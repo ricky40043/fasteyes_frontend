@@ -1,16 +1,18 @@
 <template>
-<div class="modal" v-show="isOpen">
-    <span class="close" @click="hide">&times;</span>
-    <div class="modal_content">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi in dolorem, eligendi, voluptate ullam alias ut similique iusto voluptatum, ea nostrum dicta illo adipisci sapiente! Numquam maxime excepturi aspernatur dolore.
+    <div class="modal" v-show="isOpen">
+        <span class="close" @click="hide">&times;</span>
+        <div class="modal-content">
+            <slot></slot>
+        </div>
     </div>
-</div>
 </template>
 
 <script>
+import { ref } from 'vue';
+
 export default {
     setup(){
-        const isOpen = ref(true);
+        const isOpen = ref(false);
 
         function hide(){
             isOpen.value = false;
@@ -39,7 +41,7 @@ export default {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
 }
-.modal_content {
+.modal-content {
     background-color: #ffffff;
     margin: 15% auto; 
     padding: 20px;
@@ -47,11 +49,11 @@ export default {
     border: 1px solid #888;
 }
 .close {
-    padding: 10px;
+    padding: 45px 10px;
     cursor: pointer;
     color: #aaa;
     float:right;
-    font-size:28px;
+    font-size:50px;
     font-weight: bold;
 }
 </style>

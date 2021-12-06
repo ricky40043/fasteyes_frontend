@@ -5,6 +5,8 @@ import store from "../store"
 // const source = CancelToken.source()
 const base = {
   url: 'http://192.168.45.38:8000'
+  // url: 'http://127.0.0.1:8000'
+
 }
 /**
  * post方法，對應post請求
@@ -182,6 +184,37 @@ export function getStaff (status, department_id) {
 export function getDepartment () {
   return axios({
     url: `${base.url}/department`,
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}
+
+
+export function getUerInfo () {
+  return axios({
+    url: `${base.url}/auth/pingServer`,
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}
+
+export function getgroup () {
+  return axios({
+    url: `${base.url}/group`,
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}
+
+export function getusers () {
+  return axios({
+    url: `${base.url}/users`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`

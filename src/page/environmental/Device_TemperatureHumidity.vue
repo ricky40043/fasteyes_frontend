@@ -168,6 +168,7 @@ export default {
   },
   methods: {
     getTHDevice(){
+      this.temperature_humidity_DeviceTableData=[]
       this.TH_Data_list.forEach(Data =>{
         let device = {}
         device.device_name = this.device_Map.get(Data.device_id).name

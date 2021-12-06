@@ -2,15 +2,16 @@
   <!-- <div id="main"> -->
       <div id="videoUp">
         <div id="videoLeft">
-          <img :src="video1[1]+'video'" alt="" height=270 width=270 style="display:block; margin:auto;">
+          <img :src="imgstreamName[1]+'video'" alt="" height=270 width=270 style="display:block; margin:auto;">
         </div>
         <div id="videoRight">
-          <img :src="video1[2]+'video'" alt="" height=270 width=270 style="display:block; margin:auto;">
+          <img :src="imgstreamName[2]+'video'" alt="" height=270 width=270 style="display:block; margin:auto;">
         </div>
       </div>
       <div id="videoDown">
-          <img :src="video1[0]+'video'" alt="" height=650 width=650 style="display:block; margin:auto;">
+          <img :src="face_detect? imgstreamName[0]+'face_detect' : imgstreamName[0]+'video'" alt="" height=650 width=650 style="display:block; margin:auto;">
       </div>
+      <button v-on:click="face_detect = !face_detect" :class="[face_detect? 'device_set_button' : 'device_comfirm_button']">{{face_detect? '關閉人臉偵測' : '開啟人臉偵測'}}</button>
 </template>
 <script>
 import { useRouter } from "vue-router";
@@ -18,30 +19,33 @@ import store from "../store"
 const router = useRouter();
 const base = {
   url: 'http://192.168.45.38:8000'
+  // url: 'http://127.0.0.1:8000'
 }
 export default {
   data () {
-    let video1 = []
+    let imgstreamName = []
+    let face_detect = false
     return {
-      video1,
+      imgstreamName,
+      face_detect
    }
   },
   methods: {
     // 登入
     getvideoIP () {
-      this.video1 = []
+      this.imgstreamName = []
       let list_IPCam = store.state.deviceList_IPCam
       let list_data = list_IPCam.map( D => D)
       // console.log(store.state.deviceList_IPCam)
       // console.log(list_data[0])
       list_data.forEach(data => {
         // console.log(data.id)
-        this.video1.push(base.url+"/ip_cam/device/"+data.id+"/");
+        this.imgstreamName.push(base.url+"/ip_cam/device/"+data.id+"/");
       });
-      // console.log(this.video1.length)
-      // console.log(this.video1)
+      // console.log(this.imgstreamName.length)
+      // console.log(this.imgstreamName)
 
-    }
+    },
   },
   beforeMount() {
     setTimeout(()=>{
@@ -141,6 +145,33 @@ export default {
   margin-left: 2px;
   display: flex;
   align-content: center;
+}
+.device_set_button{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color: white;
+  border-radius: 6px;
+  padding: 5px 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-content: center;
+  background-color: rgba(79, 134, 202, 1);
+}
+.device_comfirm_button{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color:rgba(79, 134, 202, 1);
+  border-radius: 6px;
+  padding: 3px 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-content: center;
+  background-color: white;
+  border-style:solid;
+  border-width:2px;
+  border-color:#4F86CA;
 }
 /* #left{
   width: 15%;
