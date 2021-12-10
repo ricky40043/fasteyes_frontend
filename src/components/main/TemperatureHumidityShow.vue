@@ -4,8 +4,8 @@
       <!-- <span class="ti-angle-left" style="align-items: center; align-content: center;"></span> -->
     </div>
     <div id="THDataLeft">
-      <div class="TH_div">
-        <div class="TH_div_inner">
+      <div class="TH_div" v-show="TH_Data_list.length>0">
+        <div class="TH_div_inner" >
           <div class="TH_div_inner_area" >
             <p class="TH_div_inner_text">{{ getTHDatafunc(0,1) }}</p>
           </div>
@@ -17,7 +17,7 @@
           </div>
         </div>
       </div>
-      <div class="TH_div">
+      <div class="TH_div" v-show="TH_Data_list.length>2">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
             <p class="TH_div_inner_text">{{ getTHDatafunc(2,1) }}</p>
@@ -30,7 +30,7 @@
           </div>
         </div>
       </div>
-      <div class="TH_div">
+      <div class="TH_div" v-show="TH_Data_list.length>4">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
             <p class="TH_div_inner_text">{{ getTHDatafunc(4,1) }}</p>
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <div class="TH_div">
+      <div class="TH_div" v-show="TH_Data_list.length>6">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
             <p class="TH_div_inner_text">{{ getTHDatafunc(6,1) }}</p>
@@ -58,7 +58,7 @@
       </div>
     </div>
     <div id="THDataRight">
-      <div class="TH_div">
+      <div class="TH_div" v-show="TH_Data_list.length>1">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
             <p class="TH_div_inner_text">{{ getTHDatafunc(1,1) }}</p>
@@ -71,7 +71,7 @@
           </div>
         </div>
       </div>
-      <div class="TH_div">
+      <div class="TH_div" v-show="TH_Data_list.length>3">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
             <p class="TH_div_inner_text">{{ getTHDatafunc(3,1) }}</p>
@@ -84,7 +84,7 @@
           </div>
         </div>
       </div>
-      <div class="TH_div">
+      <div class="TH_div" v-show="TH_Data_list.length>5">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
             <p class="TH_div_inner_text">{{ getTHDatafunc(5,1) }}</p>
@@ -97,8 +97,8 @@
           </div>
         </div>
       </div>
-      <div class="TH_div">
-        <div class="TH_div_inner">
+      <div class="TH_div" >
+        <div class="TH_div_inner" v-show="TH_Data_list.length>7">
           <div class="TH_div_inner_area" >
             <p class="TH_div_inner_text">{{ getTHDatafunc(7,1) }}</p>
           </div>
@@ -232,8 +232,8 @@
 <script>
 // import { ref } from "vue";
 // import { useRouter } from "vue-router";
-import { getLatestDeviceObservation} from "../untils/api.js"
-import store from "../store"
+import { getLatestDeviceObservation} from "../../untils/api.js"
+import store from "../../store"
 // const router = useRouter();
 
 export default {

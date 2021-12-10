@@ -15,12 +15,14 @@
 </template>
 <script>
 import { useRouter } from "vue-router";
-import store from "../store"
+import store from "../../store"
+import global_ from "../../Global.vue"
 const router = useRouter();
-const base = {
-  url: 'http://192.168.45.38:8000'
+// const base = {
+  // url: 'http://192.168.45.35:8000'
   // url: 'http://127.0.0.1:8000'
-}
+// }
+
 export default {
   data () {
     let imgstreamName = []
@@ -40,7 +42,7 @@ export default {
       // console.log(list_data[0])
       list_data.forEach(data => {
         // console.log(data.id)
-        this.imgstreamName.push(base.url+"/ip_cam/device/"+data.id+"/");
+        this.imgstreamName.push(global_.url+"/ip_cam/device/"+data.id+"/");
       });
       // console.log(this.imgstreamName.length)
       // console.log(this.imgstreamName)

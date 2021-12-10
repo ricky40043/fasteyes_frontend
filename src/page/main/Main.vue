@@ -17,9 +17,9 @@
     </div>
 </template>
 <script lang="ts">
-import TimeShow from "../../components/TimeShow.vue";
-import VideoShow from "../../components/VideoShow.vue";
-import TemperatureHumidityShow from "../../components/TemperatureHumidityShow.vue";
+import TimeShow from "../../components/main/TimeShow.vue";
+import VideoShow from "../../components/main/VideoShow.vue";
+import TemperatureHumidityShow from "../../components/main/TemperatureHumidityShow.vue";
 import { getAllDevice ,getLatestDeviceObservation,getFasteyesDevice} from "../../untils/api.js"
 import store from "../../store"
 

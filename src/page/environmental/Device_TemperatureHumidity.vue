@@ -1,4 +1,7 @@
 <template>
+    <teleport to="#destination" :disabled="disableTeleport">
+      <Addtemperaturehumidity ref="modal" />
+    </teleport>
   <div id="upbutton">
         <div class=" px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
           <div id="setbutton" class=" flex items-center" @click="getTHDevice">
@@ -44,8 +47,8 @@
           </div>
           </div>
 
-            <button class="device_set_button ">
-                確認
+            <button class="device_set_button" @click="showModal">
+                新增裝置
             </button>
         </div>
       </div>
@@ -140,16 +143,22 @@
 </template>
 
 
-<script type="text/javascript">
+<script>
 // import { ref, onMounted } from 'vue'
 import { getLatestDeviceObservation, getAllDevice} from "../../untils/api.js"
 import store from "../../store"
+import Addtemperaturehumidity from "../../components/temperature_humidity/Addtemperaturehumidity.vue"
+import { ref } from 'vue';
 
 export default {
+  components:{
+    Addtemperaturehumidity
+  },
   data (){
     let temperature_humidity_DeviceTableData=[]
     let TH_Data_list = []
     let device_Map = new Map()
+    let device_observation_Map = new Map()
     let page = 1
     let total = 1
     let page_size = 50
@@ -159,6 +168,7 @@ export default {
       temperature_humidity_DeviceTableData,
       TH_Data_list,
       device_Map,
+      device_observation_Map,
       page,
       total,
       page_size,
@@ -169,25 +179,42 @@ export default {
   methods: {
     getTHDevice(){
       this.temperature_humidity_DeviceTableData=[]
-      this.TH_Data_list.forEach(Data =>{
+      // this.TH_Data_list.forEach(Data =>{
+      //   let device = {}
+      //   device.device_name = this.device_Map.get(Data.device_id).name
+      //   device.device_serial_number = this.device_Map.get(Data.device_id).serial_number
+      //   device.area = this.device_Map.get(Data.device_id).area
+      //   device.temperature_lower_limit = this.device_Map.get(Data.device_id).info.alarm_temperature_lower_limit  
+      //   device.temperature_upper_limit = this.device_Map.get(Data.device_id).info.alarm_temperature_upper_limit  
+      //   device.humidity_lower_limit = this.device_Map.get(Data.device_id).info.alarm_humidity_lower_limit  
+      //   device.humidity_upper_limit = this.device_Map.get(Data.device_id).info.alarm_humidity_upper_limit  
+      //   device.battery = Data.info.battery  
+      //   device.status = Data.info.status  
+      //   this.temperature_humidity_DeviceTableData.push(device)
+      // });
+
+      this.device_Map.forEach(Data =>{
         let device = {}
-        device.device_name = this.device_Map.get(Data.device_id).name
-        device.device_serial_number = this.device_Map.get(Data.device_id).serial_number
-        device.area = this.device_Map.get(Data.device_id).area
-        device.temperature_lower_limit = this.device_Map.get(Data.device_id).info.alarm_temperature_lower_limit  
-        device.temperature_upper_limit = this.device_Map.get(Data.device_id).info.alarm_temperature_upper_limit  
-        device.humidity_lower_limit = this.device_Map.get(Data.device_id).info.alarm_humidity_lower_limit  
-        device.humidity_upper_limit = this.device_Map.get(Data.device_id).info.alarm_humidity_upper_limit  
-        device.battery = Data.info.battery  
-        device.status = Data.info.status  
+        device.device_name = Data.name
+        device.device_serial_number = Data.serial_number
+        device.area = Data.area
+        device.temperature_lower_limit = Data.info.alarm_temperature_lower_limit  
+        device.temperature_upper_limit = Data.info.alarm_temperature_upper_limit  
+        device.humidity_lower_limit = Data.info.alarm_humidity_lower_limit  
+        device.humidity_upper_limit = Data.info.alarm_humidity_upper_limit  
+        device.battery = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.battery : "無資料"
+        device.status = this.device_observation_Map.get(Data.id)!=undefined  ? this.device_observation_Map.get(Data.id).info.status : 1
         this.temperature_humidity_DeviceTableData.push(device)
-      });
+      })
     },
     async getTHObservation(){
       this.TH_Data_list = []
       await getLatestDeviceObservation().then((res)=>{
             let observation = Object.assign(res.data)
             this.TH_Data_list = observation
+            this.TH_Data_list.forEach(Data => {
+              this.device_observation_Map.set(Data.device_id, Object.assign(Data))
+            });
         })
     },
     increment(){
@@ -226,7 +253,7 @@ export default {
     this.getTHObservation()
     setTimeout(() => {
       this.getTHDevice()
-    }, 100);
+    }, 300);
   },
   created() {
     if(sessionStorage.getItem("state")){
@@ -238,7 +265,22 @@ export default {
       sessionStorage.removeItem('state')
       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
     })
-  }
+  },
+  setup() {
+    const disableTeleport = ref(false)   
+    
+    const modal = ref(null);
+
+    function showModal(){
+      console.log(modal)
+      modal.value.show()
+    }
+    return {
+      disableTeleport,
+      showModal ,
+      modal
+    }
+  },
 };
 </script>
 

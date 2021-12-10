@@ -1,13 +1,14 @@
 import { data } from "autoprefixer"
 import axios from "./https.js"
 import store from "../store"
+import global_ from "../Global.vue"
+
 // import base from  "../static/config.js"
 // const source = CancelToken.source()
-const base = {
-  url: 'http://192.168.45.38:8000'
+// const base = {
+  // url: 'http://192.168.45.35:8000'
   // url: 'http://127.0.0.1:8000'
-
-}
+// }
 /**
  * post方法，對應post請求
  * @desc註冊請求
@@ -21,7 +22,7 @@ export function token () {
 // 登入
 export function login (loginData) {
   return axios({
-    url: `${base.url}/auth/login`,
+    url: `${global_.url}/auth/login`,
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
@@ -33,7 +34,7 @@ export function login (loginData) {
 // 確認Email狀態
 export function checkEmail (email) {
   return axios({
-    url: `${base.url}/users/email/exists?email=${email}`,
+    url: `${global_.url}/users/email/exists?email=${email}`,
     method: 'get'
   })
 }
@@ -47,7 +48,7 @@ export function setUserInfo (email_alert=-1,language=-1) {
     setinfo.language = language
 
   return axios({
-    url: `${base.url}/users/setting`,
+    url: `${global_.url}/users/setting`,
     method: 'patch',
     data: setinfo,
     headers: {
@@ -58,7 +59,7 @@ export function setUserInfo (email_alert=-1,language=-1) {
 
 export function getAllDevice (device_model_id) {
   return axios({
-    url: `${base.url}/devices/device_model/${device_model_id}`,
+    url: `${global_.url}/devices/device_model/${device_model_id}`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -75,7 +76,7 @@ export function getDeviceObservation (device_id, start_time,end_time) {
     e = nowTime.setDate(date.getDate() + 1)
   } 
   return axios({
-    url: `${base.url}/observations/device/${device_id}?start_timestamp=${s}&end_timestamp=${e}`,
+    url: `${global_.url}/observations/device/${device_id}?start_timestamp=${s}&end_timestamp=${e}`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -104,8 +105,7 @@ export function getDevice_ModelObservation (device_model_id, page, size,status,s
   // console.log(e)
 
   return axios({
-    // url: `${base.url}/observations/device/${device_model_id}?start_timestamp=${s}&end_timestamp=${e}?page=${page}&?size=${size}`,
-    url: `${base.url}/observations/device_model/${device_model_id}?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}`,
+    url: `${global_.url}/observations/device_model/${device_model_id}?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -124,8 +124,7 @@ export function getFasteyes_Observation (page, size,status,start_time,end_time) 
   } 
 
   return axios({
-    // url: `${base.url}/fasteyes_observations/start_timestamp=${s}&end_timestamp=${e}?page=${page}&?size=${size}`,
-    url: `${base.url}/fasteyes_observations?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}`,
+    url: `${global_.url}/fasteyes_observations?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -136,7 +135,7 @@ export function getFasteyes_Observation (page, size,status,start_time,end_time) 
 
 export function getFasteyesDevice () {
   return axios({
-    url: `${base.url}/fasteyes_device`,
+    url: `${global_.url}/fasteyes_device`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -160,8 +159,7 @@ export function getFasteyes_Attendance (page, size,status,start_time,end_time) {
   attendance_in.working_time_off_1 = "17:00:00"
   attendance_in.working_time_off_2 = "18:00:00"
   return axios({
-    url: `${base.url}/attendance?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}`,
-    // url: `${base.url}/attendance?start_timestamp=2021-8-15T06:43:55.533&end_timestamp=2021-12-15T06:43:55.533&page=3&size=50`,
+    url: `${global_.url}/attendance?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}`,
     method: 'post',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -172,7 +170,7 @@ export function getFasteyes_Attendance (page, size,status,start_time,end_time) {
 
 export function getStaff (status, department_id) {
   return axios({
-    url: `${base.url}/staffs?status=${status}&department_id=${department_id}`,
+    url: `${global_.url}/staffs?status=${status}&department_id=${department_id}`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -183,7 +181,7 @@ export function getStaff (status, department_id) {
 
 export function getDepartment () {
   return axios({
-    url: `${base.url}/department`,
+    url: `${global_.url}/department`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -194,7 +192,7 @@ export function getDepartment () {
 
 export function getUerInfo () {
   return axios({
-    url: `${base.url}/auth/pingServer`,
+    url: `${global_.url}/auth/pingServer`,
     method: 'post',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -204,7 +202,7 @@ export function getUerInfo () {
 
 export function getgroup () {
   return axios({
-    url: `${base.url}/group`,
+    url: `${global_.url}/group`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -214,7 +212,7 @@ export function getgroup () {
 
 export function getusers () {
   return axios({
-    url: `${base.url}/users`,
+    url: `${global_.url}/users`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -222,13 +220,29 @@ export function getusers () {
   })
 }
 
-// export function IP_cam_login () {
-//   console.log("IPCam")
-//   return axios({
-//     url: `https://192.168.45.211:5001/webapi/entry.cgi?api=SYNO.API.Auth&method=login&version=3&account=ricky@fastwise.net&passwd=Aa16171819&session=SurveillanceStation&format=sid`,
-//     method: 'get',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//   })
-// }
+export function add_device (device_model_id, name, area, serial_number, info) {
+  let create_data = {
+    "name": name,
+    "area": area,
+    "serial_number": serial_number,
+    "info": info
+  }
+  return axios({
+    url: `${global_.url}/devices/device_model/${device_model_id}`,
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    },
+    data: create_data
+  })
+}
+
+export function get () {
+  return axios({
+    url: `${global_.url}/users`,
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}

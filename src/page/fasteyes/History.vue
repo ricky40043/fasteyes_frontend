@@ -33,7 +33,6 @@
     <div id="upnormal">
       <div class="mt-4">
         <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
-
           <div id="switchbutton">
             <div class="focus:bg-indigo-500 flex items-center justify-center">
               <!-- <button :class="[ select_status===-1 ? device_set_button : device_comfirm_button ,device_set_button ]" v-on:click="select_all"> -->
@@ -80,107 +79,134 @@
         </div>
       </div>
     </div>
-    <div id="downtable">
-            <div class="mt-6">
-        <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
-          <div
-            class="inline-block min-w-full overflow-hidden rounded-lg shadow"
-          >
-            <div class="flex flex-col items-center ">
-              <div class="inline-flex mt-2 xs:mt-0">
-                <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-l hover:bg-gray-400" v-on:click="decrement">
-                  Prev
-                </button>
-                <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-r hover:bg-gray-400" v-on:click="increment">
-                  Next
-                </button>
-              </div>
-            </div>
-            <table class="min-w-full leading-normal">
-              <thead>
-                <tr>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    裝置名稱
-                  </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    時間
-                  </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    部門
-                  </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    ID
-                  </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    人員
-                  </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    體溫
-                  </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    類型
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr v-for="(u, index) in fasteyes_ObservationTableData" :key="index">
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap">{{ u.deviceName }}</p>
-                  </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap">{{ u.time }}</p>
-                  </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">訪客</p>
-                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.department }}</p>
-                  </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">None</p>
-                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.serial_number }}</p>
-                  </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">訪客</p>
-                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.staff }}</p>
-                  </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">{{ u.temperature }}°C</p>
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.temperature }}°C</p>
-                  </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">正常</p>
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+    <div class="flex">
+      <div id="downtable" :class="showPicture? 'showPictureClass':'NotshowPictureClass'">
+              <div class="mt-6">
+          <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
             <div
-              class="flex flex-col items-center px-5 py-5 bg-white border-t xs:flex-row xs:justify-between"
+              class="inline-block min-w-full overflow-hidden rounded-lg shadow"
             >
-              <span class="text-xs text-gray-900 xs:text-sm">Showing {{page}} to {{page_total}} of {{page_size}} Entries</span>
+              <div class="flex flex-col items-center ">
+                <div class="inline-flex mt-2 xs:mt-0">
+                  <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-l hover:bg-gray-400" v-on:click="decrement">
+                    Prev
+                  </button>
+                  <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-r hover:bg-gray-400" v-on:click="increment">
+                    Next
+                  </button>
+                </div>
+              </div>
+              <table class="min-w-full leading-normal">
+                <thead>
+                  <tr>
+                    <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                      裝置名稱
+                    </th>
+                    <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                      時間
+                    </th>
+                    <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                      部門
+                    </th>
+                    <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                      ID
+                    </th>
+                    <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                      人員
+                    </th>
+                    <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                      體溫
+                    </th>
+                    <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                      類型
+                    </th>
+                  </tr>
+                </thead>
 
-              <div class="inline-flex mt-2 xs:mt-0">
-                <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-l hover:bg-gray-400" v-on:click="decrement">
-                  Prev
-                </button>
-                <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-r hover:bg-gray-400" v-on:click="increment">
-                  Next
-                </button>
+                <tbody>
+                  <tr v-for="u in fasteyes_ObservationTableData" :key="u.id" v-on:click="showResult($event, u)">
+                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                      <p class="text-gray-900 whitespace-nowrap">{{ u.deviceName }}</p>
+                    </td>
+                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                      <p class="text-gray-900 whitespace-nowrap">{{ u.time }}</p>
+                    </td>
+                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                      <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">訪客</p>
+                      <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.department }}</p>
+                    </td>
+                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                      <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">None</p>
+                      <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.serial_number }}</p>
+                    </td>
+                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                      <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">訪客</p>
+                      <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.staff }}</p>
+                    </td>
+                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                      <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">{{ u.temperature }}°C</p>
+                      <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.temperature }}°C</p>
+                    </td>
+                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                      <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">正常</p>
+                      <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div
+                class="flex flex-col items-center px-5 py-5 bg-white border-t xs:flex-row xs:justify-between"
+              >
+                <span class="text-xs text-gray-900 xs:text-sm">Showing {{page}} to {{page_total}} of {{page_size}} Entries</span>
+
+                <div class="inline-flex mt-2 xs:mt-0">
+                  <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-l hover:bg-gray-400" v-on:click="decrement">
+                    Prev
+                  </button>
+                  <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-r hover:bg-gray-400" v-on:click="increment">
+                    Next
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div v-show="showPicture">
+        <div class="max-w-sm mt-6 overflow-hidden bg-white rounded shadow-lg cardPos">
+        <div class="px-6 py-4">
+          <p>{{ select_staff.time }}</p>
+          <p>部門：{{ select_staff.department }}</p>
+          <p>ID：{{ select_staff.serial_number }}</p> 
+          <p>體溫：{{ select_staff.temperature }}°C</p>
+          <p>人員：{{ select_staff.name }}</p>
+        </div>
+        <img
+          class="w-full"
+          :src="face_url"
+          alt="人員照片"
+        />
+        <div class="px-6 py-4">
+          <p>錯誤回報</p>
+          <!-- <div class="mb-2 text-xl font-bold text-gray-900">The Coldest Sunset</div> -->
+
+        </div>
+      </div>
+      </div>
     </div>
   </div>
 </template>
 
-<script type="text/javascript">
+<script>
 // import { ref, onMounted } from 'vue'
 import { getFasteyes_Observation } from "../../untils/api.js"
 import store from "../../store"
 import moment from 'moment';
-
+import global_ from "../../Global.vue"
+//const base = {
+//  url: 'http://192.168.45.35:8000'
+  // url: 'http://127.0.0.1:8000'
+//}
 export default {
   data (){
     let fasteyes_ObservationTableData=[]
@@ -194,6 +220,8 @@ export default {
     let end_time = "23:59:59"
     let select_status = -1
     let search_text = ""
+    let showPicture = false
+    let select_id = -1
     return{
       fasteyes_ObservationTableData,
       page,
@@ -206,6 +234,20 @@ export default {
       end_time,
       select_status,
       search_text,
+      showPicture,
+      select_id,
+      select_staff:{
+        department : "",
+        time : "",
+        serial_number : "",
+        name : "",
+        temperature : "",
+        image_name :"",
+        device_id: ""
+      },
+      // face_url: require(`/Files/download/image/device/${select_staff.device_id}/file_name/${select_staff.file_name}`),
+      // face_url: '/Files/download/image/device/'+this.select_staff.device_id+'/file_name/'+this.select_staff.file_name,
+      face_url: "",
       timer: window.setInterval(() => { this.getfasteyes_Observation () }, 10000)
     }
   },
@@ -225,12 +267,15 @@ export default {
           // console.log(observation.info)
           observation_data.deviceName = observation.info.device_name 
           let datetime = moment(observation.phenomenon_time, "YYYY-MM-DDThh:mm:ss:SSSSSS")
+          observation_data.device_id = observation.fasteyes_device_id
+          observation_data.id = observation.id
           observation_data.time = datetime.format('YYYY-MM-DD HH:mm:ss')
           observation_data.department = observation.info.department_name 
           observation_data.serial_number = observation.info.staff_serial_number 
           observation_data.staff = observation.info.staff_name 
           observation_data.temperature = observation.info.temperature 
           observation_data.status = observation.result 
+          observation_data.image_name = observation.image_name
           this.fasteyes_ObservationTableData.push(observation_data)
         });
       }) 
@@ -249,12 +294,29 @@ export default {
         this.getfasteyes_Observation()
       }
     },
+    showResult (event, select_staff){
+      if(this.select_id == select_staff.id){
+        this.showPicture = !this.showPicture
+      }
+      else{
+        this.showPicture = true
+      }
+      this.select_staff.department = select_staff.department
+      this.select_staff.time = select_staff.time
+      this.select_staff.serial_number = select_staff.serial_number
+      this.select_staff.name = select_staff.staff
+      this.select_staff.temperature = select_staff.temperature
+      this.select_staff.image_name = select_staff.image_name
+      this.select_staff.device_id = select_staff.device_id
+      this.face_url = global_.url+"/Files/download/image/device/"+this.select_staff.device_id+"/file_name/"+this.select_staff.image_name
+      this.select_id = select_staff.id
+    },
     enter(){
       this.getfasteyes_Observation()
     },
     reset(){
       let nowTime = new Date()
-      let date = nowTime.getDate()-10>0?nowTime.getDate():"0"+nowTime.getDate()
+      let date = nowTime.getDate()-10>=0?nowTime.getDate():"0"+nowTime.getDate()
       this.start_date = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+date
       this.start_time = "00:00:00"
       this.end_date = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+date
@@ -423,6 +485,17 @@ export default {
   flex-wrap: nowrap;
   align-content: center;
   padding: 20px 0px;
+}
+.showPictureClass{
+  width: 80%;
+}
+.NotshowPictureClass{
+  width: 100%;
+}
+.cardPos{
+  /* color:rebeccapurple */
+  position: absolute;
+  top: 300px;
 }
 </style>
 

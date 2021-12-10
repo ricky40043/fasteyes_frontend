@@ -1,4 +1,10 @@
 <template>
+    <teleport to="#destination" :disabled="disableTeleport">
+      <Addstaff ref="modal">
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi in dolorem, eligendi, voluptate ullam alias ut similique iusto voluptatum, ea nostrum dicta illo adipisci sapiente! Numquam maxime excepturi aspernatur dolore.
+      </Addstaff>
+    </teleport>
+
   <div id="select">
           <button class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500">
             ＋ 上傳人員列表
@@ -138,11 +144,15 @@
   </div>
 </template>
 
-<script type="text/javascript">
-// import { ref, onMounted } from 'vue'
+<script>
+import { ref } from 'vue';
 import { getStaff, getDepartment } from "../../untils/api.js"
+import Addstaff from '../../components/fasteyes/Addstaff.vue'
 
 export default {
+  components:{
+    Addstaff
+  },
   data (){
     let StaffTableData=[]
     let department_list
@@ -238,7 +248,22 @@ export default {
       sessionStorage.removeItem('state')
       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
     })
-  }
+  },
+  setup() {
+    const disableTeleport = ref(false)   
+    
+    const modal = ref(null);
+
+    function showModal(){
+      console.log(modal)
+      modal.value.show()
+    }
+    return {
+      disableTeleport,
+      showModal ,
+      modal
+    }
+  },
 };
 </script>
 

@@ -270,7 +270,7 @@ export default {
     },
     reset(){
       let nowTime = new Date()
-      let date = nowTime.getDate()-10>0?nowTime.getDate():"0"+nowTime.getDate()
+      let date = nowTime.getDate()-10>=0?nowTime.getDate():"0"+nowTime.getDate()
       this.start_date = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+date
       this.start_time = "00:00:00"
       this.end_date = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+date

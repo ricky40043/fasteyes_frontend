@@ -42,7 +42,11 @@
               <p class="text-gray-900 whitespace-nowrap">{{ u.email }}</p>
             </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-              <p class="text-gray-900 whitespace-nowrap">{{ u.level }}</p>
+              <p class="text-gray-900 whitespace-nowrap" v-if="u.level == 0">RD</p>
+              <p class="text-gray-900 whitespace-nowrap" v-else-if="u.level == 1">Partner</p>
+              <p class="text-gray-900 whitespace-nowrap" v-else-if="u.level == 2">Admin</p>
+              <p class="text-gray-900 whitespace-nowrap" v-else-if="u.level == 3">HR</p>
+              <p class="text-gray-900 whitespace-nowrap" v-else-if="u.level == 4">Normal</p>
             </td>
           </tr>
         </tbody>
@@ -79,8 +83,8 @@
       </div>
       <div class = "block_text" > 
         <p v-if="level == 0">RD</p>
-        <p v-else-if="level == 1">Admin</p>
-        <p v-else-if="level == 2">Partner</p>
+        <p v-else-if="level == 1">Partner</p>
+        <p v-else-if="level == 2">Admin</p>
         <p v-else-if="level == 3">HR</p>
         <p v-else-if="level == 4">Normal</p>
       </div>
@@ -95,7 +99,7 @@ import moment from 'moment';
 
 const router = useRouter();
 const base = {
-  url: 'http://192.168.45.38:8000'
+  url: 'http://192.168.45.35:8000'
   // url: 'http://127.0.0.1:8000'
 }
 export default {
