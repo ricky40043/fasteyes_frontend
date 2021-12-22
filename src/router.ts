@@ -14,6 +14,8 @@ import Bulletin from "./page/main/Bulletin.vue";
 import Group from "./page/main/Group.vue";
 import Management from "./page/main/Management.vue";
 import Attendance from "./page/fasteyes/Attendance.vue";
+import AttendanceStatistics from "./page/fasteyes/AttendanceStatistics.vue";
+import StaffHistory from "./page/fasteyes/StaffHistory.vue";
 import DataOutput from "./page/fasteyes/DataOutput.vue";
 import Department from "./page/fasteyes/Department.vue";
 import FasteyesDevice from "./page/fasteyes/Device.vue";
@@ -127,9 +129,22 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: "fasteyes" }
   },
   {
+    path: "/fasteyes/attendance/statistics",
+    name: "AttendanceStatistics",
+    component: AttendanceStatistics,
+    meta: { layout: "fasteyes" }
+  },
+  
+  {
     path: "/fasteyes/staff",
     name: "Staff",
     component: Staff,
+    meta: { layout: "fasteyes" }
+  },
+  {
+    path: "/fasteyes/staff/:id/history",
+    name: "StaffHistory",
+    component: StaffHistory,
     meta: { layout: "fasteyes" }
   },
   {

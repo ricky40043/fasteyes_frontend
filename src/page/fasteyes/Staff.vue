@@ -1,15 +1,17 @@
 <template>
-    <teleport to="#destination" :disabled="disableTeleport">
-      <Addstaff ref="modal">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi in dolorem, eligendi, voluptate ullam alias ut similique iusto voluptatum, ea nostrum dicta illo adipisci sapiente! Numquam maxime excepturi aspernatur dolore.
-      </Addstaff>
-    </teleport>
+  <teleport to="#destination" :disabled="disableTeleport">
+    <Addstaff ref="modal" />
+  </teleport>
+  <teleport to="#destination" :disabled="disableTeleport">
+    <Modifystaff ref="settingmodal" :selectStaffData="select_staff" />
+  </teleport>
 
   <div id="select">
           <button class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500">
             ＋ 上傳人員列表
           </button>
-          <button class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500">
+          <button class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500"
+          @click="addStaffClick">
             ＋ 新增人員
           </button>
   </div>
@@ -42,26 +44,22 @@
           <div id="device" class="flex items-center justify-center">
             <select v-model="select_department" class="device_block_text" @change="get_Staff">
               <option value="-1">所有部門</option>
-              <option v-for="department in department_list" :value="department.id" :key="department.name">{{ department.name}}</option>
-              <!-- <option value="">部門選擇</option>
-              <option value="1">RD</option>
-              <option value="2">PM</option>
-              <option value="3">IT</option> -->
-          </select>
+              <option v-for="department in department_list" :value="department.id" :key="department.name">{{department.name}}</option>
+            </select>
           </div>
           <div id="setbutton" class="focus:outline-none focus:bg-indigo-500 flex items-center justify-center">
-             <select v-model="staff_status" class="device_block_text" @change="get_Staff">
+            <select v-model="staff_status" class="device_block_text" @change="get_Staff">
               <option value="-1">員工狀態</option>
               <option value="1">在職</option>
               <option value="2">留職停薪</option>
               <option value="3">離職</option>
-          </select>
+            </select>
           </div>
         </div>
       </div>
     </div>
     <div id="downtable">
-              <div class="mt-8">
+      <div class="mt-8">
       <div class="mt-6">
         <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
           <div
@@ -110,13 +108,15 @@
                     <p class="text-gray-900 whitespace-nowrap" v-else>未開啟</p>
                   </td>
                                     <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <a href="#">編輯</a>
+                    <button @click="ModifyStaff(u)">管理</button>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <a href="#">歷史紀錄</a>
+                    <router-link :to="{name:'StaffHistory', params: {id: u.id}}">
+                      <span >歷史紀錄</span>
+                    </router-link>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <img src="../../assets/SUMI_img/icon-2.png" alt="" height="25" width="25" />
+                    <img src="../../assets/SUMI_img/icon-2.png" alt="" height="25" width="25" @click="deleteStaff(u.id)" />
                   </td>
                 </tr>
               </tbody>
@@ -146,35 +146,28 @@
 
 <script>
 import { ref } from 'vue';
-import { getStaff, getDepartment } from "../../untils/api.js"
-import Addstaff from '../../components/fasteyes/Addstaff.vue'
+import { getStaff, getDepartment, delete_staff } from "../../untils/api.js"
+import Addstaff from "../../components/fasteyes/Addstaff.vue"
+import Modifystaff from "../../components/fasteyes/Modifystaff.vue"
 
 export default {
   components:{
-    Addstaff
+    Addstaff,
+    Modifystaff
   },
   data (){
-    let StaffTableData=[]
-    let department_list
-    let department_Map = new Map()
-    let page = 1
-    let total = 1
-    let page_size = 50
-    let page_total = 1
-    let search_text = ""
-    let select_department = -1
-    let staff_status = -1
     return{
-      StaffTableData,
-      department_list,
-      department_Map,
-      page,
-      total,
-      page_size,
-      page_total,
-      search_text,
-      select_department,
-      staff_status,
+      StaffTableData :[],
+      department_list:[],
+      department_Map: new Map(),
+      page: 1,
+      total: 1,
+      page_size: 50,
+      page_total: 1,
+      search_text: "",
+      select_department: -1,
+      staff_status: -1,
+      select_staff : {},
       timer: window.setInterval(() => { this.get_Staff () }, 60000)
     }
   },
@@ -186,10 +179,13 @@ export default {
         stafflist.forEach(Data =>{
           let staff = {}
           staff.department = this.department_Map.get(Data.department_id).name
+          staff.department_id = Data.department_id
           staff.serial_number = Data.serial_number
           staff.staff = Data.info.name  
           staff.facedetect = Data.info.face_detect  
           staff.id = Data.id
+          staff.gender = Data.info.gender
+          staff.status = Data.status
           this.StaffTableData.push(staff)
         });
       }) 
@@ -202,6 +198,12 @@ export default {
           this.department_Map.set(parseInt(department.id), Object.assign(department))
         });
       }) 
+    },
+    async deleteStaff(staff_id) {
+      await delete_staff(staff_id).then((res) => {
+        this.get_Staff()
+        }).catch((err) => {
+        })
     },
     increment(){
       if(this.page<this.page_total)
@@ -220,16 +222,10 @@ export default {
     search_event(){
       console.log(this.search_text) 
     },
-    select_history(){
-      alert("123")
+    ModifyStaff(input){
+      this.select_staff = input
+      this.showSettingModal()
     }
-    // init(){
-    //   // create Device Map 
-    //   let devicelist = store.state.deviceList_Fasteyes
-    //   devicelist.forEach(device => {
-    //     this.device_Map.set(device.id, Object.assign(device))
-    //   });
-    // },
   },
   beforeMount() {
     this.get_Department()
@@ -253,15 +249,23 @@ export default {
     const disableTeleport = ref(false)   
     
     const modal = ref(null);
-
-    function showModal(){
-      console.log(modal)
+    const settingmodal = ref(null);
+    
+    function addStaffClick(){
       modal.value.show()
+      this.showModal = true
     }
+    function showSettingModal(){
+      settingmodal.value.show()
+      this.showModal = true
+    }
+
     return {
       disableTeleport,
-      showModal ,
-      modal
+      addStaffClick ,
+      showSettingModal,
+      modal,
+      settingmodal
     }
   },
 };

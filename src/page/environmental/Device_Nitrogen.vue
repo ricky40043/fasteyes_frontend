@@ -3,17 +3,14 @@
         <div class=" px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
           <div id="setbutton" class=" flex items-center">
             <router-link class="device_comfirm_button"
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
               to="/environment/device/temperature_humidity">
                 溫濕度感應器
             </router-link>
             <router-link class="device_set_button"              
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
               to="/environment/device/Nitrogen">
                 氮氣產生機
             </router-link>
             <router-link class="device_comfirm_button"              
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
               to="/environment/device/email">
                 Email通知
             </router-link>

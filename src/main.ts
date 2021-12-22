@@ -4,7 +4,8 @@ import store from "./store";
 import router from './router';
 import './assets/main.css';
 import './assets/css/themify-icons.css';
-
+import "./assets/sass/paper-dashboard.scss";
+import 'font-awesome/css/font-awesome.min.css';
 
 import DashboardLayout from './layout/dashboard/DashboardLayout.vue';
 import MainDashboardLayout from './layout/main/MainDashboardLayout.vue';

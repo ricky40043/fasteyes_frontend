@@ -22,7 +22,7 @@
           <span class="mx-4">Fasteyes</span>
         </router-link>
       </div>
-            <!-- <div class="flex mx-3 text-gray-600 focus:outline-none">             
+            <div class="flex mx-3 text-gray-600 focus:outline-none">             
         <router-link :class="[$route.name === 'ElectrostaticHistory' ? activeClass : inactiveClass]" to="/electrostatic/history">
           <span class="mx-4">靜電環</span>
         </router-link>
@@ -31,7 +31,7 @@
         <router-link :class="[$route.name === 'Ipcam' ? activeClass : inactiveClass]" to="/ipcam">
           <span class="mx-4">IPCam</span>
         </router-link>
-      </div> -->
+      </div>
             <div class="flex mx-3 text-gray-600 focus:outline-none">             
         <router-link :class="[$route.name === 'TemperatureHumidity' ? activeClass : inactiveClass]" to="/environment/temperature_humidity">
           <span class="mx-4">環境監控</span>
@@ -60,7 +60,7 @@
         </svg>
       </button> -->
 
-      <!-- <div class="flex mx-4 text-gray-600 focus:outline-none">
+      <div class="flex mx-4 text-gray-600 focus:outline-none">
         <button
           @click="dropdownOpen1 = !dropdownOpen1"
         >
@@ -120,7 +120,7 @@
             </div>
           </div>
         </transition>
-      </div> -->
+      </div> 
 
 
       <div class="relative">

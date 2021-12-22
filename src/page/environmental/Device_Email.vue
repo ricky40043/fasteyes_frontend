@@ -3,17 +3,14 @@
         <div class=" px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
           <div id="setbutton" class=" flex items-center">
             <router-link class="device_comfirm_button"
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
               to="/environment/device/temperature_humidity">
                 溫濕度感應器
             </router-link>
             <router-link class="device_comfirm_button"              
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
               to="/environment/device/Nitrogen">
                 氮氣產生機
             </router-link>
             <router-link class="device_set_button"              
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
               to="/environment/device/email">
                 Email通知
             </router-link>
@@ -24,6 +21,19 @@
       <div class="mt-4" >
         <h3>Email 通知</h3>
         <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+          <h4>當收到異常資料時通知我</h4>
+          <button :class="device_email_alarm? 'device_set_button': 'device_comfirm_button'" @click="email_alarm_set(true)">ON</button>
+          <button :class="!device_email_alarm? 'device_set_button': 'device_comfirm_button'" @click="email_alarm_set(false)">OFF</button>
+        </div>
+        <!-- <div v-else class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+          <h4>當收到異常資料時通知我</h4>
+          <button class="device_comfirm_button" @click="email_alarm_set(true)">ON</button>
+          <button class="device_set_button">OFF</button>
+        </div> -->
+      </div>
+      <!-- <div class="mt-4" >
+        <h3>Email 通知</h3>
+        <div class="flex items-center px-4  space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
         <h4>當收到異常資料時通知我</h4>
             <button class="device_set_button ">
                 ON
@@ -31,8 +41,8 @@
             <button class="device_set_button ">
                 OFF
             </button>
-        </div>
-      <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+        </div> 
+       <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
         <h4>當裝置狀態異常時通知我</h4>
             <button class="device_set_button ">
                 ON
@@ -41,10 +51,43 @@
                 OFF
             </button>
         </div>
-      </div>
+      </div> -->
       
   </div>
 </template>
+
+<script type="text/javascript">
+// import { ref, onMounted } from 'vue'
+import { setUserInfo } from "../../untils/api.js"
+
+export default {
+  data (){
+    return{
+      device_email_alarm : false,
+    }
+  },
+  methods: {
+    async email_alarm_set(para){
+      this.device_email_alarm = para
+      let obj = {"device_email_alert":this.device_email_alarm }
+      await setUserInfo(obj).then((res)=>{
+            // let response = Object.assign(res.data)
+        })
+    },
+  },
+  created() {
+    if(sessionStorage.getItem("state")){
+      let sessionStorageData = JSON.parse(sessionStorage.getItem("state")) 
+      this.$store.replaceState(Object.assign({},this.$store.state, sessionStorageData))
+      // this.$store.dispatch('setToken', sessionStorageData)
+    }
+    window.addEventListener('beforeunload', ()=>{
+      sessionStorage.removeItem('state')
+      sessionStorage.setItem('state', JSON.stringify(this.$store.state))
+    })
+  }
+};
+</script>
 <style scoped>
 #time{
   /* background-color: Red; */

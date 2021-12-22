@@ -11,11 +11,9 @@
             <input id="end_time" type="time" class="time_block_text" v-model="end_time">
           </div>
           <div id="device" class="flex items-center justify-center">
-            <select id="device_select" ref="device_select" name="devices" class="device_block_text" disabled>
-              <option value="" selected="selected">全部裝置</option>
-              <option value="1">Device1</option>
-              <option value="2">Device2</option>
-              <option value="3">Device3</option>
+            <select v-model="select_device" class="device_block_text">
+              <option value="-1">所有裝置</option>
+              <option v-for="device in Fasteyes_DeviceList" :value="device.id" :key="device.name">{{device.name}}</option>
             </select>
           </div>
           <div id="setbutton" class="focus:outline-none focus:bg-indigo-500 flex items-center justify-center">
@@ -174,12 +172,19 @@
       </div>
       <div v-show="showPicture">
         <div class="max-w-sm mt-6 overflow-hidden bg-white rounded shadow-lg cardPos">
-        <div class="px-6 py-4">
+        <div class="px-6 py-4" v-if="select_staff.name!='Unknow'">
           <p>{{ select_staff.time }}</p>
           <p>部門：{{ select_staff.department }}</p>
           <p>ID：{{ select_staff.serial_number }}</p> 
           <p>體溫：{{ select_staff.temperature }}°C</p>
           <p>人員：{{ select_staff.name }}</p>
+        </div>
+        <div class="px-6 py-4" v-else>
+          <p>{{ select_staff.time }}</p>
+          <p>部門：訪客</p>
+          <p>ID：None</p> 
+          <p>體溫：{{ select_staff.temperature }}°C</p>
+          <p>人員：訪客</p>
         </div>
         <img
           class="w-full"
@@ -188,8 +193,6 @@
         />
         <div class="px-6 py-4">
           <p>錯誤回報</p>
-          <!-- <div class="mb-2 text-xl font-bold text-gray-900">The Coldest Sunset</div> -->
-
         </div>
       </div>
       </div>
@@ -199,7 +202,7 @@
 
 <script>
 // import { ref, onMounted } from 'vue'
-import { getFasteyes_Observation } from "../../untils/api.js"
+import { getFasteyes_Observation, getFasteyesDevice } from "../../untils/api.js"
 import store from "../../store"
 import moment from 'moment';
 import global_ from "../../Global.vue"
@@ -245,9 +248,9 @@ export default {
         image_name :"",
         device_id: ""
       },
-      // face_url: require(`/Files/download/image/device/${select_staff.device_id}/file_name/${select_staff.file_name}`),
-      // face_url: '/Files/download/image/device/'+this.select_staff.device_id+'/file_name/'+this.select_staff.file_name,
       face_url: "",
+      Fasteyes_DeviceList: [],
+      select_device: -1,
       timer: window.setInterval(() => { this.getfasteyes_Observation () }, 10000)
     }
   },
@@ -255,12 +258,11 @@ export default {
     async getfasteyes_Observation(){
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      await getFasteyes_Observation(this.page,this.page_size, this.select_status,start_time,end_time).then((res)=>{
+      await getFasteyes_Observation(this.page,this.page_size, this.select_status,start_time,end_time,this.select_device).then((res)=>{
         let observationlist = Object.assign(res.data.items)
         this.total = Object.assign(res.data.total)
         this.page_total = Math.ceil(this.total/this.page_size)
         this.fasteyes_ObservationTableData = []
-        
         observationlist.forEach(observation =>{
           let observation_data = {}
           // console.log(observation)
@@ -277,6 +279,18 @@ export default {
           observation_data.status = observation.result 
           observation_data.image_name = observation.image_name
           this.fasteyes_ObservationTableData.push(observation_data)
+        });
+      }) 
+    },
+    async getDevice(){
+      this.Fasteyes_DeviceTableData = []
+      await getFasteyesDevice().then((res)=>{
+        let devicelist = Object.assign(res.data)
+        devicelist.forEach(Data =>{
+          let device = {}
+          device.name = Data.name 
+          device.id = Data.id
+          this.Fasteyes_DeviceList.push(device)
         });
       }) 
     },
@@ -343,6 +357,7 @@ export default {
   },
   beforeMount() {
     this.reset()
+    this.getDevice()
   },
   beforeUnmount(){
     window.clearInterval(this.timer)

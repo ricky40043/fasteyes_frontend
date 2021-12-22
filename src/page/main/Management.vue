@@ -98,10 +98,6 @@ import { getUerInfo, getgroup, getusers} from '../../untils/api.js'
 import moment from 'moment';
 
 const router = useRouter();
-const base = {
-  url: 'http://192.168.45.35:8000'
-  // url: 'http://127.0.0.1:8000'
-}
 export default {
   data () {
     let showUser = false

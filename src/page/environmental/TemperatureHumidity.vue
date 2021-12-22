@@ -14,11 +14,9 @@
             <input id="end_time" type="time" class="time_block_text" v-model="end_time">
           </div>
           <div id="device" class="flex items-center justify-center">
-            <select id="device_select" ref="device_select" name="devices" class="device_block_text" disabled>
-              <option value="" selected="selected">全部裝置</option>
-              <option value="1">Device1</option>
-              <option value="2">Device2</option>
-              <option value="3">Device3</option>
+            <select v-model="select_device" class="device_block_text">
+              <option value="-1">所有裝置</option>
+              <option v-for="device in device_list" :value="device.id" :key="device.name">{{device.name}}</option>
             </select>
           </div>
           <div id="setbutton" class="focus:outline-none focus:bg-indigo-500 flex items-center justify-center">
@@ -36,7 +34,6 @@
 
           <div id="switchbutton">
             <div class="focus:bg-indigo-500 flex items-center justify-center">
-              <!-- <button :class="[ select_status===-1 ? device_set_button : device_comfirm_button ,device_set_button ]" v-on:click="select_all"> -->
               <button :class="[ select_status===-1 ? 'device_set_button' : 'device_comfirm_button' ]" v-on:click="select_all">
                   全部
               </button>
@@ -71,11 +68,11 @@
             />
           </div>
           </div>
-          <!-- <div id="outputbutton">
+          <div id="outputbutton" @click="getTHObservationOutput()">
             <button class="device_abnormal_button">
               輸出 .csv
             </button>
-          </div> -->
+          </div>
           
         </div>
       </div>
@@ -173,9 +170,8 @@
 <script type="text/javascript">
 // import { ref, onMounted } from 'vue'
 import moment from 'moment';
-import { getDevice_ModelObservation } from "../../untils/api.js"
+import { getDevice_ModelObservation, getDevice_ModelObservation_data, getAllDevice} from "../../untils/api.js"
 import store from "../../store"
-
 export default {
   data (){
     let temperature_humidity_ObservationTableData=[]
@@ -203,6 +199,8 @@ export default {
       end_time,
       select_status,
       search_text,
+      device_list:[],
+      select_device: -1,
       timer: window.setInterval(() => { this.getTHObservation () }, 10000),
     }
   },
@@ -211,7 +209,7 @@ export default {
       let device_model = 1
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      await getDevice_ModelObservation(device_model,this.page,this.page_size, this.select_status,start_time,end_time).then((res)=>{
+      await getDevice_ModelObservation(device_model,this.page,this.page_size, this.select_status,start_time,end_time,this.select_device).then((res)=>{
         let observationlist = Object.assign(res.data.items)
         this.total = Object.assign(res.data.total)
         this.page_total = Math.ceil(this.total/this.page_size)
@@ -232,6 +230,49 @@ export default {
           this.temperature_humidity_ObservationTableData.push(observation_data)
         });
       }) 
+    },
+    async getTHObservationOutput(){
+      let device_model = 1
+      let start_time = this.start_date+"T"+this.start_time
+      let end_time = this.end_date+"T"+this.end_time
+      let FILE = await getDevice_ModelObservation_data(device_model, this.select_status,start_time,end_time).then((res)=>{
+        return Object.assign(res.data)
+      }) 
+      if (FILE) {
+         const anchor = document.createElement('a');
+          anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(FILE);
+          anchor.target = '_blank';
+          anchor.download = this.start_date+'-'+this.end_date+'輸出報表.csv';
+          anchor.click();
+      } else 
+        console.log('none')
+    },
+    async get_all_device(){
+      // create Device Map 
+      this.device_list= []
+      let device_model = 1
+      await getAllDevice(device_model).then((res)=>{
+        this.devicelist = Object.assign(res.data)
+        this.devicelist.forEach(Data => {
+          this.device_Map.set(Data.id, Object.assign(Data))
+          let device = {}
+          device.name = Data.name 
+          device.id = Data.id
+          this.device_list.push(device)
+        });
+      })
+    },
+    getnowTime() {
+      // var currentdate = new Date(); 
+      // let h = currentdate.getHours();
+      // let H = h>9?h:"0"+h;
+      // let m = currentdate.getMinutes();
+      // let M = m>9?m:"0"+m; 
+      // let s = currentdate.getSeconds();
+      // let S = s>9?s:"0"+s;
+      // this.current_time = H + ":" + M + ":" +S; 
+      var d = Date(Date.now()); 
+      return currentdate.getTime()
     },
     increment(){
       if(this.page<this.page_total)
@@ -280,25 +321,9 @@ export default {
     search_event(){
       console.log(this.search_text) 
     },
-    init(){
-      // create Device Map 
-      let devicelist = store.state.deviceList_TH
-      devicelist.forEach(device => {
-        this.device_Map.set(device.id, Object.assign(device))
-      });
-      // Get Device select option
-      // var select = document.getElementById("device_select")
-      // console.log(select)
-      // for (var i = 0; i<=this.device_Map.size; i++){
-      //     var opt = document.createElement('option');
-      //     opt.value = i+1;
-      //     opt.innerHTML = i+1;
-      //     select.appendChild(opt);
-      // }
-    },
   },
   beforeMount() {
-    this.init()
+    this.get_all_device()
     this.reset()
   },
   beforeUnmount(){

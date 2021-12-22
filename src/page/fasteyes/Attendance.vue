@@ -11,11 +11,9 @@
             <input id="end_time" type="time" class="time_block_text" v-model="end_time">
           </div>
           <div id="device" class="flex items-center justify-center">
-            <select id="device_select" ref="device_select" name="devices" class="device_block_text" disabled>
-              <option value="" selected="selected">全部裝置</option>
-              <option value="1">Device1</option>
-              <option value="2">Device2</option>
-              <option value="3">Device3</option>
+            <select v-model="select_device" class="device_block_text">
+              <option value="-1">所有裝置</option>
+              <option v-for="device in Fasteyes_DeviceList" :value="device.id" :key="device.name">{{device.name}}</option>
             </select>
           </div>
           <div id="setbutton" class="focus:outline-none focus:bg-indigo-500 flex items-center justify-center">
@@ -79,7 +77,11 @@
         </div>
       </div>
     </div>
-
+    <div>
+      <div>
+        <vue-echarts :option="option" style="height: 400px" ref="chart" />
+      </div>
+    </div>
     <div class="mt-8">
       <div class="mt-6">
         <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
@@ -97,7 +99,7 @@
               </div>
             </div>
 
-          <h1 align="center" v-if="select_date!=''">{{ select_date }} 出勤紀錄</h1>
+          <h5 align="center" v-if="select_date!=''">{{ select_date }} 出勤紀錄</h5>
             <table class="min-w-full leading-normal">
               <thead>
                 <tr>
@@ -140,17 +142,21 @@
                     <p class="text-gray-900 whitespace-nowrap">{{ u.staff }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap">{{ u.checkin }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;"  v-if="u.checkin=='Invalid date'">無資料</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.checkin }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.checkin_result == false">{{ u.checkin_temperature }}°C</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;"  v-if="u.checkin=='Invalid date'">無資料</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else-if="u.checkin_result == false">{{ u.checkin_temperature }}°C</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.checkin_temperature }}°C</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.checkout=='Invalid date'">無資料</p>
                     <p class="text-gray-900 whitespace-nowrap">{{ u.checkout }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.checkout_result == false">{{ u.checkout_temperature }}°C</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.checkout=='Invalid date'">無資料</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else-if="u.checkout_result == false">{{ u.checkout_temperature }}°C</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.checkout_temperature }}°C</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
@@ -185,11 +191,14 @@
 
 <script type="text/javascript">
 // import { ref, onMounted } from 'vue'
-import { getFasteyes_Attendance } from "../../untils/api.js"
+import { getFasteyes_Attendance, getFasteyes_AttendanceLineChart, getFasteyesDevice} from "../../untils/api.js"
 import store from "../../store"
 import moment from 'moment'
-
+import { VueEcharts } from "vue3-echarts";
 export default {
+  components: {
+    VueEcharts,
+  },
   data (){
     let fasteyes_AttendanceTableData=[]
     let page = 1
@@ -216,14 +225,65 @@ export default {
       select_status,
       search_text,
       select_date,
-      timer: window.setInterval(() => { this.getfasteyes_Attendance () }, 10000)
+      Fasteyes_DeviceList: [],
+      select_device: -1,
+      timer: window.setInterval(() => { 
+          this.getfasteyes_Attendance ()
+          this.getfasteyesAttendanceLineChart()
+        }, 10000),
+      time_intervalData:[1,2,3,4,5,6,7,8],
+      work_staff:[1,2,3,4,5,6,7,8],
+    }
+  },
+  computed: {
+    option() {
+      return {
+        title: {
+          text: "出勤統計折線圖",
+        },
+        tooltip: {
+          trigger: "axis",
+        },
+        legend: {
+          data: ["aaa", "bbb", "ccc", "ddd", "eee"],
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {},
+          },
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: this.time_intervalData,
+          name:"時間"
+        },
+        yAxis: {
+          type: "value",
+          name:"人數"
+        },
+        series: [
+          {
+            name: "上班人數",
+            type: "line",
+            stack: "1",
+            data: this.work_staff ,
+          },
+        ],
+      }
     }
   },
   methods: {
     async getfasteyes_Attendance(){
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      await getFasteyes_Attendance(this.page,this.page_size,this.select_status,start_time,end_time).then((res)=>{
+      await getFasteyes_Attendance(this.page,this.page_size,this.select_status,start_time,end_time,this.select_device).then((res)=>{
         let observationlist = Object.assign(res.data.items)
         this.total = Object.assign(res.data.total)
         this.page_total = Math.ceil(this.total/this.page_size)
@@ -251,11 +311,36 @@ export default {
         });
       }) 
     },
+    async getfasteyesAttendanceLineChart(){
+      let start_time = this.start_date+"T"+this.start_time
+      let end_time = this.end_date+"T"+this.end_time
+      await getFasteyes_AttendanceLineChart(start_time,end_time,this.page,this.select_device).then((res)=>{
+        let observation = Object.assign(res.data)
+        // console.log(observation)
+        // console.log(this.option)
+        this.time_intervalData = observation.time_interval
+        this.work_staff = observation.work_staff
+        // console.log(this.option)
+      }) 
+    },
+    async getDevice(){
+      this.Fasteyes_DeviceTableData = []
+      await getFasteyesDevice().then((res)=>{
+        let devicelist = Object.assign(res.data)
+        devicelist.forEach(Data =>{
+          let device = {}
+          device.name = Data.name 
+          device.id = Data.id
+          this.Fasteyes_DeviceList.push(device)
+        });
+      }) 
+    },
     increment(){
       if(this.page<this.page_total)
       {
         this.page++
         this.getfasteyes_Attendance()
+        this.getfasteyesAttendanceLineChart()
       }
     },
     decrement(){
@@ -263,10 +348,12 @@ export default {
       {
         this.page--
         this.getfasteyes_Attendance()
+        this.getfasteyesAttendanceLineChart()
       }
     },
     enter(){
       this.getfasteyes_Attendance()
+      this.getfasteyesAttendanceLineChart()
     },
     reset(){
       let nowTime = new Date()
@@ -278,6 +365,7 @@ export default {
       this.search_text=""
       this.select_status=-1
       this.getfasteyes_Attendance()
+      this.getfasteyesAttendanceLineChart()
     },
     select_all(){
       this.select_status = -1
@@ -297,6 +385,7 @@ export default {
   },
   beforeMount() {
     this.reset()
+    this.getDevice()
   },
   beforeUnmount(){
     window.clearInterval(this.timer)
@@ -318,6 +407,10 @@ export default {
 
 
 <style scoped>
+.echarts {
+  width: 100%;
+  height: 100%;
+}
 #time{
   /* background-color: Red; */
   width: 60%;

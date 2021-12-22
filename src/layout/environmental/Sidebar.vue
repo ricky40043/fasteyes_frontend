@@ -38,7 +38,7 @@
           <span class="mx-4">溫濕度感應</span>
         </router-link>
 
-        <!-- <router-link
+        <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"
           :class="[$route.name === 'Nitrogen' ? activeClass : inactiveClass]"
           to="/environment/Nitrogen"
@@ -68,7 +68,7 @@
           </svg>
 
           <span class="mx-4">氮氣幾</span>
-        </router-link> -->
+        </router-link> 
 
         <router-link
           class="flex items-center px-6 py-2 mt-4 duration-200 border-l-4"

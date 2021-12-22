@@ -2,24 +2,24 @@
     <teleport to="#destination" :disabled="disableTeleport">
       <Addtemperaturehumidity ref="modal" />
     </teleport>
+    <teleport to="#destination" :disabled="disableTeleport">
+      <Settingtemperaturehumidity ref="settingmodal" :selectDeviceData="select_device" v-on:testCall="'doSome($event)'" :testID="'testCall'"/>
+    </teleport>
   <div id="upbutton">
         <div class=" px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
           <div id="setbutton" class=" flex items-center" @click="getTHDevice">
             <router-link class="device_set_button"
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
               to="/environment/device/temperature_humidity">
                 溫濕度感應器
             </router-link>
-            <!-- <router-link class="device_comfirm_button"              
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
+            <router-link class="device_comfirm_button"              
               to="/environment/device/Nitrogen">
                 氮氣產生機
             </router-link>
             <router-link class="device_comfirm_button"              
-              :class="[$route.name === 'EnvironmentDevice' ? activeClass : inactiveClass]"
               to="/environment/device/email">
                 Email通知
-            </router-link> -->
+            </router-link>
           </div>
         </div>
       <div class="mt-4" >
@@ -47,7 +47,7 @@
           </div>
           </div>
 
-            <button class="device_set_button" @click="showModal">
+            <button class="device_set_button" @click="addDeviceClick">
                 新增裝置
             </button>
         </div>
@@ -115,7 +115,7 @@
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <a href="#" disabled>管理</a>
+                    <button @click="settingDevice(u)">管理</button>
                   </td>
                 </tr>
               </tbody>
@@ -148,11 +148,13 @@
 import { getLatestDeviceObservation, getAllDevice} from "../../untils/api.js"
 import store from "../../store"
 import Addtemperaturehumidity from "../../components/temperature_humidity/Addtemperaturehumidity.vue"
+import Settingtemperaturehumidity from "../../components/temperature_humidity/Settingtemperaturehumidity.vue"
 import { ref } from 'vue';
 
 export default {
   components:{
-    Addtemperaturehumidity
+    Addtemperaturehumidity,
+    Settingtemperaturehumidity
   },
   data (){
     let temperature_humidity_DeviceTableData=[]
@@ -164,6 +166,7 @@ export default {
     let page_size = 50
     let page_total = 1
     let search_text = ""
+    let select_device ={}
     return{
       temperature_humidity_DeviceTableData,
       TH_Data_list,
@@ -173,31 +176,22 @@ export default {
       total,
       page_size,
       page_total,
-      search_text 
+      search_text,
+      select_device,
+      showModal: false
     }
   },
   methods: {
     getTHDevice(){
       this.temperature_humidity_DeviceTableData=[]
-      // this.TH_Data_list.forEach(Data =>{
-      //   let device = {}
-      //   device.device_name = this.device_Map.get(Data.device_id).name
-      //   device.device_serial_number = this.device_Map.get(Data.device_id).serial_number
-      //   device.area = this.device_Map.get(Data.device_id).area
-      //   device.temperature_lower_limit = this.device_Map.get(Data.device_id).info.alarm_temperature_lower_limit  
-      //   device.temperature_upper_limit = this.device_Map.get(Data.device_id).info.alarm_temperature_upper_limit  
-      //   device.humidity_lower_limit = this.device_Map.get(Data.device_id).info.alarm_humidity_lower_limit  
-      //   device.humidity_upper_limit = this.device_Map.get(Data.device_id).info.alarm_humidity_upper_limit  
-      //   device.battery = Data.info.battery  
-      //   device.status = Data.info.status  
-      //   this.temperature_humidity_DeviceTableData.push(device)
-      // });
-
       this.device_Map.forEach(Data =>{
         let device = {}
+        // console.log(Data)
+        device.device_id = Data.id
         device.device_name = Data.name
         device.device_serial_number = Data.serial_number
         device.area = Data.area
+        device.interval_time = Data.info.interval_time
         device.temperature_lower_limit = Data.info.alarm_temperature_lower_limit  
         device.temperature_upper_limit = Data.info.alarm_temperature_upper_limit  
         device.humidity_lower_limit = Data.info.alarm_humidity_lower_limit  
@@ -234,6 +228,10 @@ export default {
     search_event(){
       console.log(this.search_text) 
     },
+    settingDevice(input){
+      this.select_device = input
+      this.showSettingModal()
+    },
     async init(){
       // create Device Map 
       let device_model = 1
@@ -243,10 +241,10 @@ export default {
           this.device_Map.set(device.id, Object.assign(device))
         });
       })
-      // let devicelist = store.state.deviceList_TH
-      // devicelist.forEach(device => {
-      //   this.device_Map.set(device.id, Object.assign(device))
     },
+    doSome(res) {
+      console.log(success)
+    }
   },
   beforeMount() {
     this.init()
@@ -259,26 +257,37 @@ export default {
     if(sessionStorage.getItem("state")){
       let sessionStorageData = JSON.parse(sessionStorage.getItem("state")) 
       this.$store.replaceState(Object.assign({},this.$store.state, sessionStorageData))
-      // this.$store.dispatch('setToken', sessionStorageData)
     }
     window.addEventListener('beforeunload', ()=>{
       sessionStorage.removeItem('state')
       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
     })
+
+  },
+  watch:{
+    
   },
   setup() {
     const disableTeleport = ref(false)   
     
     const modal = ref(null);
-
-    function showModal(){
-      console.log(modal)
+    const settingmodal = ref(null);
+    
+    function addDeviceClick(){
       modal.value.show()
+      this.showModal = true
     }
+    function showSettingModal(){
+      settingmodal.value.show()
+      this.showModal = true
+    }
+
     return {
       disableTeleport,
-      showModal ,
-      modal
+      addDeviceClick ,
+      showSettingModal,
+      modal,
+      settingmodal
     }
   },
 };
