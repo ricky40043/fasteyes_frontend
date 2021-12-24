@@ -482,3 +482,13 @@ export function patch_output (patch_data) {
     data: patch_data
   })
 }
+
+export function get_output_csv_file () {
+  return axios({
+    url: `${global_.url}/fasteyes_observations/output_interval_data_csv`,
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}

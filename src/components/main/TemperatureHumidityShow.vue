@@ -1,4 +1,5 @@
 <template>
+  <p class="TH_div_inner_text" :class="devicelist.length!=TH_Data_list.length? 'mis_data':'' ">溫濕度感應器接收資料：{{TH_Data_list.length}}/{{devicelist.length}}</p>
   <div id="main">
     <div id="THLeftIcon" >
       <!-- <span class="ti-angle-left" style="align-items: center; align-content: center;"></span> -->
@@ -227,24 +228,38 @@
   align-content: left;
   align-items: center;
 }
+.mis_data{
+  color: red;
+}
 </style>
 
 <script>
 // import { ref } from "vue";
 // import { useRouter } from "vue-router";
-import { getLatestDeviceObservation} from "../../untils/api.js"
+import { getLatestDeviceObservation, getAllDevice} from "../../untils/api.js"
 import store from "../../store"
 // const router = useRouter();
 
 export default {
   data () {
-    let TH_Data_list = []
     return {
-      timer: window.setInterval(() => { this.getTHObservation () }, 10000),
-      TH_Data_list
+      device_Map: new Map(),
+      TH_Data_list:[],
+      devicelist:[],
+      timer: window.setInterval(() => { this.getTHObservation ()  }, 10000),
    }
   },
     methods: {
+    async init(){
+      // create Device Map 
+      let device_model = 1
+      await getAllDevice(device_model).then((res)=>{
+        this.devicelist = Object.assign(res.data)
+        this.devicelist.forEach(device => {
+          this.device_Map.set(device.id, Object.assign(device))
+        });
+      })
+    },
       async getTHObservation(){
         this.TH_Data_list = []
         await getLatestDeviceObservation().then((res)=>{
@@ -313,6 +328,7 @@ export default {
     beforeMount() {
     setTimeout(() => {
       this.getTHObservation()
+      this.init()
     },500)
   },
   beforeUnmount(){

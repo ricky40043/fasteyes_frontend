@@ -1,6 +1,6 @@
 <template>
   <teleport to="#destination" :disabled="disableTeleport">
-    <ModifyFasteyesOutputForm ref="settingmodal" :faseyes_observation_form_data="faseyes_observation_form" />
+    <ModifyFasteyesOutputForm ref="settingmodal" :faseyes_observation_form_data="faseyes_observation_form" :open_settingform="open_setting" />
   </teleport>
 
   <div class="mt-4" >
@@ -56,6 +56,9 @@
       <button class="device_comfirm_button" @click="showSettingModal">
         修改
       </button>
+      <button class="device_comfirm_button" @click="outputclick">
+        輸出報表
+      </button>
     </div>
   </div>
   </div>
@@ -65,7 +68,7 @@
 import { ref } from 'vue';
 import { useRouter } from "vue-router";
 // import { getUerInfo, getgroup, getusers} from '../../untils/api.js'
-import { get_output } from '../../untils/api.js'
+import { get_output ,get_output_csv_file} from '../../untils/api.js'
 import moment from 'moment';
 import ModifyFasteyesOutputForm from "../../components/fasteyes/ModifyFasteyesOutputForm.vue"
 
@@ -82,6 +85,7 @@ export default {
       output_list:[],
       not_output_list:[],
       resign_staff_output: false,
+      open_setting: false
    }
   },
   computed:{
@@ -129,6 +133,19 @@ export default {
         this.resign_staff_output = output_form.resign_staff_output
       })
     },
+    async outputclick(){
+      let FILE = await get_output_csv_file().then((res)=>{
+        return Object.assign(res.data)
+      }) 
+      if (FILE) {
+         const anchor = document.createElement('a');
+          anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(FILE);
+          anchor.target = '_blank';
+          anchor.download = '觀測結果輸出報表.csv';
+          anchor.click();
+      } else 
+        console.log('none')
+    },
     btnEvent(){
     }
   },
@@ -151,6 +168,7 @@ export default {
     const settingmodal = ref(null);
     function showSettingModal(){
       settingmodal.value.show()
+      this.open_setting = true
       this.showModal = true
     }
     return {

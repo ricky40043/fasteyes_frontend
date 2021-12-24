@@ -108,7 +108,9 @@
                     <p class="text-gray-900 whitespace-nowrap">{{ u.humidity_lower_limit }}%~{{ u.humidity_upper_limit }}%</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap">{{ u.battery }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.battery ==-1">無資料</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else-if="u.battery > 10">{{ u.battery }}%</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.battery }}%</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">正常</p>
@@ -196,8 +198,18 @@ export default {
         device.temperature_upper_limit = Data.info.alarm_temperature_upper_limit  
         device.humidity_lower_limit = Data.info.alarm_humidity_lower_limit  
         device.humidity_upper_limit = Data.info.alarm_humidity_upper_limit  
-        device.battery = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.battery : "無資料"
-        device.status = this.device_observation_Map.get(Data.id)!=undefined  ? this.device_observation_Map.get(Data.id).info.status : 1
+        device.battery = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.battery : -1
+        if (this.device_observation_Map.get(Data.id)==undefined)
+          device.status = 1
+        else{
+          console.log(this.device_observation_Map.get(Data.id))
+          console.log(this.device_observation_Map.get(Data.id).info.alarm_temperature)
+          if(this.device_observation_Map.get(Data.id).info.alarm_temperature || this.device_observation_Map.get(Data.id).info.alarm_temperature )
+            device.status = 1
+          else
+            device.status = 0
+        }
+
         this.temperature_humidity_DeviceTableData.push(device)
       })
     },

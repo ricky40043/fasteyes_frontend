@@ -49,7 +49,7 @@
           <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
         </div>
         <div >
-          <button style="align-content: center;" @click="deleteDevice">刪除裝置</button>
+          <button class="device_delete_button" style="align-content: center;" @click="deleteDevice">刪除裝置</button>
         </div>
         <div class="flex items-center justify-center">
           <button class ="device_comfirm_button" @click="hide">取消</button>
@@ -268,6 +268,18 @@ a{
   border-style:solid;
   border-width:2px;
   border-color:#4F86CA;
+}
+.device_delete_button{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color: white;
+  border-radius: 6px;
+  padding: 5px 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-content: center;
+  background-color: red;
 }
 .error_input{
   border-color:red

@@ -95,7 +95,7 @@
             <div class="flex items-center justify-center"> 
               <h3 class="ti-user"></h3>
               <router-link :class="[$route.name === 'Management' ? activeClass : inactiveClass]" to="/main/management">
-                <h3 class="mx-4">帳號管理</h3>
+                <h5 class="mx-4">帳號管理</h5>
               </router-link>
               <br>
               <br>
@@ -104,7 +104,7 @@
             <div class="flex items-center justify-center"> 
               <h3 class="ti-wheelchair"></h3>
                    <router-link :class="[$route.name === 'Group' ? activeClass : inactiveClass]" to="/main/group">
-                <h3 class="mx-4">群組管理</h3>
+                <h5 class="mx-4">群組管理</h5>
               </router-link>
               <br>
               <br>
@@ -113,7 +113,7 @@
             <div class="flex items-center justify-center"> 
               <h3 class="ti-comment"></h3>
               <router-link :class="[$route.name === 'Bulletin' ? activeClass : inactiveClass]" to="/main/bulletin">
-              <h3 class="mx-4">公告管理</h3>
+              <h5 class="mx-4">公告管理</h5>
               </router-link>
               <br>
               <br>

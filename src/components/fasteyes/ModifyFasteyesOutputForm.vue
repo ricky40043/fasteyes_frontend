@@ -9,10 +9,43 @@
         <div class="flex">
           <div class="flex items-center">
             <span>選擇所欲輸出的Fasteyes裝置（複選）:</span>
-            <select v-model="select_device" >
+            <!-- <select v-model="select_device" >
               <option value="-1">全選</option>
               <option v-for="faseyes_device in faseyes_device_list" :value="faseyes_device.name" :key="faseyes_device.name">{{ faseyes_device.name}}</option>
-            </select>
+            </select> -->
+            <button
+              @click="dropdownOpen1 = !dropdownOpen1"
+            >
+            裝置選擇
+            </button>
+            <div class="flex mx-4 text-gray-600 focus:outline-none">
+
+
+        <div
+          v-show="dropdownOpen1"
+          @click="dropdownOpen1 = false"
+          class="fixed inset-0 z-10 w-full h-full"
+        ></div>
+
+        <transition
+          enter-active-class="transition duration-150 ease-out transform"
+          enter-from-class="scale-95 opacity-0"
+          enter-to-class="scale-100 opacity-100"
+          leave-active-class="transition duration-150 ease-in transform"
+          leave-from-class="scale-100 opacity-100"
+          leave-to-class="scale-95 opacity-0"
+        >
+          <div
+            v-show="dropdownOpen1"
+            class="absolute right-0 z-20 w-48 py-2 mt-2 bg-white rounded-md shadow-xl"
+          >
+          <div v-for="(item, index) in Fasteyes_DeviceList">
+            <input type="checkbox" :key="item.id" value="first_checkbox" :checked="select_faseyes_device_list[index]" v-model="select_faseyes_device_list[index]">
+            <label :for="item.id">{{item.name}}</label>
+          </div>
+          </div>
+        </transition>
+                  </div> 
           </div>
         </div>
         <div class="flex ">
@@ -65,28 +98,39 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { patch_output} from '../../untils/api.js'
+import { patch_output, getFasteyesDevice} from '../../untils/api.js'
 const router = useRouter();
 
 export default {
   props:[
-    "faseyes_observation_form_data"
+    "faseyes_observation_form_data",
+    "open_settingform"
   ],
   data () {
     return {
+      device_Map: new Map(),
+      Fasteyes_DeviceList:[],
       faseyes_device_list:[],
+      select_faseyes_device_list:[],
       faseyes_output_date_list:[],
       output_list:[],
       not_output_list:[],
       resign_staff_output: false,
       select_device: -1,
-      temp:-1
+      temp:-1,
+      dropdownOpen1: true
    }
   },
     methods: {
     async modifyOutputform () {
       this.faseyes_observation_form_data.resign_staff_output = this.resign_staff_output
       let faseyes_form_data = Object.assign(this.faseyes_observation_form_data)
+      faseyes_form_data.output_fasteyes = []
+      this.Fasteyes_DeviceList.forEach((device,index)=>{
+        if(this.select_faseyes_device_list[index]){
+          faseyes_form_data.output_fasteyes.push(device)
+        }
+      })
       await patch_output(faseyes_form_data).then((res) => {
         console.log(res.data)
         this.hide()
@@ -94,20 +138,41 @@ export default {
           console.log(err)
         })
     },
+    async getDevice(){
+      this.Fasteyes_DeviceList =[]
+      await getFasteyesDevice().then((res)=>{
+        let devicelist = Object.assign(res.data)
+        devicelist.forEach(Data =>{
+          let device = {}
+          device.name = Data.name 
+          device.id = Data.id
+          this.Fasteyes_DeviceList.push(device)
+          this.device_Map.set(device.id, Object.assign(device))
+        });
+      }) 
+    },
     clear_data(){
       this.faseyes_device_list=[],
+      this.select_faseyes_device_list=[]
       this.faseyes_output_date_list=[],
       this.output_list=[],
       this.not_output_list=[],
       this.resign_staff_output=false
     },
     input_data(){
-      console.log(this.faseyes_observation_form_data)
       this.faseyes_output_date_list = this.faseyes_observation_form_data.output_time
       this.faseyes_device_list = this.faseyes_observation_form_data.output_fasteyes
       this.output_list = this.faseyes_observation_form_data.output_sequence
       this.not_output_list = this.faseyes_observation_form_data.not_output
       this.resign_staff_output = this.faseyes_observation_form_data.resign_staff_output
+      this.select_faseyes_device_list = []
+      this.Fasteyes_DeviceList.forEach(device =>{
+        let use_device = false
+        if (this.faseyes_device_list.find(element => element.id == device.id)){
+          use_device = true
+        }
+        this.select_faseyes_device_list.push(use_device)
+      });
     },
     deleteOutput(item){
       const index = this.output_list.indexOf(item);
@@ -122,6 +187,11 @@ export default {
         this.not_output_list.splice(index, 1);
       }
       this.output_list.push(item)
+    },
+    select_device(index,checked){
+      console.log(index)
+      console.log(checked)
+      this.select_faseyes_device_list[index] = checked
     }
   },
   computed:{
@@ -161,6 +231,7 @@ export default {
     const isOpen = ref(false);
 
     function hide(){
+        this.open_settingform = false
         isOpen.value = false;
     }
 
@@ -168,8 +239,11 @@ export default {
         this.clear_data()
         isOpen.value = true;
         setTimeout(()=>{
-          this.input_data()
+          this.getDevice()
         },10)
+        setTimeout(()=>{
+          this.input_data()
+        },100)
     }
 
     return{
@@ -213,7 +287,7 @@ a{
     background-color: #ffffff;
     margin: 15% auto; 
     padding: 20px;
-    width: 800px;
+    width: 1000px;
     border: 1px solid #888;
 }
 .close {
