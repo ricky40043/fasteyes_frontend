@@ -141,7 +141,9 @@ export default {
          const anchor = document.createElement('a');
           anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(FILE);
           anchor.target = '_blank';
-          anchor.download = '觀測結果輸出報表.csv';
+          let today = new Date();
+          let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+          anchor.download = date+'觀測結果輸出報表.csv';
           anchor.click();
       } else 
         console.log('none')

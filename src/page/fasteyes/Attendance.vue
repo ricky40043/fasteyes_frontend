@@ -27,6 +27,21 @@
         </div>
       </div>
   </div>
+    <div id="select">
+      <div class="mt-4" >
+        <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+          <div class="flex items-center justify-center">
+            <p>上班時段：</p>
+            <input type="time" class="time_block_text" v-model="check_in_time1">
+            <input type="time" class="time_block_text" v-model="check_in_time2">
+            <p> ~ </p>
+            <p>下班時段：</p>
+            <input type="time" class="time_block_text" v-model="check_out_time1">
+            <input type="time" class="time_block_text" v-model="check_out_time2">
+          </div>
+        </div>
+      </div>
+  </div>
   <div id="data">
     <div id="upnormal">
       <div class="mt-4">
@@ -222,6 +237,10 @@ export default {
       start_time,
       end_date,
       end_time,
+      check_in_time1:"08:00:00",
+      check_in_time2:"09:00:00",
+      check_out_time1:"17:00:00",
+      check_out_time2:"18:00:00",
       select_status,
       search_text,
       select_date,
@@ -283,7 +302,8 @@ export default {
     async getfasteyes_Attendance(){
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      await getFasteyes_Attendance(this.page,this.page_size,this.select_status,start_time,end_time,this.select_device).then((res)=>{
+      await getFasteyes_Attendance(this.page,this.page_size,this.select_status,start_time,end_time,this.select_device,
+                                   this.check_in_time1,this.check_in_time2,this.check_out_time1,this.check_out_time2).then((res)=>{
         let observationlist = Object.assign(res.data.items)
         this.total = Object.assign(res.data.total)
         this.page_total = Math.ceil(this.total/this.page_size)

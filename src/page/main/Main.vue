@@ -10,7 +10,8 @@
         <div class="container mx-auto px-6 py-8">
             <temperature-humidity-show></temperature-humidity-show>
             <div id="bulletin">
-              <img src="../../assets/SUMI_img/bulletin.png" alt="" style="display:block; margin:auto;" >
+              <img :src="image_data" alt="" v-if="use_setting" style="display:block; margin:auto;" />
+              <img src="../../assets/SUMI_img/bulletin.png" alt="" v-else style="display:block; margin:auto;" />
             </div>
         </div>
       </div>
@@ -20,10 +21,16 @@
 import TimeShow from "../../components/main/TimeShow.vue";
 import VideoShow from "../../components/main/VideoShow.vue";
 import TemperatureHumidityShow from "../../components/main/TemperatureHumidityShow.vue";
-import { getAllDevice ,getLatestDeviceObservation,getFasteyesDevice} from "../../untils/api.js"
+import { getAllDevice ,getLatestDeviceObservation,getFasteyesDevice, get_bulletin_image} from "../../untils/api.js"
 import store from "../../store"
 
 export default {
+  data () {
+    return {
+      image_data: '',
+      use_setting: false
+    }
+  },
   components: {
     TimeShow,
     VideoShow,
@@ -54,6 +61,15 @@ export default {
           this.$store.dispatch('setDeviceList_fasteyes',devicelist)
       }) 
     },
+    async getBulletinImage(){
+      await get_bulletin_image().then((res)=>{
+        this.use_setting = true
+        this.image_data = ('data:image/png;base64,' + btoa(
+        new Uint8Array(res.data).reduce(
+          (data, byte) => data + String.fromCharCode(byte), ''
+        )))
+      })
+    },
   },
 
   // watch:{
@@ -68,6 +84,7 @@ export default {
     this.getTHDevice(),
     this.getIPCamdevice(),
     this.getFasteyes_Device()
+    this.getBulletinImage()
   },
   created() {
     if(sessionStorage.getItem("state")){

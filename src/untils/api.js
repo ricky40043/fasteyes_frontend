@@ -186,7 +186,7 @@ export function getFasteyesDevice () {
 }
 
 
-export function getFasteyes_Attendance (page, size,status,start_time,end_time,select_device) {
+export function getFasteyes_Attendance (page, size,status,start_time,end_time,select_device,check_in_time1,check_in_time2,check_out_time1,check_out_time2) {
   let s = start_time 
   let e = end_time
   if(!(s && e)){
@@ -194,12 +194,11 @@ export function getFasteyes_Attendance (page, size,status,start_time,end_time,se
     s = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T00:00:00"
     e = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T23:59:59"
   } 
-
   let attendance_in = {}
-  attendance_in.working_time_1 = "8:00:00"
-  attendance_in.working_time_2 = "9:00:00"
-  attendance_in.working_time_off_1 = "17:00:00"
-  attendance_in.working_time_off_2 = "18:00:00"
+  attendance_in.working_time_1 = check_in_time1
+  attendance_in.working_time_2 = check_in_time2
+  attendance_in.working_time_off_1 = check_out_time1
+  attendance_in.working_time_off_2 = check_out_time2
   return axios({
     url: `${global_.url}/attendance?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}&select_device_id=${select_device}`,
     method: 'post',
@@ -334,6 +333,18 @@ export function getgroup () {
   })
 }
 
+export function modify_group (name) {
+  let patch_data={"name":name}
+  return axios({
+    url: `${global_.url}/group`,
+    method: 'patch',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    },
+    data : patch_data
+  })
+}
+
 export function getusers () {
   return axios({
     url: `${global_.url}/users`,
@@ -341,6 +352,33 @@ export function getusers () {
     headers: {
       Authorization: `Bearer ${token()}`
     }
+  })
+}
+
+export function modify_user_info (name) {
+  let patch_data={"name":name}
+  return axios({
+    url: `${global_.url}/users/info`,
+    method: 'patch',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    },
+    data : patch_data
+  })
+}
+
+export function invite_user(email, level) {
+  let user_data={
+    "email":email,
+    "level":level
+  }
+  return axios({
+    url: `${global_.url}/users/invite`,
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    },
+    data : user_data
   })
 }
 
@@ -489,6 +527,66 @@ export function get_output_csv_file () {
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
+    }
+  })
+}
+
+export function get_bulletin_image () {
+  return axios({
+    url: `${global_.url}/bulletin/image`,
+    method: 'get',
+    responseType: 'arraybuffer',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}
+
+export function post_bulletin_image (image) {
+  // generate file from base64 string
+  const file = dataURLtoFile(image)
+  // put file into form data
+  const formdata = new FormData()
+  formdata.append('Image_file', file, file.name)
+  return axios({
+    url: `${global_.url}/bulletin`,
+    method: 'patch',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+      'Content-Type': 'multipart/form-data'
+    },
+    data: formdata
+  })
+}
+const dataURLtoFile = (dataurl, filename) => {
+  const arr = dataurl.split(',')
+  const mime = arr[0].match(/:(.*?);/)[1]
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n) {
+    u8arr[n - 1] = bstr.charCodeAt(n - 1)
+    n -= 1 // to make eslint happy
+  }
+  return new File([u8arr], filename, { type: mime })
+}
+
+export function delete_bulletin_image () {
+  return axios({
+    url: `${global_.url}/bulletin/image`,
+    method: 'delete',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    }
+  })
+}
+
+export function delete_user (user_id) {
+  return axios({
+    url: `${global_.url}/users/${user_id}`,
+    method: 'delete',
+    headers: {
+      Authorization: `Bearer ${token()}`,
     }
   })
 }

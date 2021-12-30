@@ -28,7 +28,7 @@
         </router-link>
       </div>
             <div class="flex mx-3 text-gray-600 focus:outline-none">             
-        <router-link :class="[$route.name === 'Ipcam' ? activeClass : inactiveClass]" to="/ipcam">
+        <router-link :class="[$route.name === 'IPCam' ? activeClass : inactiveClass]" to="/ipcam">
           <span class="mx-4">IPCam</span>
         </router-link>
       </div>
@@ -100,8 +100,7 @@
               <br>
               <br>
             </div>
-
-            <div class="flex items-center justify-center"> 
+            <div class="flex items-center justify-center" v-show="level<3"> 
               <h3 class="ti-wheelchair"></h3>
                    <router-link :class="[$route.name === 'Group' ? activeClass : inactiveClass]" to="/main/group">
                 <h5 class="mx-4">群組管理</h5>
@@ -110,7 +109,7 @@
               <br>
             </div>
 
-            <div class="flex items-center justify-center"> 
+            <div class="flex items-center justify-center" v-show="level<3"> 
               <h3 class="ti-comment"></h3>
               <router-link :class="[$route.name === 'Bulletin' ? activeClass : inactiveClass]" to="/main/bulletin">
               <h5 class="mx-4">公告管理</h5>
@@ -126,6 +125,7 @@
       <div class="relative">
         <button
           @click="dropdownOpen = !dropdownOpen"
+
           class="relative z-10 block w-8 h-8 overflow-hidden rounded-full shadow focus:outline-none"
         >
         <img src="../../assets/SUMI_img/icon-15.png" hight=25 width=25 />
@@ -150,38 +150,78 @@
             v-show="dropdownOpen"
             class="absolute right-0 z-20 w-48 py-2 mt-2 bg-white rounded-md shadow-xl"
           >
-            <h3 class="block px-4 py-2 text-ssm text-gray-700 hover:bg-indigo-600 hover:text-white">Ricky</h3>
-            <h3 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Ricky@fastwis.net</h3>
-            <h3 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Admin</h3>
+            <h3 class="block px-4 py-2 text-ssm text-gray-700 hover:bg-indigo-600 hover:text-white">{{name}}</h3>
+            <h3 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">{{email}}</h3>
+            <h3 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white" v-if="level==0">RD</h3>
+            <h3 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white" v-else-if="level==2">Admin</h3>
+            <h3 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white" v-else-if="level==3">HR</h3>
+            <h3 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white" v-else>User</h3>
               <router-link :class="[$route.name === 'Management' ? activeClass : inactiveClass]" to="/main/management">
-                <h3 class="mx-4">帳號管理</h3>
+                <h4 class="mx-4">帳號管理</h4>
               </router-link>
-            <router-link
-              to="/"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white"
-              >登出</router-link
-            >
+            <!-- <router-link to="/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">
+              登出
+            </router-link> -->
+            <div class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white" @click="logoutClick">
+              登出
+            </div>
           </div>
         </transition>
       </div>
     </div>
+    <!-- <button :disabled="!isNamePresent" @click="submitName">Submit</button> -->
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useSidebar } from "../../hooks/useSidebar";
 
+import { useStore} from "vuex";
+import { ref, onMounted} from "vue";
+import { useRouter } from 'vue-router'
+// import func from "../../../vue-temp/vue-editor-bridge";
+import { useSidebar } from "../../hooks/useSidebar";
+import { getUerInfo } from "../../untils/api.js";
 const dropdownOpen1 = ref(false);
 const dropdownOpen = ref(false);
 const { isOpen } = useSidebar();
 const activeClass = ref(
   "bg-gray-600 bg-opacity-25 text-gray-100 border-gray-100"
-);
+)
 const inactiveClass = ref(
   "border-gray-900 text-gray-500 hover:bg-gray-600 hover:bg-opacity-25 hover:text-gray-100"
-);
+)
+let name = ref('Name')
+let email = ref('email')
+let level = ref(-1)
+const router = useRouter()
+const store = useStore()
+async function getinfo(){
+  await getUerInfo().then((res)=>{
+            let UserData = Object.assign(res.data)
+            name.value = UserData.name
+            email.value = UserData.email
+            level.value = parseInt(UserData.level) 
+          })
+}
+function logoutClick(){
+  sessionStorage.clear()
+  router.push({name: 'Login'})
+}
+onMounted(async () => {
+    if(sessionStorage.getItem("state")){
+    let sessionStorageData = JSON.parse(sessionStorage.getItem("state")) 
+    store.replaceState(Object.assign({},store.state, sessionStorageData))
+    // this.$store.dispatch('setToken', sessionStorageData)
+  }
+  window.addEventListener('beforeunload', ()=>{
+    sessionStorage.removeItem('state')
+    sessionStorage.setItem('state', JSON.stringify(store.state))
+  })
+  await getinfo()
+});
 </script>
+
+
 <style scoped>
 header{
   width: 100%;

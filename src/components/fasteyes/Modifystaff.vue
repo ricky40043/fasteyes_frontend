@@ -199,8 +199,15 @@ export default {
     }
 
   },
-  created(){
-    sessionStorage.clear()
+  created() {
+    if(sessionStorage.getItem("state")){
+      let sessionStorageData = JSON.parse(sessionStorage.getItem("state")) 
+      this.$store.replaceState(Object.assign({},this.$store.state, sessionStorageData))
+    }
+    window.addEventListener('beforeunload', ()=>{
+      sessionStorage.removeItem('state')
+      sessionStorage.setItem('state', JSON.stringify(this.$store.state))
+    })
   },
   setup(){
     const isOpen = ref(false);

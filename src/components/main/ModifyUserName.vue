@@ -5,16 +5,16 @@
 
       <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
-          <p>編輯部門名稱</p>
+          <p>使用者名稱</p>
         </div>
         <div class="flex items-center justify-center">
-          <input type="text" v-model="department_name" :class="error_input?'error_input':''"/>
+          <input type="text" v-model="name" :class="error_input?'error_input':''"/>
         </div>
         <p v-if="error_input" style="color: red;">{{error_description}}</p>
 
         <div class="flex items-center justify-center">
           <button class ="device_comfirm_button" @click="hide">取消</button>
-          <button class ="device_set_button" @click="ModifyDepartment">儲存</button>
+          <button class ="device_set_button" @click="ModifyGroup">儲存</button>
         </div>
       </div>
     </div>
@@ -24,29 +24,28 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { modify_department } from '../../untils/api.js'
+import { modify_user_info } from '../../untils/api.js'
 const router = useRouter();
 
 export default {
   props:[
-    "selectDepartmentData"
+    "NameData"
   ],
   data () {
     return {
-        department_id:"",
-        department_name:"",
+        name:"",
         error_input:false,
         error_description:""
       }
   },
     methods: {
-    async ModifyDepartment () {
-      await modify_department(this.department_id, this.department_name).then((res) => {
-        console.log(res.data)
+    async ModifyGroup () {
+      await modify_user_info(this.name).then((res) => {
+        // console.log(res.data)
         this.hide()
         }).catch((err) => {
           let errorMessage = err.response.data.detail
-          if (errorMessage == "department name is exist"){
+          if (errorMessage == "Name already exist in this group"){
             this.error_input = true
             this.error_description = errorMessage
           }
@@ -54,16 +53,14 @@ export default {
     },
     clear_data(){
       this.error_input= false
-      this.department_name= ""
-      this.department_id=""
+      this.name= ""
     },
     async input_data(){
-      this.department_id = this.selectDepartmentData.id
-      this.department_name = this.selectDepartmentData.name
+      this.name = this.NameData
     },
     check(){
-      if(this.department_name != ""){
-        this.error_description ="部門名稱不能是空的"
+      if(this.name == ""){
+        this.error_description ="名稱不能是空的"
         this.error_input = true
       }
       else

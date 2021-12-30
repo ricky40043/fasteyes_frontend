@@ -58,7 +58,7 @@
 
 <script type="text/javascript">
 // import { ref, onMounted } from 'vue'
-import { setUserInfo } from "../../untils/api.js"
+import { setUserInfo,getUerInfo} from "../../untils/api.js"
 
 export default {
   data (){
@@ -74,6 +74,22 @@ export default {
             // let response = Object.assign(res.data)
         })
     },
+    async getUser () {
+      await getUerInfo().then((res)=>{
+          if (res.data.Status === false) {
+            let errorEvent = {
+              target: 'email',
+              text: (window.navigator.language === 'zh-TW') ? '帳號尚未驗證' : 'User is not validated'
+            }
+          } else {
+            let UserData = Object.assign(res.data)
+            this.device_email_alarm = UserData.info.device_email_alert
+          }
+      })
+    },
+  },
+  beforeMount(){
+    this.getUser()
   },
   created() {
     if(sessionStorage.getItem("state")){

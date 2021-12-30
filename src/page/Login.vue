@@ -88,7 +88,6 @@ export default {
       let that = this
       let userData = Object.assign(this.userData)
       await login(userData).then((res) => {
-          console.log(res.data)
           if (res.data.Status === false) {
             let errorEvent = {
               target: 'email',
@@ -114,6 +113,7 @@ export default {
       this.$store.dispatch('setToken', userInfo.access_token)
       this.$store.dispatch('setRefreshToken', userInfo.refresh_token)
       this.$store.dispatch('setUserCharacter', userInfo.User.level)
+      sessionStorage.setItem('token',userInfo.access_token)
     }
   },
   created(){

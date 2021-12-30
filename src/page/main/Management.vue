@@ -1,4 +1,8 @@
 <template>
+  <teleport to="#destination" :disabled="disableTeleport">
+    <ModifyUserName ref="settingmodal" :NameData="userName" />
+  </teleport>
+
   <router-link to="/main">
     <p class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-"> &lt; 帳號管理</p>
   </router-link>
@@ -65,10 +69,10 @@
       <div class = "block_text" > 
         <p>{{ userName }}</p>
       </div>
-          <div class = "block_blue_text" > 
-        <p>修改</p>
+        <div class = "block_blue_text"> 
+          <button @click="showSettingModal">修改</button>
+        </div>
       </div>
-    </div>
     <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md">
       <div class = "block_text"> 
         <p>創立時間:</p>
@@ -93,12 +97,18 @@
   </div>
 </template>
 <script>
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { getUerInfo, getgroup, getusers} from '../../untils/api.js'
+import ModifyUserName from "../../components/main/ModifyUserName.vue"
+
 import moment from 'moment';
 
 const router = useRouter();
 export default {
+    components:{
+    ModifyUserName
+  },
   data () {
     let showUser = false
     let UserTableData = []
@@ -117,7 +127,6 @@ export default {
    }
   },
   methods: {
-    // 登入
     async getUser () {
       await getUerInfo().then((res)=>{
           if (res.data.Status === false) {
@@ -136,7 +145,6 @@ export default {
     },
     async getGroup () {
       await getgroup().then((res)=>{
-          console.log(res.data)
           let groupData = Object.assign(res.data)
           this.groupName = groupData.name
       })  
@@ -147,7 +155,6 @@ export default {
         // console.log(res.data)
         let userlist = Object.assign(res.data)
         userlist.forEach(Data =>{
-          console.log(Data)
           let user = {}
           user.name = Data.name 
           user.email = Data.email 
@@ -156,7 +163,6 @@ export default {
           this.userTableData.push(user)
         });
       })
-      console.log(this.userTableData)
     },
     btnEvent(){
       this.showUser =!this.showUser
@@ -170,7 +176,31 @@ export default {
     this.getGroup()
     this.getGroupUser()
 
-  }
+  },
+  created() {
+    if(sessionStorage.getItem("state")){
+      let sessionStorageData = JSON.parse(sessionStorage.getItem("state")) 
+      this.$store.replaceState(Object.assign({},this.$store.state, sessionStorageData))
+      // this.$store.dispatch('setToken', sessionStorageData)
+    }
+    window.addEventListener('beforeunload', ()=>{
+      sessionStorage.removeItem('state')
+      sessionStorage.setItem('state', JSON.stringify(this.$store.state))
+    })
+  },
+  setup() {
+    const disableTeleport = ref(false)   
+    const settingmodal = ref(null);
+    function showSettingModal(){
+      settingmodal.value.show()
+      this.showModal = true
+    }
+    return {
+      disableTeleport,
+      showSettingModal,
+      settingmodal
+    }
+  },
 }
 </script>
 <style scoped>

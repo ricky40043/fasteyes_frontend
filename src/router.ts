@@ -38,12 +38,13 @@ const routes: RouteRecordRaw[] = [
     path: "/",
     name: "Login",
     component: Login,
-    meta: { layout: "empty" },
+    meta: { layout: "empty" ,requiresAuth: false},
   },
   {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
+    meta: { requiresAuth: false}
   },
   {
     path: "/forms",
@@ -84,131 +85,404 @@ const routes: RouteRecordRaw[] = [
     path: "/main",
     name: "Main",
     component: Main,
-    meta: { layout: "main" }
+    meta: { layout: "main" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/main/group",
     name: "Group",
     component: Group,
-    meta: { layout: "main" }
+    meta: { layout: "main" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/main/management",
     name: "Management",
     component: Management,
-    meta: { layout: "main" }
+    meta: { layout: "main" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/main/bulletin",
     name: "Bulletin",
     component: Bulletin,
-    meta: { layout: "main" }
+    meta: { layout: "main" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/fasteyes/history",
     name: "FasteyesHistory",
     component: FasteyesHistory,
-    meta: { layout: "fasteyes" }
+    meta: { layout: "fasteyes" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/fasteyes/device",
     name: "FasteyesDevice",
     component: FasteyesDevice,
-    meta: { layout: "fasteyes" }
+    meta: { layout: "fasteyes" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/fasteyes/output",
     name: "DataOutput",
     component: DataOutput,
-    meta: { layout: "fasteyes" }
+    meta: { layout: "fasteyes" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/fasteyes/attendance",
     name: "Attendance",
     component: Attendance,
-    meta: { layout: "fasteyes" }
+    meta: { layout: "fasteyes" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/fasteyes/attendance/statistics",
     name: "AttendanceStatistics",
     component: AttendanceStatistics,
-    meta: { layout: "fasteyes" }
+    meta: { layout: "fasteyes" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   
   {
     path: "/fasteyes/staff",
     name: "Staff",
     component: Staff,
-    meta: { layout: "fasteyes" }
+    meta: { layout: "fasteyes" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/fasteyes/staff/:id/history",
     name: "StaffHistory",
     component: StaffHistory,
-    meta: { layout: "fasteyes" }
+    meta: { layout: "fasteyes" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/fasteyes/department",
     name: "Department",
     component: Department,
-    meta: { layout: "fasteyes" }
+    meta: { layout: "fasteyes" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/electrostatic/device",
     name: "ElectrostaticDevice",
     component: ElectrostaticDevice,
-    meta: { layout: "electrostatic" }
+    meta: { layout: "electrostatic" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
 
   },
   {
     path: "/electrostatic/history",
     name: "ElectrostaticHistory",
     component: ElectrostaticHistory,
-    meta: { layout: "electrostatic" }
+    meta: { layout: "electrostatic" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
 
   },
   {
     path: "/electrostatic/UnDetectStaff",
     name: "UnDetectStaff",
     component: UnDetectStaff,
-    meta: { layout: "electrostatic" }
+    meta: { layout: "electrostatic" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
 
   },
   {
     path: "/ipcam",
     name: "IPCam",
     component: IPCam,
-    meta: { layout: "IPCam" }
+    meta: { layout: "IPCam" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/environment/device/email",
     name: "EnvironmentDeviceEmail",
     component: EnvironmentDeviceEmail,
-    meta: { layout: "environmental" }
+    meta: { layout: "environmental" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/environment/device/Nitrogen",
     name: "EnvironmentDeviceNitrogen",
     component: EnvironmentDeviceNitrogen,
-    meta: { layout: "environmental" }
+    meta: { layout: "environmental" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/environment/device/temperature_humidity",
     name: "EnvironmentDeviceTemperatureHumidity",
     component: EnvironmentDeviceTemperatureHumidity,
-    meta: { layout: "environmental" }
+    meta: { layout: "environmental" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/environment/Nitrogen",
     name: "Nitrogen",
     component: Nitrogen,
-    meta: { layout: "environmental" }
+    meta: { layout: "environmental" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
   {
     path: "/environment/temperature_humidity",
     name: "TemperatureHumidity",
     component: TemperatureHumidity,
-    meta: { layout: "environmental" }
+    meta: { layout: "environmental" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
   },
 ];
 

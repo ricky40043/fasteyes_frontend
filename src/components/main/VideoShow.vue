@@ -45,7 +45,7 @@ export default {
         this.imgstreamName.push(global_.url+"/ip_cam/device/"+data.id+"/");
       });
       // console.log(this.imgstreamName.length)
-      // console.log(this.imgstreamName)
+      console.log(this.imgstreamName)
 
     },
   },

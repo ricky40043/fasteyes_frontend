@@ -230,6 +230,7 @@ export default {
   beforeMount() {
     this.get_Department()
     this.get_Staff()
+
   },
   beforeUnmount(){
     window.clearInterval(this.timer)

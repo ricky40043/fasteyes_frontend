@@ -87,7 +87,7 @@
           </div>
         </div>
         <div class="flex items-center justify-center">
-          <button class ="device_comfirm_button" @click="hide">取消</button>
+          <button class ="device_cancel_button" @click="hide">取消</button>
           <button class ="device_set_button" @click="modifyOutputform">儲存</button>
         </div>
       </div>
@@ -122,6 +122,16 @@ export default {
    }
   },
     methods: {
+        created() {
+    if(sessionStorage.getItem("state")){
+      let sessionStorageData = JSON.parse(sessionStorage.getItem("state")) 
+      this.$store.replaceState(Object.assign({},this.$store.state, sessionStorageData))
+    }
+    window.addEventListener('beforeunload', ()=>{
+      sessionStorage.removeItem('state')
+      sessionStorage.setItem('state', JSON.stringify(this.$store.state))
+    })
+  },
     async modifyOutputform () {
       this.faseyes_observation_form_data.resign_staff_output = this.resign_staff_output
       let faseyes_form_data = Object.assign(this.faseyes_observation_form_data)
@@ -224,8 +234,15 @@ export default {
       return name.substring(0,name.length-1)
     },
   },
-  created(){
-    sessionStorage.clear()
+  created() {
+    if(sessionStorage.getItem("state")){
+      let sessionStorageData = JSON.parse(sessionStorage.getItem("state")) 
+      this.$store.replaceState(Object.assign({},this.$store.state, sessionStorageData))
+    }
+    window.addEventListener('beforeunload', ()=>{
+      sessionStorage.removeItem('state')
+      sessionStorage.setItem('state', JSON.stringify(this.$store.state))
+    })
   },
   setup(){
     const isOpen = ref(false);
@@ -309,6 +326,21 @@ a{
   display: flex;
   align-content: center;
   background-color: rgba(79, 134, 202, 1);
+}
+.device_cancel_button{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color:rgba(79, 134, 202, 1);
+  border-radius: 6px;
+  padding: 5px 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-content: center;
+  background-color: white;
+  border-style:solid;
+  border-width:2px;
+  border-color:#4F86CA;
 }
 .device_comfirm_button{
   font-size: 14px;

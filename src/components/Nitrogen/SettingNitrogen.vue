@@ -20,32 +20,23 @@
           <input type="text" v-model="area" :class="empty_serial_number_error?'error_input':''"/>
         </div>
         <div class="flex">
-          <span>溫度正常範圍:</span>
-          <input type="number" v-model="addDeviceData.alarm_temperature_lower_limit" :class="temperature_error?'error_input':''"/>
+          <span>氮氣壓力正常範圍:</span>
+          <input type="number" v-model="alarm_Nitrogen_lower_limit" :class="Nitrogen_error?'error_input':''"/>
           <p>~</p>
-          <input type="number" v-model="addDeviceData.alarm_temperature_upper_limit" :class="temperature_error?'error_input':''"/>
-          <p>°C</p>
+          <input type="number" v-model="alarm_Nitrogen_upper_limit" :class="Nitrogen_error?'error_input':''"/>
         </div>
         <p v-if="temperature_error" style="color: red;">上限值不得小於下限值</p>
         <div class="flex">
-          <span>濕度正常範圍:</span>
-          <input type="number" v-model="addDeviceData.alarm_humidity_lower_limit" :class="humidity_error?'error_input':''"/>
+          <span>含氧量正常範圍:</span>
+          <input type="number" v-model="alarm_Oxygen_lower_limit" :class="Oxygen_error?'error_input':''"/>
           <p>~</p>
-          <input type="number" v-model="addDeviceData.alarm_humidity_upper_limit" :class="humidity_error?'error_input':''"/>
+          <input type="number" v-model="alarm_Oxygen_upper_limit" :class="Oxygen_error?'error_input':''"/>
           <p>%</p>
         </div>
         <p v-if="humidity_error" style="color: red;">上限值不得小於下限值，且介於0~100</p>
         <div class="flex">
-          <span>資料上傳頻率：</span>
-          <span>{{addDeviceData.interval_time}} 秒</span>
-        </div>
-        <div class="flex">
-          <span>電池：</span>
-          <span>{{addDeviceData.battery}}</span>
-        </div>
-        <div class="flex">
           <span>狀態：</span>
-          <p class="text-gray-900 whitespace-nowrap" v-if="addDeviceData.status == 0">正常</p>
+          <p class="text-gray-900 whitespace-nowrap" v-if="device_status == 0">正常</p>
           <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
         </div>
         <div >
@@ -70,7 +61,6 @@ const router = useRouter();
 export default {
   props:[
     "selectDeviceData",
-    'testID'
   ],
   data () {
     return {
@@ -83,16 +73,11 @@ export default {
       empty_name_error: false,
       empty_area_error: false,
       empty_serial_number_error: false,
-      addDeviceData: {
-        interval_time: 60,
-        alarm_temperature_lower_limit: "",
-        alarm_temperature_upper_limit: "",
-        alarm_humidity_lower_limit: "",
-        alarm_humidity_upper_limit: "",
-        battery: 100,
-        battery_alarm:10,
-        status: 0
-      },
+      alarm_Nitrogen_lower_limit: "",
+      alarm_Nitrogen_upper_limit: "",
+      alarm_Oxygen_lower_limit: "",
+      alarm_Oxygen_upper_limit: "",
+      device_status: 0
    }
   },
     methods: {
@@ -101,14 +86,19 @@ export default {
         alert("輸入資料有誤")
         return
       }
-      let DeviceData = Object.assign(this.addDeviceData)
+      let DeviceData = {
+        "alarm_Nitrogen_lower_limit": this.alarm_Nitrogen_lower_limit,
+        "alarm_Nitrogen_upper_limit": this.alarm_Nitrogen_upper_limit,
+        "alarm_Oxygen_lower_limit": this.alarm_Oxygen_lower_limit,
+        "alarm_Oxygen_upper_limit": this.alarm_Oxygen_upper_limit
+      }
       await modify_device(1, this.device_id,this.device_name, this.area, DeviceData).then((res) => {
         this.hide()
       })
       this.$emit(this.testID, true)
     },
     async deleteDevice(){
-      await delete_device(1, this.device_id).then((res) => {
+      await delete_device(4, this.device_id).then((res) => {
         alert("資料刪除成功")
         this.hide()
       })
@@ -118,57 +108,47 @@ export default {
       this.area = this.selectDeviceData.area
       this.serial_number = this.selectDeviceData.device_serial_number
       this.device_id = this.selectDeviceData.device_id
-      this.addDeviceData= {
-        interval_time: this.selectDeviceData.interval_time,
-        alarm_temperature_lower_limit: this.selectDeviceData.temperature_lower_limit,
-        alarm_temperature_upper_limit: this.selectDeviceData.temperature_upper_limit,
-        alarm_humidity_lower_limit: this.selectDeviceData.humidity_lower_limit,
-        alarm_humidity_upper_limit: this.selectDeviceData.humidity_upper_limit,
-        battery: this.selectDeviceData.battery,
-        status: this.selectDeviceData.status,
-        battery_alarm:10
-      }
+      this.alarm_Nitrogen_lower_limit = this.selectDeviceData.alarm_Nitrogen_lower_limit
+      this.alarm_Nitrogen_upper_limit = this.selectDeviceData.alarm_Nitrogen_upper_limit
+      this.alarm_Oxygen_lower_limit = this.selectDeviceData.alarm_Oxygen_lower_limit
+      this.alarm_Oxygen_upper_limit = this.selectDeviceData.alarm_Oxygen_upper_limit
+      this.device_status = this.selectDeviceData.status
     },
-    check(){
-      if(this.addDeviceData.alarm_temperature_lower_limit > this.addDeviceData.alarm_temperature_upper_limit ||
-         this.addDeviceData.alarm_temperature_lower_limit =="" ||
-         this.addDeviceData.alarm_temperature_upper_limit ==""){
-         this.temperature_error = true
+check(){
+      if(this.alarm_Nitrogen_lower_limit > this.alarm_Nitrogen_upper_limit ||
+         this.alarm_Nitrogen_lower_limit =="" ||
+         this.alarm_Nitrogen_upper_limit ==""){
+        this.Nitrogen_error = true
       }
       else{
-        this.temperature_error = false
+        this.Nitrogen_error = false
       }
-      if(this.addDeviceData.alarm_humidity_lower_limit > this.addDeviceData.alarm_humidity_upper_limit ||
-         this.addDeviceData.alarm_humidity_lower_limit<0 || this.addDeviceData.alarm_humidity_lower_limit>100 ||
-         this.addDeviceData.alarm_humidity_upper_limit<0 || this.addDeviceData.alarm_humidity_upper_limit>100 ||
-         this.addDeviceData.alarm_humidity_lower_limit=="" ||
-         this.addDeviceData.alarm_humidity_upper_limit=="" ){
-        this.humidity_error = true
+      if(this.alarm_Oxygen_lower_limit > this.alarm_Oxygen_upper_limit ||
+         this.alarm_Oxygen_lower_limit<0 || this.aalarm_Oxygen_lower_limit>100 ||
+         this.alarm_Oxygen_upper_limit<0 || this.alarm_Oxygen_upper_limit>100 ||
+         this.alarm_Oxygen_lower_limit=="" ||
+         this.alarm_Oxygen_upper_limit=="" ){
+        this.Oxygen_error = true
       }
-      else{
-        this.humidity_error = false
-      }
-      if(this.device_name==""){
+      else
+        this.Oxygen_error = false
+      
+      if(this.device_name=="")
         this.empty_name_error = true
-      }
-      else{
+      else
         this.empty_name_error = false
-      }
 
-      if(this.area==""){
+      if(this.area=="")
         this.empty_area_error = true
-      }
-      else{
+      else
         this.empty_area_error = false
-      }
-      if(this.serial_number==""){
-        this.empty_serial_number_error = true
-      }
-      else{
-        this.empty_serial_number_error = false
-      }
 
-      if(this.humidity_error || this.temperature_error || this.empty_name_error || this.empty_area_error || this.empty_serial_number_error){
+      if(this.serial_number=="")
+        this.empty_serial_number_error = true
+      else
+        this.empty_serial_number_error = false
+
+      if(this.Oxygen_error || this.Nitrogen_error || this.empty_name_error || this.empty_area_error || this.empty_serial_number_error){
         return false
       }
       else{

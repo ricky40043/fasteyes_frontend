@@ -5,16 +5,24 @@
 
       <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
-          <p>編輯部門名稱</p>
+          <p>新增群組成員</p>
         </div>
+        <p>請輸入 Email 信箱以邀請新使用者加入群組：</p>
         <div class="flex items-center justify-center">
-          <input type="text" v-model="department_name" :class="error_input?'error_input':''"/>
+          <input type="text" v-model="name" :class="error_input?'error_input':''"/>
+          <p v-if="error_input" style="color: red;">{{error_description}}</p>
         </div>
-        <p v-if="error_input" style="color: red;">{{error_description}}</p>
+
+          <div class="flex items-center justify-center">
+            <p>使用者層級</p>
+            <select v-model="select_level">
+              <option value="3">HR</option>
+              <option value="4">User</option>
+            </select>
+          </div>
 
         <div class="flex items-center justify-center">
-          <button class ="device_comfirm_button" @click="hide">取消</button>
-          <button class ="device_set_button" @click="ModifyDepartment">儲存</button>
+          <button class ="device_set_button" @click="inviteUser">寄送認證信</button>
         </div>
       </div>
     </div>
@@ -24,52 +32,45 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { modify_department } from '../../untils/api.js'
+import { invite_user } from '../../untils/api.js'
 const router = useRouter();
 
 export default {
-  props:[
-    "selectDepartmentData"
-  ],
   data () {
     return {
-        department_id:"",
-        department_name:"",
+        name:"",
+        select_level:3,
         error_input:false,
         error_description:""
       }
   },
     methods: {
-    async ModifyDepartment () {
-      await modify_department(this.department_id, this.department_name).then((res) => {
+    async inviteUser () {
+      this.check()
+      if(!this.error_input){
+        await invite_user(this.name, this.select_level).then((res) => {
         console.log(res.data)
         this.hide()
         }).catch((err) => {
           let errorMessage = err.response.data.detail
-          if (errorMessage == "department name is exist"){
-            this.error_input = true
-            this.error_description = errorMessage
-          }
+          this.error_input = true
+          this.error_description = errorMessage
         })
+      }
     },
     clear_data(){
       this.error_input= false
-      this.department_name= ""
-      this.department_id=""
-    },
-    async input_data(){
-      this.department_id = this.selectDepartmentData.id
-      this.department_name = this.selectDepartmentData.name
+      this.name= ""
+      this.select_level = 4
     },
     check(){
-      if(this.department_name != ""){
-        this.error_description ="部門名稱不能是空的"
+      if(this.name == ""){
+        this.error_description ="email不能是空的"
         this.error_input = true
       }
       else
         this.error_input = false
     }
-
   },
   created() {
     if(sessionStorage.getItem("state")){
@@ -92,7 +93,6 @@ export default {
         isOpen.value = true;
         setTimeout(()=>{
           this.clear_data()
-          this.input_data()
         },10)
     }
 
@@ -130,7 +130,7 @@ export default {
     margin: 15% auto; 
     padding: 20px;
     width: 400px;
-    height: 150px;
+    height: 200px;
 
     border: 1px solid #888;
 }

@@ -202,8 +202,6 @@ export default {
         if (this.device_observation_Map.get(Data.id)==undefined)
           device.status = 1
         else{
-          console.log(this.device_observation_Map.get(Data.id))
-          console.log(this.device_observation_Map.get(Data.id).info.alarm_temperature)
           if(this.device_observation_Map.get(Data.id).info.alarm_temperature || this.device_observation_Map.get(Data.id).info.alarm_temperature )
             device.status = 1
           else
@@ -274,7 +272,6 @@ export default {
       sessionStorage.removeItem('state')
       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
     })
-
   },
   watch:{
     
