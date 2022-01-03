@@ -1,9 +1,14 @@
 <template>
     <teleport to="#destination" :disabled="disableTeleport">
-      <Addtemperaturehumidity ref="modal" />
+      <Addtemperaturehumidity ref="modal" 
+      @addDevice="init"/>
     </teleport>
     <teleport to="#destination" :disabled="disableTeleport">
-      <Settingtemperaturehumidity ref="settingmodal" :selectDeviceData="select_device" v-on:testCall="'doSome($event)'" :testID="'testCall'"/>
+      <Settingtemperaturehumidity ref="settingmodal" 
+      :selectDeviceData="select_device" 
+      @saveDevice="init"
+      @deleteDevice="init"
+      />
     </teleport>
   <div id="upbutton">
         <div class=" px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
@@ -46,8 +51,7 @@
             />
           </div>
           </div>
-
-            <button class="device_set_button" @click="addDeviceClick">
+            <button class="device_set_button" @click="addDeviceClick" v-if="level<=2">
                 新增裝置
             </button>
         </div>
@@ -84,14 +88,14 @@
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
                     狀態
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200" v-if="level<=2">
                     管理
                   </th>
                 </tr>
               </thead>
 
               <tbody>
-                <tr v-for="(u, index) in temperature_humidity_DeviceTableData" :key="index">
+                <tr v-for="u in temperature_humidity_DeviceTableData" :key="u.id">
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap">{{ u.device_name }}</p>
                   </td>
@@ -116,7 +120,7 @@
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">正常</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
                   </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200 text-indigo-600 hover:text-indigo-900"  v-if="level<=2">
                     <button @click="settingDevice(u)">管理</button>
                   </td>
                 </tr>
@@ -147,7 +151,7 @@
 
 <script>
 // import { ref, onMounted } from 'vue'
-import { getLatestDeviceObservation, getAllDevice} from "../../untils/api.js"
+import { getLatestDeviceObservation, getAllDevice, getUerInfo} from "../../untils/api.js"
 import store from "../../store"
 import Addtemperaturehumidity from "../../components/temperature_humidity/Addtemperaturehumidity.vue"
 import Settingtemperaturehumidity from "../../components/temperature_humidity/Settingtemperaturehumidity.vue"
@@ -159,36 +163,32 @@ export default {
     Settingtemperaturehumidity
   },
   data (){
-    let temperature_humidity_DeviceTableData=[]
-    let TH_Data_list = []
-    let device_Map = new Map()
-    let device_observation_Map = new Map()
-    let page = 1
-    let total = 1
-    let page_size = 50
-    let page_total = 1
-    let search_text = ""
-    let select_device ={}
     return{
-      temperature_humidity_DeviceTableData,
-      TH_Data_list,
-      device_Map,
-      device_observation_Map,
-      page,
-      total,
-      page_size,
-      page_total,
-      search_text,
-      select_device,
-      showModal: false
+      temperature_humidity_DeviceTableData:[],
+      TH_Data_list:[],
+      device_Map: new Map(),
+      device_observation_Map: new Map(),
+      page:1,
+      total:1,
+      page_size:50,
+      page_total:1,
+      search_text:"",
+      select_device:"",
+      showModal: false,
+      level: 100
     }
   },
   methods: {
+    async getUser () {
+      await getUerInfo().then((res)=>{
+          let UserData = Object.assign(res.data)
+          this.level = UserData.level
+        })
+    },
     getTHDevice(){
       this.temperature_humidity_DeviceTableData=[]
       this.device_Map.forEach(Data =>{
         let device = {}
-        // console.log(Data)
         device.device_id = Data.id
         device.device_name = Data.name
         device.device_serial_number = Data.serial_number
@@ -244,24 +244,24 @@ export default {
     },
     async init(){
       // create Device Map 
+      this.device_Map = new Map()
       let device_model = 1
       await getAllDevice(device_model).then((res)=>{
-        this.devicelist = Object.assign(res.data)
+        this.devicelist = res.data
         this.devicelist.forEach(device => {
           this.device_Map.set(device.id, Object.assign(device))
         });
       })
+      await this.getTHDevice()
+      await this.getTHObservation()
     },
     doSome(res) {
       console.log(success)
     }
   },
   beforeMount() {
+    this.getUser()
     this.init()
-    this.getTHObservation()
-    setTimeout(() => {
-      this.getTHDevice()
-    }, 300);
   },
   created() {
     if(sessionStorage.getItem("state")){
@@ -272,9 +272,6 @@ export default {
       sessionStorage.removeItem('state')
       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
     })
-  },
-  watch:{
-    
   },
   setup() {
     const disableTeleport = ref(false)   
@@ -306,9 +303,10 @@ export default {
 
 
 <style scoped>
+
 #time{
   /* background-color: Red; */
-  width: 60%;
+  width: 88%;
 }
 #device{
   /* background-color: blue; */

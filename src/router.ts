@@ -5,9 +5,8 @@ import Forms from "./page/Forms.vue";
 import Tables from "./page/Tables.vue";
 import TableList from "./page/TablesList.vue";
 import UIElements from "./page/UIElements.vue";
-import Login from "./page/Login.vue";
-import Modal from "./page/Modal.vue";
 import Card from "./page/Card.vue";
+import Login from "./page/Login.vue";
 import Blank from "./page/Blank.vue";
 import Main from "./page/main/Main.vue";
 import Bulletin from "./page/main/Bulletin.vue";
@@ -70,11 +69,6 @@ const routes: RouteRecordRaw[] = [
     path: "/ui-elements",
     name: "UIElements",
     component: UIElements,
-  },
-  {
-    path: "/modal",
-    name: "Modal",
-    component: Modal,
   },
   {
     path: "/blank",

@@ -1,9 +1,80 @@
 <template>
   <div class="modal" v-show="isOpen">
-    <div class="modal-content">
+    <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
 
       <div id="main" class="items-center justify-center">
+        <div class="flex items-center justify-center">
+          <p class="text-xl">新增人員</p>
+        </div>
+      <table>
+        <tbody>
+          <tr>
+            <td class="px-2 py-2">
+              <span>ID:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="text" v-model="serial_number" :class="empty_serial_number_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>姓名:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="text" v-model="addStaffData.name" :class="empty_name_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>部門:</span>
+            </td>
+            <td class="px-2 py-2">
+              <select v-model="select_department" :class="select_department_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500">
+                <option value="-1">請選擇</option>
+                <option v-for="department in department_list" :value="department.id" :key="department.name">{{ department.name}}</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>在職狀態:</span>
+            </td>
+            <td class="px-2 py-2">
+              <select v-model="status" :class="select_status_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500">
+                <option value="-1">員工狀態</option>
+                <option value="1">在職</option>
+                <option value="2">留職停薪</option>
+                <option value="3">離職</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>性別:</span>
+            </td>
+            <td class="px-2 py-2">
+              <select v-model="addStaffData.gender" :class="select_gender_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500">
+                <option value="-1">請選擇</option>
+                <option value="1">男生</option>
+                <option value="2">女生</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+        <div class="flex items-center">
+          <p>新增成功後後，請別忘記到 Fasteyes 應用程式進行臉部建檔，就可以開始進行臉部辨識囉！</p>
+          <a href="https://www.fasteyes.net/FastwiseSupport/">如何進行臉部建檔？ </a>
+        </div>
+
+        <div class="flex items-center justify-center">
+          <button class ="device_comfirm_button" @click="hide">取消</button>
+          <button class ="device_set_button" @click="addStaff">儲存</button>
+        </div>
+      </div>
+
+      <!-- <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
           <p >新增人員</p>
         </div>
@@ -50,7 +121,7 @@
           <button class ="device_comfirm_button" @click="hide">取消</button>
           <button class ="device_set_button" @click="addStaff">儲存</button>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -98,8 +169,8 @@ export default {
       }
       let StaffData = Object.assign(this.addStaffData)
       await add_staff(this.select_department,this.serial_number, StaffData, this.status).then((res) => {
-        console.log(res.data)
         this.hide()
+        this.$emit('addStaff')
         }).catch((err) => {
           let errorMessage = err.response.data.detail
           if (errorMessage == "Serveral_number already exist in this group"){
@@ -206,7 +277,7 @@ export default {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 114%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {

@@ -106,15 +106,10 @@
     <div id="upnormal">
       <div class="mt-4" >
         <h3>Email 通知</h3>
-        <div v-if="email_alarm" class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+        <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
           <h4>當收到異常資料時通知我</h4>
-          <button class="device_set_button" >ON</button>
-          <button class="device_comfirm_button" @click="email_alarm_off">OFF</button>
-        </div>
-        <div v-else class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
-          <h4>當收到異常資料時通知我</h4>
-          <button class="device_comfirm_button" @click="email_alarm_on">ON</button>
-          <button class="device_set_button">OFF</button>
+          <button :class="email_alarm==true? 'device_set_button':'device_comfirm_button'" @click="email_alarm_change(true)">ON</button>
+          <button :class="email_alarm==false? 'device_set_button':'device_comfirm_button'" @click="email_alarm_change(false)">OFF</button>
         </div>
       </div>
     </div>
@@ -123,27 +118,20 @@
 
 <script type="text/javascript">
 // import { ref, onMounted } from 'vue'
-import { setUserInfo, getFasteyesDevice } from "../../untils/api.js"
+import { setUserInfo, getFasteyesDevice, getUerInfo } from "../../untils/api.js"
 import store from "../../store"
 import moment from 'moment';
 
 export default {
   data (){
-    let Fasteyes_DeviceTableData=[]
-    let page = 1
-    let total = 1
-    let page_size = 50
-    let page_total = 1
-    let search_text = ""
-    let email_alarm = false
     return{
-      Fasteyes_DeviceTableData,
-      page,
-      total,
-      page_size,
-      page_total,
-      search_text,
-      email_alarm,
+      Fasteyes_DeviceTableData:[],
+      page:1,
+      total:1,
+      page_size:50,
+      page_total:1,
+      search_text:"",
+      email_alarm:false,
       timer: window.setInterval(() => { this.getDevice () }, 10000)
     }
   },
@@ -151,7 +139,6 @@ export default {
     async getDevice(){
       this.Fasteyes_DeviceTableData = []
       await getFasteyesDevice().then((res)=>{
-        // console.log(res.data)
         let devicelist = Object.assign(res.data)
         devicelist.forEach(Data =>{
           let device = {}
@@ -164,6 +151,19 @@ export default {
           this.Fasteyes_DeviceTableData.push(device)
         });
       }) 
+    },
+    async getUser () {
+      await getUerInfo().then((res)=>{
+          if (res.data.Status === false) {
+            let errorEvent = {
+              target: 'email',
+              text: (window.navigator.language === 'zh-TW') ? '帳號尚未驗證' : 'User is not validated'
+            }
+          } else {
+            let UserData = Object.assign(res.data)
+            this.email_alarm = UserData.info.email_alert
+          }
+      })
     },
     increment(){
       if(this.page<this.page_total)
@@ -182,24 +182,24 @@ export default {
     search_event(){
       console.log(this.search_text) 
     },
-    async email_alarm_on(){
-      this.email_alarm = true
-      await setUserInfo(this.email_alarm).then((res)=>{
+    async email_alarm_change(select){
+      this.email_alarm = select
+      let obj = {"email_alert":this.email_alarm }
+      await setUserInfo(obj).then((res)=>{
             // let response = Object.assign(res.data)
         })
     },
-    async email_alarm_off(){
-      this.email_alarm = false
-      await setUserInfo(this.email_alarm).then((res)=>{
-            // let response = Object.assign(res.data)
-        })
-    },
+    // async email_alarm_off(){
+    //   this.email_alarm = false
+    //   let obj = {"email_alert":this.email_alarm }
+    //   await setUserInfo(obj).then((res)=>{
+    //         // let response = Object.assign(res.data)
+    //     })
+    // },
   },
   beforeMount() {
+    this.getUser ()
     this.getDevice()
-    setTimeout(() => {
-      this.getDevice()
-    }, 100);
   },
   beforeUnmount(){
     window.clearInterval(this.timer)

@@ -470,6 +470,7 @@ export function modify_staff (staff_id,department_id, info, status) {
   let create_data = {
     "department_id": department_id,
     "status": status,
+    "name": info.name,
     // "card_number": info.card_number,
     // "email": info.email,
     "gender": info.gender,
@@ -512,23 +513,36 @@ export function get_output () {
 
 export function patch_output (patch_data) {
   return axios({
-    url: `${global_.url}/fasteyes_observations/output_form/test`,
+    url: `${global_.url}/fasteyes_observations/output_form/modify`,
     method: 'patch',
-    headers: {
-      Authorization: `Bearer ${token()}`
-    },
-    data: patch_data
-  })
-}
-
-export function get_output_csv_file () {
-  return axios({
-    url: `${global_.url}/fasteyes_observations/output_interval_data_csv`,
-    method: 'get',
+    data: patch_data,
     headers: {
       Authorization: `Bearer ${token()}`
     }
   })
+}
+
+export function get_output_csv_file (start_time,end_time) {
+  let s = start_time 
+  let e = end_time
+  if(!(s && e)){
+    return axios({
+      url: `${global_.url}/fasteyes_observations/output_interval_data_csv`,
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${token()}`
+      }
+    })
+  } 
+  else{
+    return axios({
+      url: `${global_.url}/fasteyes_observations/output_interval_data_csv?start_timestamp=${s}&end_timestamp=${e}`,
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${token()}`
+      }
+    })
+  }
 }
 
 export function get_bulletin_image () {

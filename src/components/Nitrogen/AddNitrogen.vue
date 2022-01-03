@@ -1,9 +1,9 @@
 <template>
   <div class="modal" v-show="isOpen">
-    <div class="modal-content">
+    <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
 
-      <div id="main" class="items-center justify-center">
+      <!-- <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
           <p >新增裝置</p>
         </div>
@@ -36,6 +36,71 @@
         <p v-if="humidity_error" style="color: red;">上限值不得小於下限值，且介於0~100</p>
 
 
+        <div class="flex items-center justify-center">
+          <button class ="device_set_button" @click="addDevice">新增</button>
+          <button class ="device_comfirm_button" @click="hide">取消</button>
+        </div>
+      </div> -->
+
+      <div id="main" class="items-center justify-center">
+        <div class="flex items-center justify-center">
+          <p class="text-xl">新增裝置</p>
+        </div>
+      <table>
+        <tbody>
+          <tr>
+            <td class="px-2 py-2">
+              <span>裝置名稱:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="text" v-model="device_name" :class="empty_name_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>裝置編號:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="text" v-model="serial_number" :class="empty_area_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>裝置位置:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="text" v-model="area" :class="empty_serial_number_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>氮氣壓力正常範圍:</span>
+            </td>
+            <td class="px-2 py-2">
+              <div class="flex items-center">
+                <input type="number" v-model="alarm_Nitrogen_lower_limit" :class="Nitrogen_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20"/>
+                <p>~</p>
+                <input type="number" v-model="alarm_Nitrogen_upper_limit" :class="Nitrogen_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20"/>
+              </div>
+              <p v-if="Nitrogen_error" style="color: red;">上限值不得小於下限值</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>含氧量正常範圍:</span>
+            </td>
+            <td class="px-2 py-2">
+              <div class="flex items-center">
+                <input type="number" v-model="alarm_Oxygen_lower_limit" :class="Oxygen_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20"/>
+                <p>~</p>
+                <input type="number" v-model="alarm_Oxygen_upper_limit" :class="Oxygen_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20"/>
+                <p>%</p>
+              </div>
+              <p v-if="Oxygen_error" style="color: red;">上限值不得小於下限值，且介於0~100</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
         <div class="flex items-center justify-center">
           <button class ="device_set_button" @click="addDevice">新增</button>
           <button class ="device_comfirm_button" @click="hide">取消</button>
@@ -83,6 +148,7 @@ export default {
       await add_device(4, this.device_name, this.area, this.serial_number, DeviceData).then((res) => {
         console.log(res.data)
         this.hide()
+        this.$emit('addDevice')
       })
     },
     clear_data(){
@@ -191,7 +257,7 @@ a{
     background-color: #ffffff;
     margin: 15% auto; 
     padding: 20px;
-    width: 600px;
+    width: 400px;
     border: 1px solid #888;
 }
 .close {

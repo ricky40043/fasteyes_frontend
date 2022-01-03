@@ -1,14 +1,14 @@
 <template>
   <div class="modal" v-show="isOpen">
-    <div class="modal-content">
+    <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
 
       <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
           <p>使用者名稱</p>
         </div>
-        <div class="flex items-center justify-center">
-          <input type="text" v-model="name" :class="error_input?'error_input':''"/>
+        <div class="flex items-center justify-center  px-2 py-2">
+          <input type="text" v-model="name" :class="error_input?'error_input':''"  class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
         </div>
         <p v-if="error_input" style="color: red;">{{error_description}}</p>
 
@@ -43,6 +43,7 @@ export default {
       await modify_user_info(this.name).then((res) => {
         // console.log(res.data)
         this.hide()
+        this.$emit('saveChange')
         }).catch((err) => {
           let errorMessage = err.response.data.detail
           if (errorMessage == "Name already exist in this group"){

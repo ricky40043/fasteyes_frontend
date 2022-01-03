@@ -68,12 +68,11 @@
             />
           </div>
           </div>
-          <!-- <div id="outputbutton">
-            <button class="device_abnormal_button">
+          <div id="outputbutton">
+            <button class="device_abnormal_button" @click="outputclick">
               輸出 .csv
             </button>
-          </div> -->
-          
+          </div>
         </div>
       </div>
     </div>
@@ -202,7 +201,7 @@
 
 <script>
 // import { ref, onMounted } from 'vue'
-import { getFasteyes_Observation, getFasteyesDevice } from "../../untils/api.js"
+import { getFasteyes_Observation, getFasteyesDevice, get_output_csv_file} from "../../untils/api.js"
 import store from "../../store"
 import moment from 'moment';
 import global_ from "../../Global.vue"
@@ -294,6 +293,23 @@ export default {
         });
       }) 
     },
+    async outputclick(){
+      let start_time = this.start_date+"T"+this.start_time
+      let end_time = this.end_date+"T"+this.end_time
+      let FILE = await get_output_csv_file(start_time,end_time).then((res)=>{
+        return Object.assign(res.data)
+      }) 
+      if (FILE) {
+         const anchor = document.createElement('a');
+          anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(FILE);
+          anchor.target = '_blank';
+          let today = new Date();
+          let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+          anchor.download = date+'觀測結果輸出報表.csv';
+          anchor.click();
+      } else 
+        console.log('none')
+    },
     increment(){
       if(this.page<this.page_total)
       {
@@ -331,9 +347,10 @@ export default {
     reset(){
       let nowTime = new Date()
       let date = nowTime.getDate()-10>=0?nowTime.getDate():"0"+nowTime.getDate()
-      this.start_date = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+date
+      let month = nowTime.getMonth()+1-10>=0?nowTime.getMonth()+1:"0"+(nowTime.getMonth()+1)
+      this.start_date = nowTime.getFullYear()+"-"+month+"-"+date
       this.start_time = "00:00:00"
-      this.end_date = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+date
+      this.end_date = nowTime.getFullYear()+"-"+month+"-"+date
       this.end_time = "23:59:59"
       this.search_text=""
       this.select_status=-1

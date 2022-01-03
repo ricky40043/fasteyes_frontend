@@ -1,9 +1,15 @@
 <template>
   <teleport to="#destination" :disabled="disableTeleport">
-    <Addstaff ref="modal" />
+    <Addstaff ref="modal" 
+    @addStaff="get_Staff"
+    />
   </teleport>
   <teleport to="#destination" :disabled="disableTeleport">
-    <Modifystaff ref="settingmodal" :selectStaffData="select_staff" />
+    <Modifystaff ref="settingmodal" 
+    :selectStaffData="select_staff" 
+    @saveStaff="get_Staff"
+    @deleteStaff="get_Staff"
+    />
   </teleport>
 
   <div id="select">
@@ -97,20 +103,20 @@
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap">{{ u.department }}</p>
                   </td>
-                                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap">{{ u.serial_number }}</p>
                   </td>
-                                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap">{{ u.staff }}</p>
                   </td>
-                                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.facedetect">已開啟</p>
                     <p class="text-gray-900 whitespace-nowrap" v-else>未開啟</p>
                   </td>
-                                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200 text-indigo-600 hover:text-indigo-900">
                     <button @click="ModifyStaff(u)">管理</button>
                   </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200 text-indigo-600 hover:text-indigo-900">
                     <router-link :to="{name:'StaffHistory', params: {id: u.id}}">
                       <span >歷史紀錄</span>
                     </router-link>

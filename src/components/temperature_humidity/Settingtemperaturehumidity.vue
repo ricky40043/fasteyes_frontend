@@ -1,49 +1,143 @@
 <template>
-  <div class="modal" v-show="isOpen">
-    <div class="modal-content">
+  <div class="modal " v-show="isOpen">
+    <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
-
       <div id="main" class="items-center justify-center">
+        <div class="flex items-center justify-center">
+          <p class="text-xl">新增裝置</p>
+        </div>
+      <table>
+        <tbody>
+          <tr>
+            <td class="px-2 py-2">
+              <span>裝置名稱:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="text" v-model="device_name" :class="empty_name_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>裝置編號:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="text" v-model="serial_number" :class="empty_area_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>裝置位置:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="text" v-model="area" :class="empty_serial_number_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>溫度正常範圍:</span>
+            </td>
+            <td class="px-2 py-2">
+              <div class="flex items-center">
+                <input type="number" v-model="addDeviceData.alarm_temperature_lower_limit" :class="temperature_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20"/>
+                <p>~</p>
+                <input type="number" v-model="addDeviceData.alarm_temperature_upper_limit" :class="temperature_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20"/>
+                <p>°C</p>
+              </div>
+              <p v-if="temperature_error" style="color: red;">上限值不得小於下限值</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>濕度正常範圍:</span>
+            </td>
+            <td class="px-2 py-2">
+              <div class="flex items-center">
+                <input type="number" v-model="addDeviceData.alarm_humidity_lower_limit" :class="humidity_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20"/>
+                <p>~</p>
+                <input type="number" v-model="addDeviceData.alarm_humidity_upper_limit" :class="humidity_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20"/>
+                <p>%</p>
+              </div>
+              <p v-if="humidity_error" style="color: red;">上限值不得小於下限值，且介於0~100</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>資料上傳頻率:</span>
+            </td>
+            <td class="px-2 py-2">
+              <span>{{addDeviceData.interval_time}} 秒</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>電池:</span>
+            </td>
+            <td class="px-2 py-2">
+              <span v-if="addDeviceData.battery==-1">無資料</span>
+              <span v-else>{{addDeviceData.battery}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>狀態:</span>
+            </td>
+            <td class="px-2 py-2">
+              <p class="text-gray-900 whitespace-nowrap" v-if="addDeviceData.status == 0">正常</p>
+              <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+        <div class="flex items-center justify-items-end">
+          <button class="device_delete_button" style="align-content: center;" @click="deleteDevice">刪除裝置</button>
+        </div>
+        <div class="flex items-center justify-center">
+          <button class ="device_comfirm_button" @click="hide">取消</button>
+          <button class ="device_set_button" @click="modifyDevice">儲存</button>
+        </div>
+      </div>
+      <!-- <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
           <p >裝置管理</p>
         </div>
         <div class="flex items-center">
           <span>裝置名稱:</span>
-          <input type="text" v-model="device_name" :class="empty_name_error?'error_input':''"/>
+          <input type="text" v-model="device_name" :class="empty_name_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
         </div>
         <div class="flex items-center">
           <span>裝置編號:</span>
-          <input type="text" v-model="serial_number" :class="empty_area_error?'error_input':''" disabled="disabled"/>
+          <input type="text" v-model="serial_number" :class="empty_area_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" disabled="disabled"/>
         </div>
         <div class="flex items-center">
           <span>裝置位置:</span>
-          <input type="text" v-model="area" :class="empty_serial_number_error?'error_input':''"/>
+          <input type="text" v-model="area" :class="empty_serial_number_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
         </div>
-        <div class="flex">
+        <div class="flex items-center">
           <span>溫度正常範圍:</span>
-          <input type="number" v-model="addDeviceData.alarm_temperature_lower_limit" :class="temperature_error?'error_input':''"/>
+          <input type="number" v-model="addDeviceData.alarm_temperature_lower_limit" :class="temperature_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
           <p>~</p>
-          <input type="number" v-model="addDeviceData.alarm_temperature_upper_limit" :class="temperature_error?'error_input':''"/>
+          <input type="number" v-model="addDeviceData.alarm_temperature_upper_limit" :class="temperature_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
           <p>°C</p>
         </div>
         <p v-if="temperature_error" style="color: red;">上限值不得小於下限值</p>
-        <div class="flex">
+        <div class="flex items-center">
           <span>濕度正常範圍:</span>
-          <input type="number" v-model="addDeviceData.alarm_humidity_lower_limit" :class="humidity_error?'error_input':''"/>
+          <input type="number" v-model="addDeviceData.alarm_humidity_lower_limit" :class="humidity_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
           <p>~</p>
-          <input type="number" v-model="addDeviceData.alarm_humidity_upper_limit" :class="humidity_error?'error_input':''"/>
+          <input type="number" v-model="addDeviceData.alarm_humidity_upper_limit" :class="humidity_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
           <p>%</p>
         </div>
         <p v-if="humidity_error" style="color: red;">上限值不得小於下限值，且介於0~100</p>
-        <div class="flex">
+        <div class="flex items-center">
           <span>資料上傳頻率：</span>
           <span>{{addDeviceData.interval_time}} 秒</span>
         </div>
-        <div class="flex">
+        <div class="flex items-center">
           <span>電池：</span>
-          <span>{{addDeviceData.battery}}</span>
+          <span v-if="addDeviceData.battery==-1">無資料</span>
+          <span v-else>{{addDeviceData.battery}}</span>
         </div>
-        <div class="flex">
+        <div class="flex items-center">
           <span>狀態：</span>
           <p class="text-gray-900 whitespace-nowrap" v-if="addDeviceData.status == 0">正常</p>
           <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
@@ -54,9 +148,8 @@
         <div class="flex items-center justify-center">
           <button class ="device_comfirm_button" @click="hide">取消</button>
           <button class ="device_set_button" @click="modifyDevice">儲存</button>
-
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -105,12 +198,13 @@ export default {
       await modify_device(1, this.device_id,this.device_name, this.area, DeviceData).then((res) => {
         this.hide()
       })
-      this.$emit(this.testID, true)
+      this.$emit('saveDevice')
     },
     async deleteDevice(){
       await delete_device(1, this.device_id).then((res) => {
         alert("資料刪除成功")
         this.hide()
+        this.$emit('deleteDevice')
       })
     },
     input_data(){
@@ -230,14 +324,14 @@ a{
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 115%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {
     background-color: #ffffff;
     margin: 15% auto; 
     padding: 20px;
-    width: 600px;
+    width: 400px;
     border: 1px solid #888;
 }
 .close {

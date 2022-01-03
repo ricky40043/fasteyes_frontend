@@ -1,9 +1,14 @@
 <template>
     <teleport to="#destination" :disabled="disableTeleport">
-      <AddNitrogen ref="modal" />
+      <AddNitrogen ref="modal" 
+      @addDevice="init"/>
     </teleport>
     <teleport to="#destination" :disabled="disableTeleport">
-      <SettingNitrogen ref="settingmodal" :selectDeviceData="select_device" v-on:testCall="'doSome($event)'" :testID="'testCall'"/>
+      <SettingNitrogen ref="settingmodal" 
+      :selectDeviceData="select_device" 
+      @saveDevice="init"
+      @deleteDevice="init"
+      />
     </teleport>
   <div id="upbutton">
         <div class=" px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
@@ -47,7 +52,7 @@
           </div>
           </div>
 
-            <button class="device_set_button" @click="addDeviceClick">
+            <button class="device_set_button" @click="addDeviceClick" v-if="level<=2">
                 新增裝置
             </button>
         </div>
@@ -81,7 +86,7 @@
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
                     狀態
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200" v-if="level<=2">
                     管理
                   </th>
                 </tr>
@@ -108,7 +113,7 @@
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">正常</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
                   </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200 text-indigo-600 hover:text-indigo-900" v-if="level<=2">
                     <button @click="settingDevice(u)">管理</button>
                   </td>
                 </tr>
@@ -139,7 +144,7 @@
 
 <script>
 // import { ref, onMounted } from 'vue'
-import { getLatestDeviceObservation, getAllDevice} from "../../untils/api.js"
+import { getLatestDeviceObservation, getAllDevice, getUerInfo} from "../../untils/api.js"
 import store from "../../store"
 import AddNitrogen from "../../components/Nitrogen/AddNitrogen.vue"
 import SettingNitrogen from "../../components/Nitrogen/SettingNitrogen.vue"
@@ -162,10 +167,17 @@ export default {
       page_total: 1,
       search_text: "",
       select_device: {},
-      showModal: false
+      showModal: false,
+      level: 100
     }
   },
   methods: {
+    async getUser () {
+      await getUerInfo().then((res)=>{
+          let UserData = Object.assign(res.data)
+          this.level = UserData.level
+        })
+    },
     getTHDevice(){
       this.Nitrogen_DeviceTableData=[]
       this.device_Map.forEach(Data =>{
@@ -224,7 +236,8 @@ export default {
       this.showSettingModal()
     },
     async init(){
-      // create Device Map 
+      // create Device Map
+      this.device_Map = new Map()
       let device_model = 4
       await getAllDevice(device_model).then((res)=>{
         this.devicelist = Object.assign(res.data)
@@ -232,17 +245,13 @@ export default {
           this.device_Map.set(device.id, Object.assign(device))
         });
       })
+      await this.getTHObservation()
+      await this.getTHDevice()
     },
-    doSome(res) {
-      console.log(success)
-    }
   },
   beforeMount() {
+    this.getUser()
     this.init()
-    this.getTHObservation()
-    setTimeout(() => {
-      this.getTHDevice()
-    }, 300);
   },
   created() {
     if(sessionStorage.getItem("state")){
@@ -289,7 +298,7 @@ export default {
 <style scoped>
 #time{
   /* background-color: Red; */
-  width: 60%;
+  width: 88%;
 }
 #device{
   /* background-color: blue; */

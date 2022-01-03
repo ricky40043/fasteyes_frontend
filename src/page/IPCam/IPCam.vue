@@ -1,9 +1,14 @@
 <template>
     <teleport to="#destination" :disabled="disableTeleport">
-      <AddIPCam ref="modal" />
+      <AddIPCam ref="modal" 
+      @addDevice="init"/>
     </teleport>
     <teleport to="#destination" :disabled="disableTeleport">
-      <SettingIPCam ref="settingmodal" :selectDeviceData="select_device" v-on:testCall="'doSome($event)'" :testID="'testCall'"/>
+      <SettingIPCam ref="settingmodal" 
+      :selectDeviceData="select_device" 
+      @saveDevice="init"
+      @deleteDevice="init"
+      />
     </teleport>
   <div id="upbutton">
       <div class="mt-4" >
@@ -31,7 +36,7 @@
           </div>
           </div>
 
-            <button class="device_set_button" @click="addDeviceClick">
+            <button class="device_set_button" @click="addDeviceClick" v-if="level<=2">
                 新增裝置
             </button>
         </div>
@@ -65,7 +70,7 @@
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
                     PORT
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200" v-if="level<=2">
                     管理
                   </th>
                 </tr>
@@ -91,7 +96,7 @@
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap">{{ u.port }}</p>
                   </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200 text-indigo-600 hover:text-indigo-900" v-if="level<=2">
                     <button @click="settingDevice(u)">管理</button>
                   </td>
                 </tr>
@@ -122,7 +127,7 @@
 
 <script>
 // import { ref, onMounted } from 'vue'
-import { getAllDevice} from "../../untils/api.js"
+import { getAllDevice, getUerInfo} from "../../untils/api.js"
 import store from "../../store"
 import AddIPCam from "../../components/IpCam/AddIPCam.vue"
 import SettingIPCam from "../../components/IpCam/SettingIPCam.vue"
@@ -134,25 +139,25 @@ export default {
     SettingIPCam
   },
   data (){
-    let IPCam_DeviceTableData=[]
-    let page = 1
-    let total = 1
-    let page_size = 50
-    let page_total = 1
-    let search_text = ""
-    let select_device ={}
     return{
-      IPCam_DeviceTableData,
-      page,
-      total,
-      page_size,
-      page_total,
-      search_text,
-      select_device,
-      showModal: false
+      IPCam_DeviceTableData:[],
+      page:1,
+      total:1,
+      page_size:50,
+      page_total:1,
+      search_text:"",
+      select_device:"",
+      showModal: false,
+      level: 100
     }
   },
   methods: {
+    async getUser () {
+      await getUerInfo().then((res)=>{
+          let UserData = Object.assign(res.data)
+          this.level = UserData.level
+        })
+    },
     increment(){
       if(this.page<this.page_total)
       {
@@ -195,11 +200,9 @@ export default {
         });
       })
     },
-    doSome(res) {
-      console.log(success)
-    }
   },
   beforeMount() {
+    this.getUser()
     this.init()
   },
   created() {
@@ -247,7 +250,7 @@ export default {
 <style scoped>
 #time{
   /* background-color: Red; */
-  width: 60%;
+  width: 88%;
 }
 #device{
   /* background-color: blue; */

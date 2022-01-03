@@ -4,7 +4,9 @@
   </teleport>
 
   <teleport to="#destination" :disabled="disableTeleport">
-    <ModifyGroupName ref="settingmodal" :NameData="groupName" />
+    <ModifyGroupName ref="settingmodal" 
+    :NameData="groupName" 
+    @changeGroupName="getGroup"/>
   </teleport>
 
   <router-link to="/main">
@@ -47,7 +49,7 @@
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
               層級
             </th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 ">
               刪除
             </th>
           </tr>
@@ -69,7 +71,7 @@
               <p class="text-gray-900 whitespace-nowrap" v-else-if="u.level == 4">Normal</p>
             </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-              <button class="text-gray-900 whitespace-nowrap" v-if="u.level>2" @click="deleteUser(u.id)">刪除</button>
+              <button class="text-gray-900 whitespace-nowrap text-red-600" v-if="u.level>2" @click="deleteUser(u.id)">刪除</button>
             </td>
           </tr>
         </tbody>

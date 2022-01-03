@@ -1,6 +1,8 @@
 <template>
   <teleport to="#destination" :disabled="disableTeleport">
-    <ModifyFasteyesOutputForm ref="settingmodal" :faseyes_observation_form_data="faseyes_observation_form" :open_settingform="open_setting" />
+    <ModifyFasteyesOutputForm ref="settingmodal" 
+    :faseyes_observation_form_data="faseyes_observation_form" 
+    @saveOutputForm="getOutput"/>
   </teleport>
 
   <div class="mt-4" >
@@ -53,7 +55,7 @@
       </div>
     </div>
     <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md">
-      <button class="device_comfirm_button" @click="showSettingModal">
+      <button class="device_comfirm_button" @click="showSettingModal" v-if="level<=2">
         修改
       </button>
       <button class="device_comfirm_button" @click="outputclick">
@@ -68,7 +70,7 @@
 import { ref } from 'vue';
 import { useRouter } from "vue-router";
 // import { getUerInfo, getgroup, getusers} from '../../untils/api.js'
-import { get_output ,get_output_csv_file} from '../../untils/api.js'
+import { get_output ,get_output_csv_file,getUerInfo} from '../../untils/api.js'
 import moment from 'moment';
 import ModifyFasteyesOutputForm from "../../components/fasteyes/ModifyFasteyesOutputForm.vue"
 
@@ -85,7 +87,8 @@ export default {
       output_list:[],
       not_output_list:[],
       resign_staff_output: false,
-      open_setting: false
+      open_setting: false,
+      level:100
    }
   },
   computed:{
@@ -120,12 +123,18 @@ export default {
     },
   },
   methods: {
+    async getUser () {
+      await getUerInfo().then((res)=>{
+          let UserData = Object.assign(res.data)
+          this.level = UserData.level
+        })
+    },
     async getOutput(){
       await get_output().then((res)=>{
-        console.log(res.data)
+        // console.log(res.data)
         let output_form = res.data
         this.faseyes_observation_form = output_form
-        console.log(this.faseyes_observation_form)
+        // console.log(this.faseyes_observation_form)
         this.faseyes_output_date_list = output_form.output_time
         this.faseyes_device_list = output_form.output_fasteyes
         this.output_list = output_form.output_sequence
@@ -153,6 +162,7 @@ export default {
   },
   beforeMount() {
     this.getOutput()
+    this.getUser ()
   },
   created() {
     if(sessionStorage.getItem("state")){

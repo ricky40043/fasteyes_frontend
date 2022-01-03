@@ -1,9 +1,9 @@
 <template>
   <div class="modal" v-show="isOpen">
-    <div class="modal-content">
+    <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
 
-      <div id="main" class="items-center justify-center">
+      <!-- <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
           <p >新增裝置</p>
         </div>
@@ -48,6 +48,102 @@
 
         <div id="bulletin" v-if="watchingVideo">
           <img :src="rstpname" alt="" style="display:block; margin:auto;" />
+        </div>
+        <div class="flex items-center justify-center">
+          <button class ="device_comfirm_button" @click="hide">取消</button>
+          <button class ="device_set_button" @click="addDevice">儲存</button>
+        </div>
+      </div> -->
+
+
+      <div id="main" class="items-center justify-center">
+        <div class="flex items-center justify-center">
+          <p class="text-xl">編輯裝置</p>
+        </div>
+        <div class="flex justify-center">
+          <div id="left"> 
+            <table>
+              <tbody>
+                <tr>
+                  <td class="px-2 py-2">
+                    <span>裝置名稱:</span>
+                  </td>
+                  <td class="px-2 py-2">
+                    <input type="text" v-model="device_name" :class="empty_name_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2">
+                    <span>裝置編號:</span>
+                  </td>
+                  <td class="px-2 py-2">
+                    <input type="text" v-model="serial_number" :class="empty_area_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2">
+                    <span>裝置位置:</span>
+                  </td>
+                  <td class="px-2 py-2">
+                    <input type="text" v-model="area" :class="empty_serial_number_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2">
+                    <span>IP位址:</span>
+                  </td>
+                  <td class="px-2 py-2">
+                    <div class="flex items-center justify-center">
+                      <input type="text" v-model="ip" :class="ip_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" disabled/>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2">
+                    <span>PORT:</span>
+                  </td>
+                  <td class="px-2 py-2">
+                    <input type="number" v-model="port" :class="port_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2">
+                    <span>串流名稱:</span>
+                  </td>
+                  <td class="px-2 py-2">
+                    <input type="text" v-model="stream_name" :class="stream_name_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2">
+                    <span>使用者名稱:</span>
+                  </td>
+                  <td class="px-2 py-2">
+                    <input type="text" v-model="username" :class="username_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2">
+                    <span>使用者密碼:</span>
+                  </td>
+                  <td class="px-2 py-2">
+                    <input type="password" v-model="password" :class="password_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+                        <div class="py-2">
+              <button class="device_delete_button" style="align-content: center;" @click="deleteDevice">刪除裝置</button>
+            </div>
+          </div>
+          <div id="right">
+            <div class="flex items-center justify-center">
+              <button class ="device_set_button" @click="seeVideo">查看影像</button>
+            </div>
+            <div id="bulletin" v-if="watchingVideo">
+              <img :src="rstpname" alt="" style="display:block; margin:auto;" class="w-auto h-auto"/>
+            </div>
+          </div>
         </div>
         <div class="flex items-center justify-center">
           <button class ="device_comfirm_button" @click="hide">取消</button>
@@ -113,6 +209,7 @@ export default {
       }
       await modify_device(2, this.device_id, this.device_name, this.area, DeviceData).then((res) => {
         this.hide()
+        this.$emit('saveDevice')
       })
     },
     seeVideo(){
@@ -122,6 +219,7 @@ export default {
       await delete_device(2, this.device_id).then((res) => {
         alert("資料刪除成功")
         this.hide()
+        this.$emit('deleteDevice')
       })
     },
     clear_data(){
@@ -255,24 +353,30 @@ export default {
    height: auto; */
   /* background-color: rgba(59, 65, 79, 1.0); */
 }
+#left {
+  width: 35%;
+}
+#right {
+  width: 65%;
+}
 a{
   color:white
 }
-
 .modal {
     position: absolute;
     z-index: 999;
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 130%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {
     background-color: #ffffff;
     margin: 15% auto; 
     padding: 20px;
-    width: 400px;
+    width: 1000px;
+    height: 650px;
     border: 1px solid #888;
 }
 .close {

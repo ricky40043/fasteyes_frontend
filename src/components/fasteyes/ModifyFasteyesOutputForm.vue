@@ -1,6 +1,6 @@
 <template>
   <div class="modal" v-show="isOpen">
-    <div class="modal-content">
+    <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
       <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
@@ -9,14 +9,11 @@
         <div class="flex">
           <div class="flex items-center">
             <span>選擇所欲輸出的Fasteyes裝置（複選）:</span>
-            <!-- <select v-model="select_device" >
-              <option value="-1">全選</option>
-              <option v-for="faseyes_device in faseyes_device_list" :value="faseyes_device.name" :key="faseyes_device.name">{{ faseyes_device.name}}</option>
-            </select> -->
             <button
               @click="dropdownOpen1 = !dropdownOpen1"
+              class="device_comfirm_button"
             >
-            裝置選擇
+            裝置選擇 ᴠ
             </button>
             <div class="flex mx-4 text-gray-600 focus:outline-none">
 
@@ -37,17 +34,17 @@
         >
           <div
             v-show="dropdownOpen1"
-            class="absolute right-0 z-20 w-48 py-2 mt-2 bg-white rounded-md shadow-xl"
+            class="absolute z-2 w-48 py-2 mt-2 bg-white rounded-md shadow-xl"
           >
-          <div v-for="(item, index) in Fasteyes_DeviceList">
-            <input type="checkbox" :key="item.id" value="first_checkbox" :checked="select_faseyes_device_list[index]" v-model="select_faseyes_device_list[index]">
-            <label :for="item.id">{{item.name}}</label>
-          </div>
+            <div v-for="(item, index) in Fasteyes_DeviceList">
+              <input type="checkbox" :key="item.id" value="first_checkbox" :checked="select_faseyes_device_list[index]" v-model="select_faseyes_device_list[index]">
+              <label :for="item.id">{{item.name}}</label>
+            </div>
           </div>
         </transition>
-                  </div> 
-          </div>
-        </div>
+        </div> 
+      </div>
+    </div>
         <div class="flex ">
           <div class="flex items-center">
             <input type="checkbox" id="cbox1" value="first_checkbox" v-model="resign_staff_output">
@@ -62,7 +59,9 @@
         </div>
         <div class="flex" style="border-width:1px;border-style:solid;border-color:Black;padding:3px 3px;">
           <div v-for="item in output_list">
-            <button class="device_comfirm_button" @click="deleteOutput(item)">{{item.name}}</button>
+            <div class="device_comfirm_button" @click="deleteOutput(item)" @mouseover="mouseoverEvent" @mouseleave="mouseleaveEvent">
+              {{item.name}}
+            </div>
           </div>
         </div>
         <div class="flex">
@@ -73,7 +72,7 @@
         </div>
         <div class="flex" style="border-width:1px;border-style:solid;border-color:Black;padding:3px 3px;">
           <div v-for="item in not_output_list">
-            <button class="device_comfirm_button" @click="addOutput(item)">{{item.name}}</button>
+            <button class="device_comfirm_button" @click="addOutput(item)" @mouseover="mouseoverEvent2" @mouseleave="mouseleaveEvent2">{{item.name}}</button>
           </div>
         </div>
         <div class="flex">
@@ -103,8 +102,7 @@ const router = useRouter();
 
 export default {
   props:[
-    "faseyes_observation_form_data",
-    "open_settingform"
+    "faseyes_observation_form_data"
   ],
   data () {
     return {
@@ -118,7 +116,8 @@ export default {
       resign_staff_output: false,
       select_device: -1,
       temp:-1,
-      dropdownOpen1: true
+      dropdownOpen1: false,
+      temp_outputdata:""
    }
   },
     methods: {
@@ -142,8 +141,8 @@ export default {
         }
       })
       await patch_output(faseyes_form_data).then((res) => {
-        console.log(res.data)
         this.hide()
+        this.$emit('saveOutputForm')
         }).catch((err) => {
           console.log(err)
         })
@@ -202,6 +201,32 @@ export default {
       console.log(index)
       console.log(checked)
       this.select_faseyes_device_list[index] = checked
+    },
+    mouseoverEvent(event){
+      event.target.className = "device_delete_button"
+      var img = "✘"
+      if(event.target.innerHTML.indexOf(img)<0)
+         event.target.innerHTML += img 
+    },
+    mouseleaveEvent(event){
+      event.target.className = "device_comfirm_button"
+      var img = "✘"
+      let innerdata = event.target.innerHTML
+      innerdata = innerdata.substring(0,innerdata.length - img.length)
+      event.target.innerHTML = innerdata 
+    },
+    mouseoverEvent2(event){
+      event.target.className = "device_in_button"
+      var img = "✓"
+      if(event.target.innerHTML.indexOf(img)<0)
+         event.target.innerHTML += img 
+    },
+    mouseleaveEvent2(event){
+      event.target.className = "device_comfirm_button"
+      var img = "✓"
+      let innerdata = event.target.innerHTML
+      innerdata = innerdata.substring(0,innerdata.length - img.length)
+      event.target.innerHTML = innerdata 
     }
   },
   computed:{
@@ -248,7 +273,6 @@ export default {
     const isOpen = ref(false);
 
     function hide(){
-        this.open_settingform = false
         isOpen.value = false;
     }
 
@@ -291,13 +315,25 @@ a{
 #right {
   width: 50%;
 }
+.time_block_text{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color: black;
+  /* background-color: gray; */
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-left: 10px;
+  margin-right: 10px;
+  display: flex;
+  align-content: center;
+}
 .modal {
     position: absolute;
     z-index: 999;
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 110%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {
@@ -375,5 +411,35 @@ a{
   border-style:solid;
   border-width:2px;
   border-color:#4F86CA;
+}
+.device_delete_button{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color:red;
+  border-radius: 6px;
+  padding: 3px 6px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-content: center;
+  background-color: white;
+  border-style:solid;
+  border-width:2px;
+  border-color:red;
+}
+.device_in_button{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color:limegreen;
+  border-radius: 6px;
+  padding: 3px 6px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-content: center;
+  background-color: white;
+  border-style:solid;
+  border-width:2px;
+  border-color:limegreen;
 }
 </style>

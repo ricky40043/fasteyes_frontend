@@ -254,9 +254,10 @@ export default {
     reset(){
       let nowTime = new Date()
       let date = nowTime.getDate()-10>=0?nowTime.getDate():"0"+nowTime.getDate()
-      this.start_date = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+date
+      let month = nowTime.getMonth()+1-10>=0?nowTime.getMonth()+1:"0"+(nowTime.getMonth()+1)
+      this.start_date = nowTime.getFullYear()+"-"+month+"-"+date
       this.start_time = "00:00:00"
-      this.end_date = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+date
+      this.end_date = nowTime.getFullYear()+"-"+month+"-"+date
       this.end_time = "23:59:59"
       this.search_text=""
       this.select_status=-1

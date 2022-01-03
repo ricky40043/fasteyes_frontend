@@ -1,9 +1,14 @@
 <template>
   <teleport to="#destination" :disabled="disableTeleport">
-    <AddDepartment ref="modal" />
+    <AddDepartment ref="modal"
+    @addDepartment="init"
+    />
   </teleport>
   <teleport to="#destination" :disabled="disableTeleport">
-    <ModifyDepartment ref="settingmodal" :selectDepartmentData="select_department" />
+    <ModifyDepartment ref="settingmodal" 
+    :selectDepartmentData="select_department" 
+    @saveDepartment="init"
+    />
   </teleport>
 
     <div class="flex  bg-gray-200 font-roboto" >
@@ -207,15 +212,20 @@ export default {
     search_event(){
       console.log(this.search_text) 
     },
+    async init(){
+      await this.get_Deparment()
+      if(this.fasteyes_DepartmentTableData.length>0)
+        this.showResult(this.fasteyes_DepartmentTableData[0])
+    },
   },
   beforeMount() {
-    this.get_Deparment()
-    setTimeout(()=>{
-      if(this.fasteyes_DepartmentTableData.length>0){
-        this.showResult(this.fasteyes_DepartmentTableData[0])
-      }
-    },100)
-
+    // this.get_Deparment()
+    // setTimeout(()=>{
+    //   if(this.fasteyes_DepartmentTableData.length>0){
+    //     this.showResult(this.fasteyes_DepartmentTableData[0])
+    //   }
+    // },100)
+    this.init()
   },
   created() {
     if(sessionStorage.getItem("state")){

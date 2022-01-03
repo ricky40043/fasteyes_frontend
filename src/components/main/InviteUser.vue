@@ -1,6 +1,6 @@
 <template>
   <div class="modal" v-show="isOpen">
-    <div class="modal-content">
+    <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
 
       <div id="main" class="items-center justify-center">
@@ -9,13 +9,13 @@
         </div>
         <p>請輸入 Email 信箱以邀請新使用者加入群組：</p>
         <div class="flex items-center justify-center">
-          <input type="text" v-model="name" :class="error_input?'error_input':''"/>
+          <input type="text" placeholder="新使用者email" v-model="name" :class="error_input?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
           <p v-if="error_input" style="color: red;">{{error_description}}</p>
         </div>
 
-          <div class="flex items-center justify-center">
+          <div class="flex items-center justify-center px-2 py-2">
             <p>使用者層級</p>
-            <select v-model="select_level">
+            <select v-model="select_level" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500">
               <option value="3">HR</option>
               <option value="4">User</option>
             </select>
@@ -122,7 +122,7 @@ export default {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 110%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {
@@ -130,7 +130,7 @@ export default {
     margin: 15% auto; 
     padding: 20px;
     width: 400px;
-    height: 200px;
+    height: 230px;
 
     border: 1px solid #888;
 }

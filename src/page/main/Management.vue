@@ -1,6 +1,8 @@
 <template>
   <teleport to="#destination" :disabled="disableTeleport">
-    <ModifyUserName ref="settingmodal" :NameData="userName" />
+    <ModifyUserName ref="settingmodal" 
+    :NameData="userName" 
+    @saveChange="getUser"/>
   </teleport>
 
   <router-link to="/main">

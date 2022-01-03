@@ -1,6 +1,6 @@
 <template>
   <div class="modal" v-show="isOpen">
-    <div class="modal-content">
+    <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
 
       <div id="main" class="items-center justify-center">
@@ -8,11 +8,11 @@
           <p>新增部門</p>
         </div>
         <div class="flex items-center justify-center">
-          <input type="text" v-model="department_name" :class="error_input?'error_input':''"/>
+          <input type="text" v-model="department_name" :class="error_input?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
         </div>
         <p v-if="error_input" style="color: red;">{{error_description}}</p>
 
-        <div class="flex items-center justify-center">
+        <div class="flex items-center justify-center px-2 py-2">
           <button class ="device_comfirm_button" @click="hide">取消</button>
           <button class ="device_set_button" @click="addDepartment">儲存</button>
         </div>
@@ -38,8 +38,8 @@ export default {
     methods: {
     async addDepartment () {
       await add_department(this.department_name).then((res) => {
-        console.log(res.data)
         this.hide()
+        this.$emit('addDepartment')
         }).catch((err) => {
           let errorMessage = err.response.data.detail
           if (errorMessage == "department name is exist"){
@@ -110,7 +110,7 @@ export default {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 115%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {
