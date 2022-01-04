@@ -94,6 +94,7 @@
         <div class="flex items-center justify-center">
           <button class ="device_comfirm_button" @click="hide">取消</button>
           <button class ="device_set_button" @click="modifyDevice">儲存</button>
+          
         </div>
       </div>
       <!-- <div id="main" class="items-center justify-center">

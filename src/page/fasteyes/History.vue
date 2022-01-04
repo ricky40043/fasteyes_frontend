@@ -1,4 +1,10 @@
 <template>
+  <teleport to="#destination" :disabled="disableTeleport">
+    <ModifyObservation ref="settingmodal"
+    :selectObservation_id="select_id"
+    @modifyObservation="reset"
+    />
+  </teleport>
   <div id="select">
       <div class="mt-4" >
         <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
@@ -45,7 +51,7 @@
               </button>
             </div>
           </div>
-          <div id="searchinput">
+          <!-- <div id="searchinput">
           <div class="relative mx-4 lg:mx-0" style="width= 100%">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
               <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -67,7 +73,7 @@
             @change="search_event"
             />
           </div>
-          </div>
+          </div> -->
           <div id="outputbutton">
             <button class="device_abnormal_button" @click="outputclick">
               輸出 .csv
@@ -121,30 +127,30 @@
                 </thead>
 
                 <tbody>
-                  <tr v-for="u in fasteyes_ObservationTableData" :key="u.id" v-on:click="showResult($event, u)">
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <tr v-for="u in fasteyes_ObservationTableData" :key="u.id" v-on:click="showResult($event, u)" class="report_list" :style="select_id==u.id? 'background-color:powderblue;':''">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap">{{ u.deviceName }}</p>
                     </td>
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap">{{ u.time }}</p>
                     </td>
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">訪客</p>
                       <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.department }}</p>
                     </td>
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">None</p>
                       <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.serial_number }}</p>
                     </td>
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap" v-if="u.staff == 'Unknow'">訪客</p>
                       <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.staff }}</p>
                     </td>
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">{{ u.temperature }}°C</p>
                       <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.temperature }}°C</p>
                     </td>
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">正常</p>
                       <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
                     </td>
@@ -190,8 +196,8 @@
           :src="face_url"
           alt="人員照片"
         />
-        <div class="px-6 py-4">
-          <p>錯誤回報</p>
+        <div class="px-6 py-4 text-blue-600">
+          <div @click="errorReportClick">錯誤回報</div>
         </div>
       </div>
       </div>
@@ -200,8 +206,9 @@
 </template>
 
 <script>
-// import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { getFasteyes_Observation, getFasteyesDevice, get_output_csv_file} from "../../untils/api.js"
+import ModifyObservation from "../../components/fasteyes/ModifyObservation.vue" 
 import store from "../../store"
 import moment from 'moment';
 import global_ from "../../Global.vue"
@@ -210,6 +217,9 @@ import global_ from "../../Global.vue"
   // url: 'http://127.0.0.1:8000'
 //}
 export default {
+  components:{
+    ModifyObservation
+  },
   data (){
     let fasteyes_ObservationTableData=[]
     let page = 1
@@ -354,6 +364,8 @@ export default {
       this.end_time = "23:59:59"
       this.search_text=""
       this.select_status=-1
+      this.select_id=-1
+      this.showPicture = false
       this.getfasteyes_Observation()
     },
     select_all(){
@@ -371,6 +383,9 @@ export default {
     search_event(){
       console.log(this.search_text) 
     },
+    errorReportClick(){
+      this.showSettingModal()
+    }
   },
   beforeMount() {
     this.reset()
@@ -389,6 +404,22 @@ export default {
       sessionStorage.removeItem('state')
       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
     })
+  },
+  setup(){
+    const disableTeleport = ref(false)   
+    
+    const settingmodal = ref(null);
+    
+    function showSettingModal(){
+      settingmodal.value.show()
+      this.showModal = true
+    }
+
+    return {
+      disableTeleport,
+      showSettingModal,
+      settingmodal
+    }
   }
 };
 </script>
@@ -528,6 +559,12 @@ export default {
   /* color:rebeccapurple */
   position: absolute;
   top: 300px;
+}
+.report_list{
+  background-color: white;
+}
+.report_list:hover{
+  background-color: powderblue;
 }
 </style>
 

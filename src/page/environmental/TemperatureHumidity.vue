@@ -45,7 +45,7 @@
               </button>
             </div>
           </div>
-          <div id="searchinput">
+          <!-- <div id="searchinput">
           <div class="relative mx-4 lg:mx-0" style="width= 100%">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
               <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -67,7 +67,7 @@
             @change="search_event"
             />
           </div>
-          </div>
+          </div> -->
           <div id="outputbutton" @click="getTHObservationOutput()">
             <button class="device_abnormal_button">
               輸出 .csv

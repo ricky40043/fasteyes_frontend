@@ -13,28 +13,28 @@
   <div id="upbutton">
       <div class="mt-4" >
         <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
-          <div id="time">
+          <!-- <div id="time">
             <div class="relative mx-4 lg:mx-0" style="width= 100%">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-              <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
 
-            <input
-              class="pl-10 pr-4 border-gray-200 rounded-md"
-              style="width: 100%;"
-              type="text"
-              placeholder="以裝置名稱或其ID搜尋"
-            />
+              <input
+                class="pl-10 pr-4 border-gray-200 rounded-md"
+                style="width: 100%;"
+                type="text"
+                placeholder="以裝置名稱或其ID搜尋"
+              />
           </div>
-          </div>
+        </div> -->
 
             <button class="device_set_button" @click="addDeviceClick" v-if="level<=2">
                 新增裝置

@@ -40,19 +40,6 @@ export function checkEmail (email) {
 }
 
 export function setUserInfo (obj_input) {
-  // let setinfo = {}
-  // if(obj_input.email_alert)
-  //   setinfo.email_alert = obj_input.email_alert
-
-  // if(obj_input.language)
-  //   setinfo.language = obj_input.language
-
-  // if(obj_input.device_email_alert)
-  // {
-  //   setinfo.device_email_alert = obj_input.device_email_alert
-  // }
-
-  // alert(obj_input.device_email_alert)
   let setinfo = obj_input
   return axios({
     url: `${global_.url}/users/setting`,
@@ -153,6 +140,18 @@ export function getFasteyes_Observation (page, size,status,start_time,end_time,s
     headers: {
       Authorization: `Bearer ${token()}`
     }
+  })
+}
+
+export function modifyFasteyes_Observation (observation_id, staff_id) {
+  let modifyData={"staff_id":staff_id}
+  return axios({
+    url: `${global_.url}/fasteyes_observations/${observation_id}`,
+    method: 'patch',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    },
+    data: modifyData
   })
 }
 

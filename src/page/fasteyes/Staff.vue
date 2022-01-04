@@ -13,9 +13,9 @@
   </teleport>
 
   <div id="select">
-          <button class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500">
+          <!-- <button class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500">
             ＋ 上傳人員列表
-          </button>
+          </button> -->
           <button class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500"
           @click="addStaffClick">
             ＋ 新增人員
@@ -44,6 +44,7 @@
               style="width: 100%;"
               type="text"
               placeholder="以人員名稱或其ID搜尋"
+              v-model="search_text"
             />
           </div>
           </div>
@@ -99,7 +100,7 @@
               </thead>
 
               <tbody>
-                <tr v-for="(u, index) in StaffTableData" :key="index">
+                <tr v-for="(u, index) in SearchTableData" :key="index">
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap">{{ u.department }}</p>
                   </td>
@@ -107,7 +108,7 @@
                     <p class="text-gray-900 whitespace-nowrap">{{ u.serial_number }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap">{{ u.staff }}</p>
+                    <p class="text-gray-900 whitespace-nowrap">{{ u.name }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.facedetect">已開啟</p>
@@ -127,7 +128,7 @@
                 </tr>
               </tbody>
             </table>
-            <div
+            <!-- <div
               class="flex flex-col items-center px-5 py-5 bg-white border-t xs:flex-row xs:justify-between"
             >
               <span class="text-xs text-gray-900 xs:text-sm">Showing {{page}} to {{page_total}} of {{page_size}} Entries</span>
@@ -140,7 +141,7 @@
                   Next
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -164,12 +165,13 @@ export default {
   data (){
     return{
       StaffTableData :[],
+      SearchTableData: [],
       department_list:[],
       department_Map: new Map(),
-      page: 1,
-      total: 1,
-      page_size: 50,
-      page_total: 1,
+      // page: 1,
+      // total: 1,
+      // page_size: 50,
+      // page_total: 1,
       search_text: "",
       select_department: -1,
       staff_status: -1,
@@ -187,7 +189,7 @@ export default {
           staff.department = this.department_Map.get(Data.department_id).name
           staff.department_id = Data.department_id
           staff.serial_number = Data.serial_number
-          staff.staff = Data.info.name  
+          staff.name = Data.info.name  
           staff.facedetect = Data.info.face_detect  
           staff.id = Data.id
           staff.gender = Data.info.gender
@@ -195,6 +197,7 @@ export default {
           this.StaffTableData.push(staff)
         });
       }) 
+      this.SearchTableData = this.StaffTableData
     },
     async get_Department(){
       this.department_list = []
@@ -231,12 +234,28 @@ export default {
     ModifyStaff(input){
       this.select_staff = input
       this.showSettingModal()
+    },
+    filter(){
+      let newlist = []
+      this.StaffTableData.forEach(staff =>{
+        if(this.search_text !==''){
+          let search_text = this.search_text.toLowerCase()
+          let hasName = staff.name.toLowerCase().search(search_text) !== -1
+          let hasSerialNumber = staff.serial_number.toLowerCase().search(search_text) !== -1
+          if(hasName || hasSerialNumber){
+            newlist.push(staff)
+          }
+        }
+        else{
+          newlist.push(staff)
+        }
+      })
+      this.SearchTableData = newlist
     }
   },
   beforeMount() {
     this.get_Department()
     this.get_Staff()
-
   },
   beforeUnmount(){
     window.clearInterval(this.timer)
@@ -251,6 +270,11 @@ export default {
       sessionStorage.removeItem('state')
       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
     })
+  },
+  watch: {
+    search_text(){
+      this.filter()
+    }
   },
   setup() {
     const disableTeleport = ref(false)   

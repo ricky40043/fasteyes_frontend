@@ -65,7 +65,7 @@
       </table>
         <div class="flex items-center">
           <p>新增成功後後，請別忘記到 Fasteyes 應用程式進行臉部建檔，就可以開始進行臉部辨識囉！</p>
-          <a href="https://www.fasteyes.net/FastwiseSupport/">如何進行臉部建檔？ </a>
+          <a class="text-blue-600" href="https://www.fasteyes.net/FastwiseSupport/">如何進行臉部建檔？ </a>
         </div>
 
         <div class="flex items-center justify-center">

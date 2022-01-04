@@ -178,7 +178,7 @@ export default {
       this.status = this.selectStaffData.status
       this.face_detect = this.selectStaffData.facedetect
       this.addStaffData= {
-        name : this.selectStaffData.staff,
+        name : this.selectStaffData.name,
         gender : this.selectStaffData.gender
       }
       if (this.face_detect){

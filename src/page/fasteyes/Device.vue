@@ -3,7 +3,7 @@
     <div id="upnormal">
       <div class="mt-4" >
         <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
-          <div id="time">
+          <!-- <div id="time">
             <div class="relative mx-4 lg:mx-0">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
               <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -24,7 +24,7 @@
               placeholder="以裝置名稱或其ID搜尋"
             />
           </div>
-          </div>
+          </div> -->
 
             <button class="device_set_button ">
                 新增裝置

@@ -4,19 +4,21 @@
     style="background-color=Yellow"
   >
     <div class="flex items-left">
-        <router-link  class="border-bottom-style:dotted"
+        <!-- <router-link  class="border-bottom-style:dotted"
          :class="[$route.name === 'Dashboard' ? activeClass : inactiveClass]" to="/dashboard">
         <img src="../../assets/SUMI_img/SUMI logo/w.png" hight=30 width=30 />
-        </router-link>
+        </router-link> -->
+        <img src="../../assets/SUMI_img/SUMI logo/w.png" hight=30 width=30 />
+
         <router-link :class="[$route.name === 'Main' ? activeClass : inactiveClass]" to="/main">
           <span class="mx-4">首頁</span>
         </router-link>
         <router-link :class="[$route.name === 'FasteyesHistory' ? activeClass : inactiveClass]" to="/fasteyes/history" v-if="level<=3">
           <span class="mx-4">Fasteyes</span>
         </router-link>
-        <router-link :class="[$route.name === 'ElectrostaticHistory' ? activeClass : inactiveClass]" to="/electrostatic/history">
+        <!-- <router-link :class="[$route.name === 'ElectrostaticHistory' ? activeClass : inactiveClass]" to="/electrostatic/history">
           <span class="mx-4">靜電環</span>
-        </router-link>
+        </router-link> -->
         <router-link :class="[$route.name === 'IPCam' ? activeClass : inactiveClass]" to="/ipcam">
           <span class="mx-4">IPCam</span>
         </router-link>

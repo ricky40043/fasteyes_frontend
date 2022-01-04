@@ -12,13 +12,15 @@
   </teleport>
 
     <div class="flex  bg-gray-200 font-roboto" >
-      <div class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200" >
-        <button class="device_set_button " @click="addDemprtmentClick">
+      <div class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 px-1" >
+        <div class="py-2">
+        <button class="device_set_button" @click="addDemprtmentClick">
             + 新增部門
         </button>
+        </div>
          <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
 
-          <div id="switchbutton">
+          <!-- <div id="switchbutton">
             <div class=" flex items-center justify-center">
               <button :class="select_status? 'device_set_button':'device_comfirm_button' " v-on:click="select_all">
                   全部
@@ -27,7 +29,7 @@
                   空部門
               </button>
             </div>
-          </div>
+          </div> -->
           <div id="searchinput">
             <div class="relative mx-4 lg:mx-0" style="width= 100%">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -43,34 +45,38 @@
               </span>
 
               <input
-                class="w-32 pl-10 pr-4 text-indigo-600 border-gray-200 rounded-md sm:w-64 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                class="pl-10 pr-4 text-indigo-600 border-gray-200 rounded-md sm:w-96 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
                 type="text"
                 placeholder="以部門名稱搜尋"
+                v-model="search_department_text"
               />
             </div>
           </div>
           
         </div>
-          <span>部門列表：{{fasteyes_DepartmentTableData.length}}筆</span>
-          <table class="min-w-full leading-normal">
-            <thead>
-              <tr>
-                <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                  部門
-                </th>
-              </tr>
-            </thead>
+          <span>部門列表：{{searchFasteyes_DepartmentTableData.length}}筆</span>
+          <div id="tableout">
+            
+            <table class="min-w-full leading-normal">
+              <thead>
+                <tr>
+                  <th class="px-3 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                    部門
+                  </th>
+                </tr>
+              </thead>
 
-            <tbody>
-              <tr v-for="u in fasteyes_DepartmentTableData" :key="u.id" v-on:click="showResult(u)">
-                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                  <p class="text-gray-900 whitespace-nowrap">{{ u.name }}</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+              <tbody>
+                <tr v-for="u in searchFasteyes_DepartmentTableData" :key="u.id" v-on:click="showResult(u)" class="report_list" :style="select_department.id==u.id? 'background-color:powderblue;':''">
+                  <td class="px-3 py-3 text-sm border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap">{{ u.name }}</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
       </div>
-      <div class="flex-1 items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md">
+      <div class="flex-1 items-center px-3 py-3 overflow-x-auto bg-white rounded-md">
           <span></span>
 
           <div class="flex">
@@ -97,36 +103,39 @@
                 </svg>
               </span>
               <input
-                class="w-32 pl-10 pr-4 text-indigo-600 border-gray-200 rounded-md sm:w-64 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                class="w-32 pl-10 pr-4 text-indigo-600 border-gray-200 rounded-md sm:w-96 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
                 type="text"
                 placeholder="以人員名稱搜尋"
+                v-model="search_staff_text"
               />
             </div>
           </div>
-          <span>員工列表：{{StaffTableData.length}}筆</span>
-          <table class="min-w-full leading-normal">
-            <thead>
-              <tr>
-                <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                  ID
-                </th>
-                <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                  人員
-                </th>
-              </tr>
-            </thead>
+          <span>員工列表：{{searchStaffTableData.length}}筆</span>
+          <div id="tableout" class="bg-white">
+            <table class="min-w-full leading-normal">
+              <thead>
+                <tr>
+                  <th class="px-3 py-3  text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                    ID
+                  </th>
+                  <th class="px-3 py-3  text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                    人員
+                  </th>
+                </tr>
+              </thead>
 
-            <tbody>
-              <tr v-for="u in StaffTableData" :key="u.id">
-                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                  <p class="text-gray-900 whitespace-nowrap">{{ u.serial_number }}</p>
-                </td>
-                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                  <p class="text-gray-900 whitespace-nowrap">{{ u.name }}</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+              <tbody>
+                <tr v-for="u in searchStaffTableData" :key="u.id">
+                  <td class="px-3 py-3  text-sm border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap">{{ u.serial_number }}</p>
+                  </td>
+                  <td class="px-3 py-3  text-sm border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap">{{ u.name }}</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
       </div>
 
     </div>
@@ -146,8 +155,11 @@ export default {
   data (){
     return{
       fasteyes_DepartmentTableData: [],
+      searchFasteyes_DepartmentTableData: [],
       StaffTableData:[],
-      search_text: "",
+      searchStaffTableData:[],
+      search_department_text: "",
+      search_staff_text: "",
       select_id: -1,
       select_status: true,
       select_department:{
@@ -170,6 +182,7 @@ export default {
           this.fasteyes_DepartmentTableData.push(department_data)
         });
       }) 
+      this.searchFasteyes_DepartmentTableData = this.fasteyes_DepartmentTableData
     },
     async get_Staff(){
       this.StaffTableData = []
@@ -184,6 +197,7 @@ export default {
           this.StaffTableData.push(staff)
         });
       }) 
+      this.searchStaffTableData = this.StaffTableData
     },
     async deleteDepartment(){
       await delete_department(this.select_department.id).then((res)=>{
@@ -195,6 +209,39 @@ export default {
             }
           },100)
       }) 
+    },
+    filterDepartment(){
+      let newlist = []
+      this.fasteyes_DepartmentTableData.forEach(department =>{
+        if(this.search_department_text !==''){
+          let search_department_text = this.search_department_text.toLowerCase()
+          let hasName = department.name.toLowerCase().search(search_department_text) !== -1
+          if(hasName){
+            newlist.push(department)
+          }
+        }
+        else{
+          newlist.push(department)
+        }
+      })
+      this.searchFasteyes_DepartmentTableData = newlist
+    },
+    filterStaff(){
+      let newlist = []
+      this.StaffTableData.forEach(staff =>{
+        if(this.search_staff_text !==''){
+          let search_staff_text = this.search_staff_text.toLowerCase()
+          let hasSerialNumber = staff.serial_number.toLowerCase().search(search_staff_text) !== -1
+          let hasName = staff.name.toLowerCase().search(search_staff_text) !== -1
+          if(hasName || hasSerialNumber){
+            newlist.push(staff)
+          }
+        }
+        else{
+          newlist.push(staff)
+        }
+      })
+      this.searchStaffTableData = newlist
     },
     showResult (select_department){
       this.select_department.name = select_department.name
@@ -217,6 +264,14 @@ export default {
       if(this.fasteyes_DepartmentTableData.length>0)
         this.showResult(this.fasteyes_DepartmentTableData[0])
     },
+  },
+  watch: {
+    search_department_text(){
+      this.filterDepartment()
+    },
+    search_staff_text(){
+      this.filterStaff()
+    }
   },
   beforeMount() {
     // this.get_Deparment()
@@ -279,10 +334,10 @@ export default {
   width: 24%;
 }
 #switchbutton{
-  width: 40%;
+  width: 60%;
 }
 .searchinput{
-  width: 60%;
+  width: 40%;
 }
 .time_block_text{
   font-size: 14px;
@@ -421,5 +476,16 @@ export default {
     /* white-space: nowrap; */
       border-radius: 10px;
   padding: 10px 5px;
+}
+.report_list{
+  background-color: white;
+}
+.report_list:hover{
+  background-color: powderblue;
+}
+#tableout{
+  height: 500px;
+  width: 100%;
+  overflow-y: scroll;
 }
 </style>
