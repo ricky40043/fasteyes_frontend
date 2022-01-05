@@ -1,12 +1,12 @@
 <template>
-  <div class="modal" v-show="isOpen">
+  <div class="modal" v-show="isOpen"   >
     <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
       <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
           <h4>檔案輸出設定</h4>
         </div>
-        <div class="flex">
+        <!-- <div class="flex">
           <div class="flex items-center">
             <span>選擇所欲輸出的Fasteyes裝置（複選）:</span>
             <button
@@ -18,33 +18,38 @@
             <div class="flex mx-4 text-gray-600 focus:outline-none">
 
 
-        <div
-          v-show="dropdownOpen1"
-          @click="dropdownOpen1 = false"
-          class="fixed inset-0 z-10 w-full h-full"
-        ></div>
-
-        <transition
-          enter-active-class="transition duration-150 ease-out transform"
-          enter-from-class="scale-95 opacity-0"
-          enter-to-class="scale-100 opacity-100"
-          leave-active-class="transition duration-150 ease-in transform"
-          leave-from-class="scale-100 opacity-100"
-          leave-to-class="scale-95 opacity-0"
-        >
-          <div
-            v-show="dropdownOpen1"
-            class="absolute z-2 w-48 py-2 mt-2 bg-white rounded-md shadow-xl"
-          >
-            <div v-for="(item, index) in Fasteyes_DeviceList">
-              <input type="checkbox" :key="item.id" value="first_checkbox" :checked="select_faseyes_device_list[index]" v-model="select_faseyes_device_list[index]">
-              <label :for="item.id">{{item.name}}</label>
-            </div>
+            <div
+              v-show="dropdownOpen1"
+              class="fixed inset-0 z-10 w-full h-full"
+              @click="dropdownOpen1 = false"
+            ></div>
+              
+            <transition
+              enter-active-class="transition duration-150 ease-out transform"
+              enter-from-class="scale-95 opacity-0"
+              enter-to-class="scale-100 opacity-100"
+              leave-active-class="transition duration-150 ease-in transform"
+              leave-from-class="scale-100 opacity-100"
+              leave-to-class="scale-95 opacity-0"
+            >
+              <div
+                v-show="dropdownOpen1"
+                class="absolute z-2 w-48 py-2 mt-2 bg-white rounded-md shadow-xl"
+              >
+                <div v-for="(item, index) in Fasteyes_DeviceList">
+                  <input type="checkbox" :key="item.id" value="first_checkbox" v-model="select_faseyes_device_list[index]">
+                  <label :for="item.id">{{item.name}}</label>
+                </div>
+              </div>
+            </transition>
+            </div> 
           </div>
-        </transition>
-        </div> 
-      </div>
-    </div>
+        </div> -->
+        <span>選擇所欲輸出的Fasteyes裝置（複選）:</span>
+        <div v-for="(item, index) in Fasteyes_DeviceList">
+          <input type="checkbox" :key="item.id" value="first_checkbox" v-model="select_faseyes_device_list[index]">
+          <label :for="item.id">{{item.name}}</label>
+        </div>
         <div class="flex ">
           <div class="flex items-center">
             <input type="checkbox" id="cbox1" value="first_checkbox" v-model="resign_staff_output">
@@ -79,7 +84,7 @@
             <p>每日輸出時間：</p>
           <div class="items-center">
           <ul id="array-rendering">
-            <li v-for="(item, index) in faseyes_output_date_list">
+            <li v-for="item in faseyes_output_date_list">
               <input id="start_time" type="time" class="time_block_text" v-model="faseyes_output_date_list[index]">
             </li>
           </ul>
@@ -114,7 +119,6 @@ export default {
       output_list:[],
       not_output_list:[],
       resign_staff_output: false,
-      select_device: -1,
       temp:-1,
       dropdownOpen1: false,
       temp_outputdata:""
@@ -182,6 +186,7 @@ export default {
         }
         this.select_faseyes_device_list.push(use_device)
       });
+      console.log(this.select_faseyes_device_list)
     },
     deleteOutput(item){
       const index = this.output_list.indexOf(item);
@@ -196,11 +201,6 @@ export default {
         this.not_output_list.splice(index, 1);
       }
       this.output_list.push(item)
-    },
-    select_device(index,checked){
-      console.log(index)
-      console.log(checked)
-      this.select_faseyes_device_list[index] = checked
     },
     mouseoverEvent(event){
       event.target.className = "device_delete_button"

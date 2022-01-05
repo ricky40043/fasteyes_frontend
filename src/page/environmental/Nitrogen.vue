@@ -76,7 +76,7 @@
           
         </div>
       </div>
-        <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
+        <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8 tableout">
           <div
             class="inline-block min-w-full overflow-hidden rounded-lg shadow"
           >

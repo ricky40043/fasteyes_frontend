@@ -70,7 +70,7 @@
       <div class="mt-6">
         <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
           <div
-            class="inline-block min-w-full overflow-hidden rounded-lg shadow"
+            class="inline-block min-w-full overflow-hidden rounded-lg shadow tableout"
           >
             <table class="min-w-full leading-normal">
               <thead>
@@ -426,6 +426,11 @@ export default {
   flex-wrap: nowrap;
   align-content: center;
   padding: 20px 0px;
+}
+.tableout{
+  height: 400px;
+  width: 100%;
+  overflow-y: scroll;
 }
 </style>
 

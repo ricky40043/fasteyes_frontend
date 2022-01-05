@@ -169,7 +169,7 @@ export default {
       let end_time = this.end_date+"T"+this.end_time
       await getFasteyes_AttendancePie(start_time,end_time,this.select_device).then((res)=>{
         let AttendancePieData = Object.assign(res.data)
-        console.log(AttendancePieData)
+        // console.log(AttendancePieData)
         this.statsCards[0].footerText = AttendancePieData.ontime
         this.statsCards[1].footerText = AttendancePieData.late
         this.statsCards[2].footerText = AttendancePieData.leaveEarly
@@ -460,7 +460,6 @@ export default {
   align-content: center;
   padding: 20px 0px;
 }
-
 .cardDiv {
     /* border: 1px solid black; */
     width: 250px;
@@ -468,5 +467,10 @@ export default {
     /* white-space: nowrap; */
       border-radius: 10px;
   padding: 10px 5px;
+}
+#tableout{
+  height: 400px;
+  width: 100%;
+  overflow-y: scroll;
 }
 </style>

@@ -85,20 +85,10 @@
     <div class="flex">
       <div id="downtable" :class="showPicture? 'showPictureClass':'NotshowPictureClass'">
               <div class="mt-6">
-          <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
+          <div class="px-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
             <div
-              class="inline-block min-w-full overflow-hidden rounded-lg shadow"
+              class="inline-block min-w-full overflow-hidden rounded-lg shadow tableout"
             >
-              <div class="flex flex-col items-center ">
-                <div class="inline-flex mt-2 xs:mt-0">
-                  <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-l hover:bg-gray-400" v-on:click="decrement">
-                    Prev
-                  </button>
-                  <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-300 rounded-r hover:bg-gray-400" v-on:click="increment">
-                    Next
-                  </button>
-                </div>
-              </div>
               <table class="min-w-full leading-normal">
                 <thead>
                   <tr>
@@ -565,6 +555,11 @@ export default {
 }
 .report_list:hover{
   background-color: powderblue;
+}
+.tableout{
+  height: 400px;
+  width: 100%;
+  overflow-y: scroll;
 }
 </style>
 
