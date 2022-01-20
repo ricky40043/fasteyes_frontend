@@ -1,4 +1,11 @@
 <template>
+  <teleport to="#destination" :disabled="disableTeleport">
+    <ModifyObservation ref="settingmodal"
+    :selectObservation_id="select_id"
+    @modifyObservation="reset"
+    />
+  </teleport>
+
   <router-link to="/fasteyes/staff">
     <p class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-"> &lt; {{staff_name}} 人員歷史紀錄</p>
   </router-link>
@@ -54,14 +61,14 @@
                 </thead>
 
                 <tbody>
-                  <tr v-for="u in fasteyes_ObservationTableData" :key="u.id" v-on:click="showResult($event, u)">
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <tr v-for="u in fasteyes_ObservationTableData" :key="u.id" v-on:click="showResult($event, u)" class="report_list" :style="select_id==u.id? 'background-color:powderblue;':''">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap">{{ u.deviceName }}</p>
                     </td>
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap">{{ u.time }}</p>
                     </td>
-                    <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">{{ u.temperature }}°C</p>
                       <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.temperature }}°C</p>
                     </td>
@@ -107,8 +114,8 @@
           :src="face_url"
           alt="人員照片"
         />
-        <div class="px-6 py-4">
-          <p>錯誤回報</p>
+        <div class="px-6 py-4 text-blue-600">
+          <div @click="errorReportClick">錯誤回報</div>
         </div>
       </div>
       </div>
@@ -117,13 +124,17 @@
 </template>
 
 <script>
-// import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { getFasteyes_StaffObservation, get_staff, getFasteyesDevice } from "../../untils/api.js"
+import ModifyObservation from "../../components/fasteyes/ModifyObservation.vue" 
 import store from "../../store"
 import moment from 'moment';
 import global_ from "../../Global.vue"
 import { useRoute } from 'vue-router'
 export default {
+  components:{
+    ModifyObservation
+  },
   data (){
     let fasteyes_ObservationTableData=[]
     let page = 1
@@ -261,6 +272,7 @@ export default {
       this.end_time = "23:59:59"
       this.search_text=""
       this.select_status=-1
+      this.showPicture = false
       this.getfasteyes_Observation()
     },
     select_all(){
@@ -278,6 +290,9 @@ export default {
     search_event(){
       console.log(this.search_text) 
     },
+    errorReportClick(){
+      this.showSettingModal()
+    }
   },
   beforeMount() {
     this.reset()
@@ -302,8 +317,25 @@ export default {
     const route = useRoute()
 
     const staff_history_id = route.params.id
-    return { staff_history_id }
+
+    const disableTeleport = ref(false)   
+    
+    const settingmodal = ref(null);
+    
+    function showSettingModal(){
+      settingmodal.value.show()
+      this.showModal = true
+    }
+
+    return { 
+      disableTeleport,
+      showSettingModal,
+      settingmodal,
+      staff_history_id   
+    }
   }
+
+
 };
 </script>
 
@@ -442,6 +474,12 @@ export default {
   /* color:rebeccapurple */
   position: absolute;
   top: 300px;
+}
+.report_list{
+  background-color: white;
+}
+.report_list:hover{
+  background-color: powderblue;
 }
 </style>
 

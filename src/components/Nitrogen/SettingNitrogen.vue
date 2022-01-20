@@ -1,4 +1,10 @@
 <template>
+    <teleport to="#destination" :disabled="disableTeleport">
+      <DeleteComfirm ref="deletemodal" 
+      @deleteDevice="deleteDevice"
+      />
+    </teleport>
+
   <div class="modal" v-show="isOpen">
     <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
@@ -109,15 +115,13 @@
         </tbody>
       </table>
         <div >
-          <button class="device_delete_button" style="align-content: center;" @click="deleteDevice">刪除裝置</button>
+          <button class="device_delete_button" style="align-content: center;" @click="deleteClick">刪除裝置</button>
         </div>
         <div class="flex items-center justify-center">
           <button class ="device_comfirm_button" @click="hide">取消</button>
           <button class ="device_set_button" @click="modifyDevice">儲存</button>
-
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -126,9 +130,14 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { modify_device, delete_device} from '../../untils/api.js'
+import DeleteComfirm from '../../components/DeleteComfirm.vue'
+
 const router = useRouter();
 
 export default {
+  components:{
+    DeleteComfirm
+  },
   props:[
     "selectDeviceData",
   ],
@@ -167,9 +176,11 @@ export default {
         this.$emit('saveDevice')
       })
     },
+    async deleteClick(){
+      this.showDeleteModal()
+    },
     async deleteDevice(){
       await delete_device(4, this.device_id).then((res) => {
-        alert("資料刪除成功")
         this.hide()
         this.$emit('deleteDevice')
       })
@@ -187,18 +198,18 @@ export default {
     },
 check(){
       if(this.alarm_Nitrogen_lower_limit > this.alarm_Nitrogen_upper_limit ||
-         this.alarm_Nitrogen_lower_limit =="" ||
-         this.alarm_Nitrogen_upper_limit ==""){
+         this.alarm_Nitrogen_lower_limit ==="" ||
+         this.alarm_Nitrogen_upper_limit ===""){
         this.Nitrogen_error = true
       }
       else{
         this.Nitrogen_error = false
       }
       if(this.alarm_Oxygen_lower_limit > this.alarm_Oxygen_upper_limit ||
-         this.alarm_Oxygen_lower_limit<0 || this.aalarm_Oxygen_lower_limit>100 ||
+         this.alarm_Oxygen_lower_limit<0 || this.alarm_Oxygen_lower_limit>100 ||
          this.alarm_Oxygen_upper_limit<0 || this.alarm_Oxygen_upper_limit>100 ||
-         this.alarm_Oxygen_lower_limit=="" ||
-         this.alarm_Oxygen_upper_limit=="" ){
+         this.alarm_Oxygen_lower_limit==="" ||
+         this.alarm_Oxygen_upper_limit==="" ){
         this.Oxygen_error = true
       }
       else
@@ -240,7 +251,7 @@ check(){
   },
   setup(){
     const isOpen = ref(false);
-
+    
     function hide(){
         isOpen.value = false;
     }
@@ -251,13 +262,19 @@ check(){
           this.input_data()
         },10)
     }
+    const deletemodal = ref(null);
+    function showDeleteModal(){
+      deletemodal.value.show()
+    }
 
     return{
         isOpen,
         hide,
-        show
+        show,
+        deletemodal,
+        showDeleteModal
     }
-}
+  }
 }
 </script>
 

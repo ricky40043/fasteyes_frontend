@@ -28,8 +28,10 @@ import EnvironmentDeviceNitrogen from "./page/environmental/Device_Nitrogen.vue"
 import EnvironmentDeviceTemperatureHumidity from "./page/environmental/Device_TemperatureHumidity.vue";
 import TemperatureHumidity from "./page/environmental/TemperatureHumidity.vue";
 import IPCam from "./page/IPCam/IPCam.vue";
-
 import Staff from "./page/fasteyes/Staff.vue";
+import AreaSetting from "./page/area/AreaSetting.vue";
+import DeviceList from "./page/area/DeviceList.vue";
+import DeviceMap from "./page/area/DeviceMap.vue";
 import NotFound from "./page/NotFound.vue";
 
 const routes: RouteRecordRaw[] = [
@@ -464,6 +466,63 @@ const routes: RouteRecordRaw[] = [
     name: "TemperatureHumidity",
     component: TemperatureHumidity,
     meta: { layout: "environmental" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
+  },
+  {
+    path: "/area/area_setting",
+    name: "AreaSetting",
+    component: AreaSetting,
+    meta: { layout: "area" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
+  },
+  {
+    path: "/area/device_list",
+    name: "DeviceList",
+    component: DeviceList,
+    meta: { layout: "area" ,requiresAuth: true},
+    beforeEnter: (to, from, next)=> {
+      if(to.matched.some(recode =>{
+        return recode.meta.requiresAuth
+      })) {
+        if(!sessionStorage.getItem('token')) {
+          next({ name:'Login'})
+        } else {
+          next()
+        }
+      } else{
+        next()
+      }
+    }
+  },
+  {
+    path: "/area/device_map",
+    name: "DeviceMap",
+    component: DeviceMap,
+    meta: { layout: "area" ,requiresAuth: true},
     beforeEnter: (to, from, next)=> {
       if(to.matched.some(recode =>{
         return recode.meta.requiresAuth

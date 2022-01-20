@@ -62,6 +62,22 @@
               <p v-if="humidity_error" style="color: red;">上限值不得小於下限值，且介於0~100</p>
             </td>
           </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>溫度補償:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="number" v-model="addDeviceData.compensate_temperature" :class="empty_temperature_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>濕度補償:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="number" v-model="addDeviceData.compensate_humidity" :class="empty_humidity_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
         </tbody>
       </table>
         <div class="flex items-center justify-center">
@@ -81,34 +97,26 @@ const router = useRouter();
 
 export default {
   data () {
-      let device_name=""
-      let area=""
-      let serial_number=""
-      let temperature_error = false
-      let humidity_error = false
-      let empty_name_error = false
-      let empty_area_error = false
-      let empty_serial_number_error = false
-      // let alarm_temperature_lower_limit
-      // let alarm_temperature_upper_limit
-      // let alarm_humidity_lower_limit
-      // let alarm_humidity_upper_limit
     return {
-      device_name,
-      area,
-      serial_number,
-      temperature_error,
-      humidity_error,
-      empty_name_error,
-      empty_area_error,
-      empty_serial_number_error,
+      device_name:"",
+      area:"",
+      serial_number:"",
+      temperature_error: false,
+      humidity_error: false,
+      empty_name_error: false,
+      empty_area_error: false,
+      empty_serial_number_error: false,
+      empty_temperature_error: false,
+      empty_humidity_error: false,
       addDeviceData: {
         interval_time: 60,
         alarm_temperature_lower_limit: "",
         alarm_temperature_upper_limit: "",
         alarm_humidity_lower_limit: "",
         alarm_humidity_upper_limit: "",
-        battery_alarm: 10
+        battery_alarm: 10,
+        compensate_temperature: 0,
+        compensate_humidity: 0
       },
    }
   },
@@ -122,14 +130,18 @@ export default {
       await add_device(1, this.device_name, this.area, this.serial_number, DeviceData).then((res) => {
         this.hide()
         this.$emit('addDevice')
+      }).catch((err) => {
+        alert(err.response.data.detail)
       })
     },
     clear_data(){
-      this.temperature_error=""
-      this.humidity_error=""
-      this.empty_name_error=""
-      this.empty_area_error=""
-      this.empty_serial_number_error=""
+      this.temperature_error=false
+      this.humidity_error=false
+      this.empty_name_error=false
+      this.empty_area_error=false
+      this.empty_serial_number_error=false
+      this.empty_temperature_error = false
+      this.empty_humidity_error= false
       this.device_name = ""
       this.area = ""
       this.serial_number = ""
@@ -139,13 +151,15 @@ export default {
         alarm_temperature_upper_limit: "",
         alarm_humidity_lower_limit: "",
         alarm_humidity_upper_limit: "",
+        compensate_temperature: 0,
+        compensate_humidity: 0,
         battery_alarm: 10
       }
     },
     check(){
       if(this.addDeviceData.alarm_temperature_lower_limit > this.addDeviceData.alarm_temperature_upper_limit ||
-         this.addDeviceData.alarm_temperature_lower_limit =="" ||
-         this.addDeviceData.alarm_temperature_upper_limit ==""){
+         this.addDeviceData.alarm_temperature_lower_limit ==="" ||
+         this.addDeviceData.alarm_temperature_upper_limit ===""){
         this.temperature_error = true
       }
       else{
@@ -154,39 +168,43 @@ export default {
       if(this.addDeviceData.alarm_humidity_lower_limit > this.addDeviceData.alarm_humidity_upper_limit ||
          this.addDeviceData.alarm_humidity_lower_limit<0 || this.addDeviceData.alarm_humidity_lower_limit>100 ||
          this.addDeviceData.alarm_humidity_upper_limit<0 || this.addDeviceData.alarm_humidity_upper_limit>100 ||
-         this.addDeviceData.alarm_humidity_lower_limit=="" ||
-         this.addDeviceData.alarm_humidity_upper_limit=="" ){
+         this.addDeviceData.alarm_humidity_lower_limit==="" ||
+         this.addDeviceData.alarm_humidity_upper_limit==="" ){
         this.humidity_error = true
       }
-      else{
+      else
         this.humidity_error = false
-      }
-      if(this.device_name==""){
+
+      if(this.device_name=="")
         this.empty_name_error = true
-      }
-      else{
+      else
         this.empty_name_error = false
-      }
 
-      if(this.area==""){
+      if(this.area=="")
         this.empty_area_error = true
-      }
-      else{
+      else
         this.empty_area_error = false
-      }
-      if(this.serial_number==""){
+      
+      if(this.serial_number=="")
         this.empty_serial_number_error = true
-      }
-      else{
+      else
         this.empty_serial_number_error = false
-      }
 
-      if(this.humidity_error || this.temperature_error || this.empty_name_error || this.empty_area_error || this.empty_serial_number_error){
+      if(this.addDeviceData.compensate_temperature==="")
+        this.empty_temperature_error = true
+      else
+        this.empty_temperature_error = false
+      
+      if(this.addDeviceData.compensate_humidity==="")
+        this.empty_humidity_error = true
+      else
+        this.empty_humidity_error = false
+
+      if(this.humidity_error || this.temperature_error || this.empty_name_error || this.empty_area_error || 
+         this.empty_serial_number_error || this.empty_temperature_error || this.empty_humidity_error)
         return false
-      }
-      else{
+      else
         return true
-      }
     }
 
   },
@@ -241,7 +259,7 @@ a{
     left: 0;
     top: 0;
     width: 100%;
-    height: 115%;
+    height: 135%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {

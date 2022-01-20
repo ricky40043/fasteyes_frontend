@@ -10,6 +10,8 @@
       @deleteDevice="init"
       />
     </teleport>
+
+
   <div id="upbutton">
         <div class=" px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
           <div id="setbutton" class=" flex items-center" @click="getTHDevice">
@@ -83,6 +85,12 @@
                     濕度正常範圍
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                    溫度
+                  </th>
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                    濕度
+                  </th>
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
                     電池
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
@@ -110,6 +118,14 @@
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap">{{ u.humidity_lower_limit }}%~{{ u.humidity_upper_limit }}%</p>
+                  </td>
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.temperature ==-1">無資料</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.temperature }}</p>
+                  </td>
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.humidity ==-1">無資料</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.humidity }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.battery ==-1">無資料</p>
@@ -198,6 +214,10 @@ export default {
         device.temperature_upper_limit = Data.info.alarm_temperature_upper_limit  
         device.humidity_lower_limit = Data.info.alarm_humidity_lower_limit  
         device.humidity_upper_limit = Data.info.alarm_humidity_upper_limit  
+        device.compensate_temperature = Data.info.compensate_temperature
+        device.compensate_humidity = Data.info.compensate_humidity  
+        device.temperature = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.temperature : -1
+        device.humidity = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.humidity : -1
         device.battery = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.battery : -1
         if (this.device_observation_Map.get(Data.id)==undefined)
           device.status = 1
@@ -252,8 +272,8 @@ export default {
           this.device_Map.set(device.id, Object.assign(device))
         });
       })
-      await this.getTHDevice()
       await this.getTHObservation()
+      await this.getTHDevice()
     },
     doSome(res) {
       console.log(success)
@@ -281,11 +301,11 @@ export default {
     
     function addDeviceClick(){
       modal.value.show()
-      this.showModal = true
+      // this.showModal = true
     }
     function showSettingModal(){
       settingmodal.value.show()
-      this.showModal = true
+      // this.showModal = true
     }
 
     return {

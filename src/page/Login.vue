@@ -102,8 +102,7 @@ export default {
         }).then((res) => {
           // ========
         }).catch((err) => {
-          console.log(err)
-          alert(err.data) 
+          alert(err.response.data.detail)
         })
     },
 

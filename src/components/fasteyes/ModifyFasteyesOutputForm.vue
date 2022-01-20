@@ -84,7 +84,7 @@
             <p>每日輸出時間：</p>
           <div class="items-center">
           <ul id="array-rendering">
-            <li v-for="item in faseyes_output_date_list">
+            <li v-for="(item,index) in faseyes_output_date_list">
               <input id="start_time" type="time" class="time_block_text" v-model="faseyes_output_date_list[index]">
             </li>
           </ul>
@@ -144,11 +144,13 @@ export default {
           faseyes_form_data.output_fasteyes.push(device)
         }
       })
+      this.faseyes_observation_form_data.output_time = this.faseyes_output_date_list
+      console.log(this.faseyes_observation_form_data.output_time)
       await patch_output(faseyes_form_data).then((res) => {
         this.hide()
         this.$emit('saveOutputForm')
         }).catch((err) => {
-          console.log(err)
+          alert(err.response.data.detail)
         })
     },
     async getDevice(){
@@ -186,7 +188,6 @@ export default {
         }
         this.select_faseyes_device_list.push(use_device)
       });
-      console.log(this.select_faseyes_device_list)
     },
     deleteOutput(item){
       const index = this.output_list.indexOf(item);

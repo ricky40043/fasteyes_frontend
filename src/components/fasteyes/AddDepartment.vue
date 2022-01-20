@@ -41,6 +41,7 @@ export default {
         this.hide()
         this.$emit('addDepartment')
         }).catch((err) => {
+          alert(err.response.data.detail)
           let errorMessage = err.response.data.detail
           if (errorMessage == "department name is exist"){
             this.error_input = true

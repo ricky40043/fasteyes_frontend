@@ -132,16 +132,21 @@
                     <p class="text-gray-900 whitespace-nowrap">{{ u.time }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_temperature == 0">{{ u.temperature }}°C</p>
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.temperature }}°C</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_temperature == 0">{{ u.temperature }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.temperature }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_humidity == 0">{{ u.humidity }}％</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.humidity }}％</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_temperature == 0 && u.alarm_humidity == 0 ">正常</p>
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_Nitrogen == 0 && u.alarm_humidity == 0 && u.alarm_Oxygen == 0 ">正常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_Nitrogen == 0 && u.alarm_Oxygen == 1 ">濕度異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_Nitrogen == 1 && u.alarm_Oxygen == 0 ">溫度異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_Nitrogen == 1 && u.alarm_Oxygen == 1 ">溫濕度異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_status == 1 ">裝置異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_status == 2 ">資料遺失</p>
+                    <p class="text-red-600 whitespace-nowrap" style="color:red;" v-else>異常</p>
                   </td>
                 </tr>
               </tbody>
@@ -236,7 +241,7 @@ export default {
       let device_model = 4
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      let FILE = await getDevice_ModelObservation_data(device_model, this.select_status,start_time,end_time).then((res)=>{
+      let FILE = await getDevice_ModelObservation_data(device_model, this.select_status,start_time,end_time,this.search_text).then((res)=>{
         return Object.assign(res.data)
       }) 
       if (FILE) {

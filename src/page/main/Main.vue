@@ -21,7 +21,7 @@
 import TimeShow from "../../components/main/TimeShow.vue";
 import VideoShow from "../../components/main/VideoShow.vue";
 import TemperatureHumidityShow from "../../components/main/TemperatureHumidityShow.vue";
-import { getAllDevice ,getLatestDeviceObservation,getFasteyesDevice, get_bulletin_image} from "../../untils/api.js"
+import { getAllDevice ,getLatestDeviceObservation,getFasteyesDevice, get_bulletin_image, get_bulletin} from "../../untils/api.js"
 import store from "../../store"
 
 export default {
@@ -68,8 +68,17 @@ export default {
         new Uint8Array(res.data).reduce(
           (data, byte) => data + String.fromCharCode(byte), ''
         )))
+        console.log(this.image_data)
       })
     },
+    async getBulletin(){
+      await get_bulletin().then(async(res)=>{
+        if(res.data.is_used){
+          await this.getBulletinImage()
+        }
+      })
+    },
+    
   },
 
   // watch:{
@@ -84,7 +93,8 @@ export default {
     this.getTHDevice(),
     this.getIPCamdevice(),
     this.getFasteyes_Device()
-    this.getBulletinImage()
+    this.getBulletin()
+    // this.getBulletinImage()
   },
   created() {
     if(sessionStorage.getItem("state")){

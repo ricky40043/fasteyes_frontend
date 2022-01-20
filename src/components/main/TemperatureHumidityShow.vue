@@ -8,52 +8,52 @@
       <div class="TH_div" v-show="TH_Data_list.length>0">
         <div class="TH_div_inner" >
           <div class="TH_div_inner_area" >
-            <p class="TH_div_inner_text">{{ getTHDatafunc(0,1) }}</p>
+            <p :class="check_error(0) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(0,1) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(0,2) }} °C</p>
+            <p :class="check_error(0) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(0,2) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(0,3) }} %</p>
+            <p :class="check_error(0) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(0,3) }}</p>
           </div>
         </div>
       </div>
       <div class="TH_div" v-show="TH_Data_list.length>2">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
-            <p class="TH_div_inner_text">{{ getTHDatafunc(2,1) }}</p>
+            <p :class="check_error(2) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(2,1) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(2,2) }} °C</p>
+            <p :class="check_error(2) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(2,2) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(2,3) }} %</p>
+            <p :class="check_error(2) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(2,3) }}</p>
           </div>
         </div>
       </div>
       <div class="TH_div" v-show="TH_Data_list.length>4">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
-            <p class="TH_div_inner_text">{{ getTHDatafunc(4,1) }}</p>
+            <p :class="check_error(4) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(4,1) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(4,2) }} °C</p>
+            <p :class="check_error(4) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(4,2) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(4,3) }} %</p>
+            <p :class="check_error(4) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(4,3) }}</p>
           </div>
         </div>
       </div>
       <div class="TH_div" v-show="TH_Data_list.length>6">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
-            <p class="TH_div_inner_text">{{ getTHDatafunc(6,1) }}</p>
+            <p :class="check_error(6) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(6,1) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(6,2) }} °C</p>
+            <p :class="check_error(6) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(6,2) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(6,3) }} %</p>
+            <p :class="check_error(6) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(6,3) }}</p>
           </div>
         </div>
       </div>
@@ -62,52 +62,53 @@
       <div class="TH_div" v-show="TH_Data_list.length>1">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
-            <p class="TH_div_inner_text">{{ getTHDatafunc(1,1) }}</p>
+            <p :class="check_error(1) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(1,1) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(1,2) }} °C</p>
+            <p :class="check_error(1) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(1,2) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(1,3) }} %</p>
+            <p :class="check_error(1) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(1,3) }}</p>
           </div>
         </div>
       </div>
       <div class="TH_div" v-show="TH_Data_list.length>3">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
-            <p class="TH_div_inner_text">{{ getTHDatafunc(3,1) }}</p>
+            <p :class="check_error(3) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(3,1) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(3,2) }} °C</p>
+            <p :class="check_error(3) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(3,2) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(3,3) }} %</p>
+            <p :class="check_error(3) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(3,3) }}</p>
           </div>
         </div>
       </div>
       <div class="TH_div" v-show="TH_Data_list.length>5">
         <div class="TH_div_inner">
           <div class="TH_div_inner_area" >
-            <p class="TH_div_inner_text">{{ getTHDatafunc(5,1) }}</p>
+            <p :class="check_error(5) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(5,1) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(5,2) }} °C</p>
+            <p :class="check_error(5) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(5,2) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(5,3) }} %</p>
+            <p :class="check_error(5) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(5,3) }}</p>
           </div>
         </div>
       </div>
       <div class="TH_div" >
         <div class="TH_div_inner" v-show="TH_Data_list.length>7">
           <div class="TH_div_inner_area" >
-            <p class="TH_div_inner_text">{{ getTHDatafunc(7,1) }}</p>
+            <!-- <p :class="TH_Data_list[7].data.info.status==0 ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ TH_Data_list[7].data.info.status }}</p> -->
+            <p :class="check_error(7) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{  getTHDatafunc(7,1) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(7,2) }} °C</p>
+            <p :class="check_error(7) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(7,2) }}</p>
           </div>
           <div class="TH_div_inner_data">
-            <p class="TH_div_inner_text">{{ getTHDatafunc(7,3) }} %</p>
+            <p :class="check_error(7) ?'TH_div_inner_text':'TH_div_inner_text_error'">{{ getTHDatafunc(7,3) }}</p>
           </div>
         </div>
       </div>
@@ -222,6 +223,15 @@
 .TH_div_inner_text{
   font-size: 20px;
   /* font-weight: bold; */
+  color: red;
+  margin-left: 2px;
+  display: flex;
+  align-content: left;
+  align-items: center;
+}
+.TH_div_inner_text_error{
+  font-size: 20px;
+  /* font-weight: bold; */
   color: white;
   margin-left: 2px;
   display: flex;
@@ -287,6 +297,16 @@ export default {
         // });
         // console.log(this.TH_Data_list)
       },
+      check_error(index){
+        if (index >= this.TH_Data_list.length)
+          return false
+        let data = this.TH_Data_list[index]
+        // console.log(index,type, data)
+        if (data === undefined)
+          return false
+        if (data.info.status ==2)
+          return true
+      },
       getTHDatafunc(index,type) {
         if (index >= this.TH_Data_list.length)
           return ""
@@ -295,14 +315,19 @@ export default {
         if (data === undefined)
           return ""
 
+
         if(type == 1){
-          return store.state.deviceList_TH[index].name
+          return data.info.name
         }
         else if(type ==2){
-          return data.info.temperature
+          if (data.info.status ==2)
+            return "無資料"
+          return data.info.temperature+ "°C"
         }
         else if(type ==3){
-          return data.info.humidity
+          if (data.info.status ==2)
+            return "無資料"
+          return data.info.humidity+"%"
         }
         else 
           return data

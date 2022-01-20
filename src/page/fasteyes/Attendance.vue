@@ -27,20 +27,42 @@
         </div>
       </div>
   </div>
-    <div id="select">
-      <div class="mt-4" >
-        <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
-          <div class="flex items-center justify-center">
-            <p>上班時段：</p>
-            <input type="time" class="time_block_text" v-model="check_in_time1">
-            <input type="time" class="time_block_text" v-model="check_in_time2">
-            <p> ~ </p>
-            <p>下班時段：</p>
-            <input type="time" class="time_block_text" v-model="check_out_time1">
-            <input type="time" class="time_block_text" v-model="check_out_time2">
-          </div>
+  <div id="select">
+    <div class="mt-4" >
+      <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+        <div class="flex items-center justify-center">
+          <p>上班時段：</p>
+          <input type="time" class="time_block_text" v-model="check_in_time1">
+          <input type="time" class="time_block_text" v-model="check_in_time2">
+          <p> ~ </p>
+          <p>下班時段：</p>
+          <input type="time" class="time_block_text" v-model="check_out_time1">
+          <input type="time" class="time_block_text" v-model="check_out_time2">
         </div>
       </div>
+      <!-- <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+        <div class="flex items-center justify-center">
+          <p>上班時段：</p>
+          <input type="time" class="time_block_text" v-model="check_in_time1_2">
+          <input type="time" class="time_block_text" v-model="check_in_time2_2">
+          <p> ~ </p>
+          <p>下班時段：</p>
+          <input type="time" class="time_block_text" v-model="check_out_time1_2">
+          <input type="time" class="time_block_text" v-model="check_out_time2_2">
+        </div>
+      </div>
+        <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+        <div class="flex items-center justify-center">
+          <p>上班時段：</p>
+          <input type="time" class="time_block_text" v-model="check_in_time1_3">
+          <input type="time" class="time_block_text" v-model="check_in_time2_3">
+          <p> ~ </p>
+          <p>下班時段：</p>
+          <input type="time" class="time_block_text" v-model="check_out_time1_3">
+          <input type="time" class="time_block_text" v-model="check_out_time2_3">
+        </div>
+      </div> -->
+    </div>
   </div>
   <div id="data">
     <div id="upnormal">
@@ -83,11 +105,11 @@
             />
           </div>
           </div> -->
-          <!-- <div id="outputbutton">
-            <button class="device_abnormal_button">
+          <div id="outputbutton">
+            <button class="device_abnormal_button" @click="outputclick">
               輸出 .csv
             </button>
-          </div> -->
+          </div>
           
         </div>
       </div>
@@ -167,7 +189,7 @@
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.checkout=='Invalid date'">無資料</p>
-                    <p class="text-gray-900 whitespace-nowrap">{{ u.checkout }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.checkout }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.checkout=='Invalid date'">無資料</p>
@@ -206,7 +228,7 @@
 
 <script type="text/javascript">
 // import { ref, onMounted } from 'vue'
-import { getFasteyes_Attendance, getFasteyes_AttendanceLineChart, getFasteyesDevice} from "../../untils/api.js"
+import { getFasteyes_Attendance, getFasteyes_AttendanceLineChart, getFasteyesDevice, getFasteyes_Attendance_csv} from "../../untils/api.js"
 import store from "../../store"
 import moment from 'moment'
 import { VueEcharts } from "vue3-echarts";
@@ -237,10 +259,10 @@ export default {
       start_time,
       end_date,
       end_time,
-      check_in_time1:"08:00:00",
+      check_in_time1:"06:00:00",
       check_in_time2:"09:00:00",
       check_out_time1:"17:00:00",
-      check_out_time2:"18:00:00",
+      check_out_time2:"21:00:00",
       select_status,
       search_text,
       select_date,
@@ -334,14 +356,31 @@ export default {
     async getfasteyesAttendanceLineChart(){
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      await getFasteyes_AttendanceLineChart(start_time,end_time,this.page,this.select_device).then((res)=>{
+      await getFasteyes_AttendanceLineChart(start_time,end_time,this.page,this.select_device,
+                                            this.check_in_time1,this.check_in_time2,this.check_out_time1,this.check_out_time2).then((res)=>{
         let observation = Object.assign(res.data)
-        // console.log(observation)
-        // console.log(this.option)
+        console.log(observation)
         this.time_intervalData = observation.time_interval
         this.work_staff = observation.work_staff
-        // console.log(this.option)
       }) 
+    },
+    async outputclick(){
+      let start_time = this.start_date+"T"+this.start_time
+      let end_time = this.end_date+"T"+this.end_time
+      let FILE = await getFasteyes_Attendance_csv(start_time,end_time,this.select_device,this.select_status,
+                                                  this.check_in_time1,this.check_in_time2,this.check_out_time1,this.check_out_time2 ).then((res)=>{
+        return Object.assign(res.data)
+      }) 
+      if (FILE) {
+         const anchor = document.createElement('a');
+          anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(FILE);
+          anchor.target = '_blank';
+          let today = new Date();
+          let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+          anchor.download = date+'考勤結果輸出報表.csv';
+          anchor.click();
+      } else 
+        console.log('none')
     },
     async getDevice(){
       this.Fasteyes_DeviceTableData = []

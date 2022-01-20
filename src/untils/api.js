@@ -51,14 +51,25 @@ export function setUserInfo (obj_input) {
   })
 }
 
-export function getAllDevice (device_model_id) {
-  return axios({
-    url: `${global_.url}/devices/device_model/${device_model_id}`,
-    method: 'get',
-    headers: {
-      Authorization: `Bearer ${token()}`
-    }
-  })
+export function getAllDevice (device_model_id, area="") {
+  if(area===""){
+    return axios({
+      url: `${global_.url}/devices/device_model/${device_model_id}`,
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${token()}`
+      }
+    })
+  }
+  else{
+    return axios({
+      url: `${global_.url}/devices/device_model/${device_model_id}?area=${area}`,
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${token()}`
+      }
+    }) 
+  }
 }
 
 export function getDeviceObservation (device_id, start_time,end_time) {
@@ -88,7 +99,7 @@ export function getLatestDeviceObservation () {
   })
 }
 
-export function getDevice_ModelObservation (device_model_id, page, size,status,start_time,end_time,select_device_id) {
+export function getDevice_ModelObservation (device_model_id, page, size,status,start_time,end_time,select_device_id,area) {
   let s = start_time 
   let e = end_time
   if(!(s && e)){
@@ -98,7 +109,7 @@ export function getDevice_ModelObservation (device_model_id, page, size,status,s
   } 
 
   return axios({
-    url: `${global_.url}/observations/device_model/${device_model_id}?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}&select_device=${select_device_id}`,
+    url: `${global_.url}/observations/device_model/${device_model_id}?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}&select_device=${select_device_id}&area=${area}`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -106,7 +117,7 @@ export function getDevice_ModelObservation (device_model_id, page, size,status,s
   })
 }
 
-export function getDevice_ModelObservation_data (device_model_id,status,start_time,end_time) {
+export function getDevice_ModelObservation_data (device_model_id,status,start_time,end_time,area) {
   let s = start_time 
   let e = end_time
   if(!(s && e)){
@@ -114,15 +125,28 @@ export function getDevice_ModelObservation_data (device_model_id,status,start_ti
     s = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T00:00:00"
     e = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T23:59:59"
   } 
+  if(area===""){
+    return axios({
+      url: `${global_.url}/observations/device_model/${device_model_id}/data_output?start_timestamp=${s}&end_timestamp=${e}&status=${status}`,
+      method: 'get',
+      headers: {
+        'Content-Type': 'text/csv',
+        Authorization: `Bearer ${token()}`
+      }
+    })
+  }
+  else
+  {
+    return axios({
+      url: `${global_.url}/observations/device_model/${device_model_id}/data_output?start_timestamp=${s}&end_timestamp=${e}&status=${status}&area=${area}`,
+      method: 'get',
+      headers: {
+        'Content-Type': 'text/csv',
+        Authorization: `Bearer ${token()}`
+      }
+    })
+  }
 
-  return axios({
-    url: `${global_.url}/observations/device_model/${device_model_id}/data_output?start_timestamp=${s}&end_timestamp=${e}&status=${status}`,
-    method: 'get',
-    headers: {
-      'Content-Type': 'text/csv',
-      Authorization: `Bearer ${token()}`
-    }
-  })
 }
 
 export function getFasteyes_Observation (page, size,status,start_time,end_time,select_device) {
@@ -193,22 +217,39 @@ export function getFasteyes_Attendance (page, size,status,start_time,end_time,se
     s = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T00:00:00"
     e = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T23:59:59"
   } 
-  let attendance_in = {}
-  attendance_in.working_time_1 = check_in_time1
-  attendance_in.working_time_2 = check_in_time2
-  attendance_in.working_time_off_1 = check_out_time1
-  attendance_in.working_time_off_2 = check_out_time2
+  // let attendance_in = {}
+  // attendance_in.working_time_1 = check_in_time1
+  // attendance_in.working_time_2 = check_in_time2
+  // attendance_in.working_time_off_1 = check_out_time1
+  // attendance_in.working_time_off_2 = check_out_time2
   return axios({
-    url: `${global_.url}/attendance?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}&select_device_id=${select_device}`,
-    method: 'post',
+    url: `${global_.url}/attendance?start_timestamp=${s}&end_timestamp=${e}&page=${page}&size=${size}&status=${status}&select_device_id=${select_device}&working_time_1=${check_in_time1}&working_time_2=${check_in_time2}&working_time_off_1=${check_out_time1}&working_time_off_2=${check_out_time2}`,
+    method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
-    },
-    data: attendance_in
+    }
   })
 }
 
-export function getFasteyes_AttendancePie (start_time,end_time,select_device) {
+export function getFasteyes_Attendance_csv (start_time,end_time,select_device, status,check_in_time1,check_in_time2,check_out_time1,check_out_time2) {
+  let s = start_time 
+  let e = end_time
+  if(!(s && e)){
+    let nowTime = new Date()
+    s = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T00:00:00"
+    e = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T23:59:59"
+  } 
+  return axios({
+    url: `${global_.url}/attendance/output_csv?start_timestamp=${s}&end_timestamp=${e}&select_device_id=${select_device}&status=${status}&working_time_1=${check_in_time1}&working_time_2=${check_in_time2}&working_time_off_1=${check_out_time1}&working_time_off_2=${check_out_time2}`,
+    method: 'get',
+    headers: {
+      'Content-Type': 'text/csv',
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}
+
+export function getFasteyes_AttendancePie (start_time,end_time,select_device,working_time_1,working_time_2,working_time_off_1,working_time_off_2) {
   let s = start_time 
   let e = end_time
   if(!(s && e)){
@@ -217,22 +258,25 @@ export function getFasteyes_AttendancePie (start_time,end_time,select_device) {
     e = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T23:59:59"
   } 
 
-  let attendance_in = {}
-  attendance_in.working_time_1 = "8:00:00"
-  attendance_in.working_time_2 = "9:00:00"
-  attendance_in.working_time_off_1 = "17:00:00"
-  attendance_in.working_time_off_2 = "18:00:00"
+  // let attendance_in = {}
+  // attendance_in.working_time_1 = "8:00:00"
+  // attendance_in.working_time_2 = "9:00:00"
+  // attendance_in.working_time_off_1 = "17:00:00"
+  // attendance_in.working_time_off_2 = "18:00:00"
+  // let working_time_1 = "8:00:00"
+  // let working_time_2 = "9:00:00"
+  // let working_time_off_1 = "17:00:00"
+  // let working_time_off_2 = "18:00:00"
   return axios({
-    url: `${global_.url}/attendance/pie?start_timestamp=${s}&end_timestamp=${e}&select_device_id=${select_device}`,
-    method: 'post',
+    url: `${global_.url}/attendance/pie?start_timestamp=${s}&end_timestamp=${e}&select_device_id=${select_device}&working_time_1=${working_time_1}&working_time_2=${working_time_2}&working_time_off_1=${working_time_off_1}&working_time_off_2=${working_time_off_2}`,
+    method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
-    },
-    data: attendance_in
+    }
   })
 }
 
-export function getFasteyes_AttendanceLineChart (start_time,end_time,page,select_device_id) {
+export function getFasteyes_AttendanceLineChart (start_time,end_time,page,select_device_id,working_time_1,working_time_2,working_time_off_1,working_time_off_2) {
   let s = start_time 
   let e = end_time
   if(!(s && e)){
@@ -241,18 +285,17 @@ export function getFasteyes_AttendanceLineChart (start_time,end_time,page,select
     e = nowTime.getFullYear()+"-"+(nowTime.getMonth()+1)+"-"+ nowTime.getDate()+"T23:59:59"
   } 
 
-  let attendance_in = {}
-  attendance_in.working_time_1 = "8:00:00"
-  attendance_in.working_time_2 = "9:00:00"
-  attendance_in.working_time_off_1 = "17:00:00"
-  attendance_in.working_time_off_2 = "18:00:00"
+  // let attendance_in = {}
+  // attendance_in.working_time_1 = "8:00:00"
+  // attendance_in.working_time_2 = "9:00:00"
+  // attendance_in.working_time_off_1 = "17:00:00"
+  // attendance_in.working_time_off_2 = "18:00:00"
   return axios({
-    url: `${global_.url}/attendance/line_chart?start_timestamp=${s}&end_timestamp=${e}&page=${page}&select_device_id=${select_device_id}`,
-    method: 'post',
+    url: `${global_.url}/attendance/line_chart?start_timestamp=${s}&end_timestamp=${e}&page=${page}&select_device_id=${select_device_id}&working_time_1=${working_time_1}&working_time_2=${working_time_2}&working_time_off_1=${working_time_off_1}&working_time_off_2=${working_time_off_2}`,
+    method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
-    },
-    data: attendance_in
+    }
   })
 }
 
@@ -466,7 +509,7 @@ export function delete_staff (staff_id) {
 }
 
 export function modify_staff (staff_id,department_id, info, status) {
-  let create_data = {
+  let patch_data = {
     "department_id": department_id,
     "status": status,
     "name": info.name,
@@ -485,7 +528,7 @@ export function modify_staff (staff_id,department_id, info, status) {
     headers: {
       Authorization: `Bearer ${token()}`
     },
-    data: create_data
+    data: patch_data
   })
 }
 
@@ -529,6 +572,7 @@ export function get_output_csv_file (start_time,end_time) {
       url: `${global_.url}/fasteyes_observations/output_interval_data_csv`,
       method: 'get',
       headers: {
+        'Content-Type': 'text/csv',
         Authorization: `Bearer ${token()}`
       }
     })
@@ -538,10 +582,31 @@ export function get_output_csv_file (start_time,end_time) {
       url: `${global_.url}/fasteyes_observations/output_interval_data_csv?start_timestamp=${s}&end_timestamp=${e}`,
       method: 'get',
       headers: {
+        'Content-Type': 'text/csv',
         Authorization: `Bearer ${token()}`
       }
     })
   }
+}
+
+export function get_bulletin () {
+  return axios({
+    url: `${global_.url}/bulletin`,
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}
+
+export function modify_bulletin (is_used) {
+  return axios({
+    url: `${global_.url}/bulletin?is_used=${is_used}`,
+    method: 'patch',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
 }
 
 export function get_bulletin_image () {
@@ -562,8 +627,8 @@ export function post_bulletin_image (image) {
   const formdata = new FormData()
   formdata.append('Image_file', file, file.name)
   return axios({
-    url: `${global_.url}/bulletin`,
-    method: 'patch',
+    url: `${global_.url}/bulletin/image`,
+    method: 'post',
     headers: {
       Authorization: `Bearer ${token()}`,
       'Content-Type': 'multipart/form-data'
@@ -597,6 +662,76 @@ export function delete_bulletin_image () {
 export function delete_user (user_id) {
   return axios({
     url: `${global_.url}/users/${user_id}`,
+    method: 'delete',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    }
+  })
+}
+
+export function get_area () {
+  return axios({
+    url: `${global_.url}/area`,
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    }
+  })
+}
+
+export function create_area (name) {
+  return axios({
+    url: `${global_.url}/area?name=${name}`,
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    },
+  })
+}
+
+export function modify_area (area_id,name,send_mail) {
+  return axios({
+    url: `${global_.url}/area/${area_id}?name=${name}&send_mail=${send_mail}`,
+    method: 'patch',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    }
+  })
+}
+
+export function delete_area (area_id) {
+  return axios({
+    url: `${global_.url}/area/${area_id}`,
+    method: 'delete',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    }
+  })
+}
+
+export function get_area_user (area_id) {
+  return axios({
+    url: `${global_.url}/area_user?area_id=${area_id}`,
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    }
+  })
+}
+
+export function create_area_user (area_id, user_id) {
+  return axios({
+    url: `${global_.url}/area_user?area_id=${area_id}&user_id=${user_id}`,
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    }
+  })
+}
+
+export function delete_area_user (area_id, user_id) {
+  return axios({
+    url: `${global_.url}/area_user?area_id=${area_id}&user_id=${user_id}`,
     method: 'delete',
     headers: {
       Authorization: `Bearer ${token()}`,

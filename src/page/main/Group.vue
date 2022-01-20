@@ -9,6 +9,12 @@
     @changeGroupName="getGroup"/>
   </teleport>
 
+  <teleport to="#destination" :disabled="disableTeleport">
+    <DeleteComfirm ref="deletemodal" 
+    @deleteDevice="deleteUser"
+    />
+  </teleport>
+
   <router-link to="/main">
     <p class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-"> &lt; 群組管理</p>
   </router-link>
@@ -71,7 +77,7 @@
               <p class="text-gray-900 whitespace-nowrap" v-else-if="u.level == 4">Normal</p>
             </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-              <button class="text-gray-900 whitespace-nowrap text-red-600" v-if="u.level>2" @click="deleteUser(u.id)">刪除</button>
+              <button class="text-gray-900 whitespace-nowrap text-red-600" v-if="u.level>2" @click="delete_click(u.id)">刪除</button>
             </td>
           </tr>
         </tbody>
@@ -85,14 +91,15 @@ import { ref } from "vue";
 import { getUerInfo, getgroup, getusers,delete_user} from '../../untils/api.js'
 import ModifyGroupName from "../../components/main/ModifyGroupName.vue"
 import InviteUser from "../../components/main/InviteUser.vue"
-
+import DeleteComfirm from "../../components/DeleteComfirm.vue"
 import moment from 'moment';
 
 const router = useRouter();
 export default {
   components:{
     ModifyGroupName,
-    InviteUser
+    InviteUser,
+    DeleteComfirm
   },
   data () {
     return {
@@ -102,6 +109,7 @@ export default {
       level:-1,
       groupName:"",
       tablelength: -1,
+      delete_user_id: -1
    }
   },
   methods: {
@@ -146,11 +154,15 @@ export default {
       // console.log(this.userTableData)
       this.tablelength = this.userTableData.length
     },
-    async deleteUser(user_id) {
-      await delete_user(user_id).then(async (res) => {
-        alert("刪除成功")
+    delete_click(user_id){
+      this.delete_user_id = user_id
+      this.showDeleteModal()
+    },
+    async deleteUser() {
+      await delete_user(this.delete_user_id).then(async (res) => {
         await this.getGroupUser()
         }).catch((err) => {
+          alert(err.response.data.detail)
         })
     },
     btnEvent(){
@@ -188,12 +200,20 @@ export default {
       settingmodal.value.show()
       this.showModal = true
     }
+
+    const deletemodal = ref(null);
+    function showDeleteModal(){
+      deletemodal.value.show()
+    }
+
     return {
       disableTeleport,
       showSettingModal,
       inviteUserClick,
       settingmodal,
       modal,
+      deletemodal,
+      showDeleteModal
     }
   },
 }

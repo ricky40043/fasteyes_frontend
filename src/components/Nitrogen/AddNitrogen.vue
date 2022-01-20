@@ -158,18 +158,18 @@ export default {
     },
     check(){
       if(this.alarm_Nitrogen_lower_limit > this.alarm_Nitrogen_upper_limit ||
-         this.alarm_Nitrogen_lower_limit =="" ||
-         this.alarm_Nitrogen_upper_limit ==""){
+         this.alarm_Nitrogen_lower_limit ==="" ||
+         this.alarm_Nitrogen_upper_limit ===""){
         this.Nitrogen_error = true
       }
       else{
         this.Nitrogen_error = false
       }
       if(this.alarm_Oxygen_lower_limit > this.alarm_Oxygen_upper_limit ||
-         this.alarm_Oxygen_lower_limit<0 || this.aalarm_Oxygen_lower_limit>100 ||
+         this.alarm_Oxygen_lower_limit<0 || this.alarm_Oxygen_lower_limit>100 ||
          this.alarm_Oxygen_upper_limit<0 || this.alarm_Oxygen_upper_limit>100 ||
-         this.alarm_Oxygen_lower_limit=="" ||
-         this.alarm_Oxygen_upper_limit=="" ){
+         this.alarm_Oxygen_lower_limit==="" ||
+         this.alarm_Oxygen_upper_limit==="" ){
         this.Oxygen_error = true
       }
       else

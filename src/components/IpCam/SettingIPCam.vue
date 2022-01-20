@@ -1,4 +1,11 @@
 <template>
+
+  <teleport to="#destination" :disabled="disableTeleport">
+    <DeleteComfirm ref="deletemodal" 
+    @deleteDevice="deleteDevice"
+    />
+  </teleport>
+
   <div class="modal" v-show="isOpen">
     <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
@@ -133,12 +140,12 @@
               </tbody>
             </table>
                         <div class="py-2">
-              <button class="device_delete_button" style="align-content: center;" @click="deleteDevice">刪除裝置</button>
+              <button class="device_delete_button" style="align-content: center;" @click="deleteClick">刪除裝置</button>
             </div>
           </div>
           <div id="right">
             <div class="flex items-center justify-center">
-              <button class ="device_set_button" @click="seeVideo">查看影像</button>
+              <button :class ="watchingVideo===false ? 'device_set_button':'device_back_button'" @click="seeVideo">查看影像</button>
             </div>
             <div id="bulletin" v-if="watchingVideo">
               <img :src="rstpname" alt="" style="display:block; margin:auto;" class="w-auto h-auto"/>
@@ -158,11 +165,15 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { modify_device, delete_device} from '../../untils/api.js'
+import DeleteComfirm from '../../components/DeleteComfirm.vue'
 import global_ from "../../Global.vue"
 
 const router = useRouter();
 
 export default {
+  components:{
+    DeleteComfirm
+  },
     props:[
     "selectDeviceData",
   ],
@@ -203,7 +214,7 @@ export default {
       let DeviceData = {
         "stream_name":this.stream_name,
         "ip":this.ip,
-        "port":this.port,
+        "port":this.port.toString(),
         "password":this.password,
         "username":this.username,
       }
@@ -215,9 +226,11 @@ export default {
     seeVideo(){
       this.watchingVideo = !this.watchingVideo
     },
+    async deleteClick(){
+      this.showDeleteModal()
+    },
     async deleteDevice(){
       await delete_device(2, this.device_id).then((res) => {
-        alert("資料刪除成功")
         this.hide()
         this.$emit('deleteDevice')
       })
@@ -289,7 +302,7 @@ export default {
    
 
       if(this.username_error || this.password_error || this.empty_name_error || this.empty_area_error || 
-         this.empty_serial_number_error || this.stream_name_error || this.port || this.ip_error){
+         this.empty_serial_number_error || this.stream_name_error || this.port_error || this.ip_error){
         return false
       }
       else{
@@ -334,12 +347,19 @@ export default {
         },10)
     }
 
+    const deletemodal = ref(null);
+    function showDeleteModal(){
+      deletemodal.value.show()
+    }
+
     return{
         isOpen,
         hide,
-        show
+        show,
+        deletemodal,
+        showDeleteModal
     }
-}
+  }
 }
 </script>
 
@@ -398,6 +418,18 @@ a{
   display: flex;
   align-content: center;
   background-color: rgba(79, 134, 202, 1);
+}
+.device_back_button{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color: white;
+  border-radius: 6px;
+  padding: 5px 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-content: center;
+  background-color: gainsboro;
 }
 .device_comfirm_button{
   font-size: 14px;

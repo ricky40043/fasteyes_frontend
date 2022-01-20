@@ -127,7 +127,6 @@ export default {
         return
       }
       await modifyFasteyes_Observation(this.selectObservation_id, this.select_staff).then((res)=>{
-        alert("修改成功")
         this.hide()
         this.$emit('modifyObservation')
       })

@@ -133,6 +133,12 @@
           </tbody>
         </table>
         <div class="flex items-center justify-center">
+          <button :class ="connectTesting===false ? 'device_set_button':'device_back_button'" @click="connectTest">進行連線測試</button>
+        </div>
+        <div id="bulletin" v-if="connectTesting">
+          <img :src="rstpname" alt="" style="display:block; margin:auto;" />
+        </div>
+        <div class="flex items-center justify-center">
           <button class ="device_set_button" @click="addDevice">新增</button>
           <button class ="device_comfirm_button" @click="hide">取消</button>
         </div>
@@ -193,7 +199,7 @@ export default {
       let DeviceData = {
         "stream_name":this.stream_name,
         "ip":this.ip,
-        "port":this.port,
+        "port":this.port.toString(),
         "password":this.password,
         "username":this.username,
       }
@@ -203,6 +209,10 @@ export default {
       })
     },
     connectTest(){
+      if(this.check()){
+        alert("輸入資料有誤")
+        return
+      }
       this.connectTesting = !this.connectTesting
     },
     clear_data(){
@@ -258,24 +268,27 @@ export default {
       else
         this.password_error = false
 
-      if(this.port=="")
+      if(this.port==="")
         this.port_error = true
       else
         this.port_error = false
       
-      if(this.password=="")
-        this.password_error = true
-      else
-        this.password_error = false
-
-      if((this.ip1<0 || this.ip1>255)  || (this.ip2<0 || this.ip2>255) || (this.ip3<0 || this.ip3>255) || (this.ip4<0 || this.ip4>255))
+      if((this.ip1<0 || this.ip1>255)  || (this.ip2<0 || this.ip2>255) || (this.ip3<0 || this.ip3>255) || (this.ip4<0 || this.ip4>255) ||
+          this.ip1===""||this.ip2===""||this.ip3===""||this.ip4==="")
         this.ip_error = true
       else
         this.ip_error = false
    
-
+      console.log(this.username_error)
+      console.log(this.password_error)
+      console.log(this.empty_name_error)
+      console.log(this.empty_area_error)
+      console.log(this.empty_serial_number_error)
+      console.log(this.stream_name_error)
+      console.log(this.port)
+      console.log(this.ip_error)
       if(this.username_error || this.password_error || this.empty_name_error || this.empty_area_error || 
-         this.empty_serial_number_error || this.stream_name_error || this.port || this.ip_error){
+         this.empty_serial_number_error || this.stream_name_error || this.port_error || this.ip_error){
         return true
       }
       else{
@@ -335,7 +348,7 @@ a{
     left: 0;
     top: 0;
     width: 100%;
-    height: 120%;
+    height: 180%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {
@@ -379,6 +392,18 @@ a{
   border-style:solid;
   border-width:2px;
   border-color:#4F86CA;
+}
+.device_back_button{
+  font-size: 14px;
+  /* font-weight: bold; */
+  color: white;
+  border-radius: 6px;
+  padding: 5px 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-content: center;
+  background-color: gainsboro;
 }
 .error_input{
   border-color:red

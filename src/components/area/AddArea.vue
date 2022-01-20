@@ -5,68 +5,59 @@
 
       <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
-          <p>群組名稱</p>
+          <p>新增區域</p>
         </div>
-        <div class="flex items-center justify-center px-2 py-2">
-          <input type="text" v-model="name" :class="error_input?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+        <div class="flex items-center justify-center">
+          <input type="text" v-model="area_name" :class="error_input?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
         </div>
         <p v-if="error_input" style="color: red;">{{error_description}}</p>
 
-        <div class="flex items-center justify-center">
+        <div class="flex items-center justify-center px-2 py-2">
           <button class ="device_comfirm_button" @click="hide">取消</button>
-          <button class ="device_set_button" @click="ModifyGroup">儲存</button>
+          <button class ="device_set_button" @click="addDepartment">儲存</button>
         </div>
       </div>
-    </div>
+    </div> 
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { modify_group } from '../../untils/api.js'
+import { create_area } from '../../untils/api.js'
 const router = useRouter();
 
 export default {
-  props:[
-    "NameData"
-  ],
   data () {
     return {
-        name:"",
+        area_name:"",
         error_input:false,
         error_description:""
       }
   },
     methods: {
-    async ModifyGroup () {
-      await modify_group(this.name).then((res) => {
-        // console.log(res.data)
+    async addDepartment () {
+      await create_area(this.area_name).then((res) => {
         this.hide()
-        this.$emit('changeGroupName')
+        this.$emit('addArea')
         }).catch((err) => {
           alert(err.response.data.detail)
           let errorMessage = err.response.data.detail
-          if (errorMessage == "group name is exist"){
-            this.error_input = true
-            this.error_description = errorMessage
-          }
+          this.error_input = true
+          this.error_description = errorMessage
         })
     },
     clear_data(){
       this.error_input= false
-      this.name= ""
-    },
-    async input_data(){
-      this.name = this.NameData
+      this.area_name= ""
     },
     check(){
-      if(this.name == ""){
-        this.error_description ="名稱不能是空的"
+      if(this.area_name != ""){
+        this.error_description ="區域名稱不能是空的"
         this.error_input = true
       }
       else
-        this.error_input = false
+        this.select_gender_error = false
     }
 
   },
@@ -88,11 +79,8 @@ export default {
     }
 
     function show(){
+        this.clear_data()
         isOpen.value = true;
-        setTimeout(()=>{
-          this.clear_data()
-          this.input_data()
-        },10)
     }
 
     return{
@@ -121,7 +109,7 @@ export default {
     left: 0;
     top: 0;
     width: 100%;
-    height: 110%;
+    height: 115%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {

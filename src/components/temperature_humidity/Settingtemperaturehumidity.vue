@@ -1,10 +1,16 @@
 <template>
+    <teleport to="#destination" :disabled="disableTeleport">
+      <DeleteComfirm ref="deletemodal" 
+      @deleteDevice="deleteDevice"
+      />
+    </teleport>
+
   <div class="modal " v-show="isOpen">
     <div class="modal-content rounded-lg">
       <span class="close" @click="hide">&times;</span>
       <div id="main" class="items-center justify-center">
         <div class="flex items-center justify-center">
-          <p class="text-xl">新增裝置</p>
+          <p class="text-xl">編輯裝置</p>
         </div>
       <table>
         <tbody>
@@ -62,6 +68,22 @@
           </tr>
           <tr>
             <td class="px-2 py-2">
+              <span>溫度補償:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="number" v-model="addDeviceData.compensate_temperature" :class="empty_temperature_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
+              <span>濕度補償:</span>
+            </td>
+            <td class="px-2 py-2">
+              <input type="number" v-model="addDeviceData.compensate_humidity" :class="empty_humidity_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-2 py-2">
               <span>資料上傳頻率:</span>
             </td>
             <td class="px-2 py-2">
@@ -89,7 +111,7 @@
         </tbody>
       </table>
         <div class="flex items-center justify-items-end">
-          <button class="device_delete_button" style="align-content: center;" @click="deleteDevice">刪除裝置</button>
+          <button class="device_delete_button" style="align-content: center;" @click="deleteClick">刪除裝置</button>
         </div>
         <div class="flex items-center justify-center">
           <button class ="device_comfirm_button" @click="hide">取消</button>
@@ -159,9 +181,14 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { modify_device, delete_device} from '../../untils/api.js'
+import DeleteComfirm from '../../components/DeleteComfirm.vue'
+
 const router = useRouter();
 
 export default {
+  components:{
+    DeleteComfirm
+  },
   props:[
     "selectDeviceData",
     'testID'
@@ -177,12 +204,16 @@ export default {
       empty_name_error: false,
       empty_area_error: false,
       empty_serial_number_error: false,
+      empty_temperature_error: false,
+      empty_humidity_error: false,
       addDeviceData: {
         interval_time: 60,
         alarm_temperature_lower_limit: "",
         alarm_temperature_upper_limit: "",
         alarm_humidity_lower_limit: "",
         alarm_humidity_upper_limit: "",
+        compensate_temperature: 0,
+        compensate_humidity: 0,
         battery: 100,
         battery_alarm:10,
         status: 0
@@ -198,17 +229,44 @@ export default {
       let DeviceData = Object.assign(this.addDeviceData)
       await modify_device(1, this.device_id,this.device_name, this.area, DeviceData).then((res) => {
         this.hide()
+        this.$emit('saveDevice')
+      }).catch((err) => {
+        alert(err.response.data.detail)
       })
-      this.$emit('saveDevice')
+    },
+    async deleteClick(){
+      this.showDeleteModal()
     },
     async deleteDevice(){
       await delete_device(1, this.device_id).then((res) => {
-        alert("資料刪除成功")
         this.hide()
         this.$emit('deleteDevice')
       })
     },
+    clear_data(){
+      this.temperature_error=false
+      this.humidity_error=false
+      this.empty_name_error=false
+      this.empty_area_error=false
+      this.empty_serial_number_error=false
+      this.empty_temperature_error = false
+      this.empty_humidity_error= false
+      this.device_name = ""
+      this.area = ""
+      this.serial_number = ""
+      this.addDeviceData= {
+        interval_time: 60,
+        alarm_temperature_lower_limit: "",
+        alarm_temperature_upper_limit: "",
+        alarm_humidity_lower_limit: "",
+        alarm_humidity_upper_limit: "",
+        compensate_temperature: 0,
+        compensate_humidity: 0,
+        battery_alarm: 10
+      }
+    },
     input_data(){
+      console.log(this.selectDeviceData)
       this.device_name = this.selectDeviceData.device_name
       this.area = this.selectDeviceData.area
       this.serial_number = this.selectDeviceData.device_serial_number
@@ -219,6 +277,8 @@ export default {
         alarm_temperature_upper_limit: this.selectDeviceData.temperature_upper_limit,
         alarm_humidity_lower_limit: this.selectDeviceData.humidity_lower_limit,
         alarm_humidity_upper_limit: this.selectDeviceData.humidity_upper_limit,
+        compensate_temperature: this.selectDeviceData.compensate_temperature,
+        compensate_humidity: this.selectDeviceData.compensate_humidity,
         battery: this.selectDeviceData.battery,
         status: this.selectDeviceData.status,
         battery_alarm:10
@@ -226,8 +286,8 @@ export default {
     },
     check(){
       if(this.addDeviceData.alarm_temperature_lower_limit > this.addDeviceData.alarm_temperature_upper_limit ||
-         this.addDeviceData.alarm_temperature_lower_limit =="" ||
-         this.addDeviceData.alarm_temperature_upper_limit ==""){
+         this.addDeviceData.alarm_temperature_lower_limit ==="" ||
+         this.addDeviceData.alarm_temperature_upper_limit ===""){
          this.temperature_error = true
       }
       else{
@@ -236,8 +296,8 @@ export default {
       if(this.addDeviceData.alarm_humidity_lower_limit > this.addDeviceData.alarm_humidity_upper_limit ||
          this.addDeviceData.alarm_humidity_lower_limit<0 || this.addDeviceData.alarm_humidity_lower_limit>100 ||
          this.addDeviceData.alarm_humidity_upper_limit<0 || this.addDeviceData.alarm_humidity_upper_limit>100 ||
-         this.addDeviceData.alarm_humidity_lower_limit=="" ||
-         this.addDeviceData.alarm_humidity_upper_limit=="" ){
+         this.addDeviceData.alarm_humidity_lower_limit==="" ||
+         this.addDeviceData.alarm_humidity_upper_limit==="" ){
         this.humidity_error = true
       }
       else{
@@ -262,13 +322,21 @@ export default {
       else{
         this.empty_serial_number_error = false
       }
+      if(this.addDeviceData.compensate_temperature==="")
+        this.empty_temperature_error = true
+      else
+        this.empty_temperature_error = false
 
-      if(this.humidity_error || this.temperature_error || this.empty_name_error || this.empty_area_error || this.empty_serial_number_error){
+      if(this.addDeviceData.compensate_humidity==="")
+        this.empty_humidity_error = true
+      else
+        this.empty_humidity_error = false
+
+      if(this.humidity_error || this.temperature_error || this.empty_name_error || this.empty_area_error || 
+         this.empty_serial_number_error || this.empty_temperature_error || this.empty_humidity_error)
         return false
-      }
-      else{
+      else
         return true
-      }
     }
 
   },
@@ -284,24 +352,31 @@ export default {
   },
   setup(){
     const isOpen = ref(false);
-
+    
     function hide(){
         isOpen.value = false;
     }
 
     function show(){
         isOpen.value = true;
+        this.clear_data()
         setTimeout(()=>{
           this.input_data()
         },10)
+    }
+    const deletemodal = ref(null);
+    function showDeleteModal(){
+      deletemodal.value.show()
     }
 
     return{
         isOpen,
         hide,
-        show
+        show,
+        deletemodal,
+        showDeleteModal
     }
-}
+  }
 }
 </script>
 
@@ -325,7 +400,7 @@ a{
     left: 0;
     top: 0;
     width: 100%;
-    height: 115%;
+    height: 135%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {

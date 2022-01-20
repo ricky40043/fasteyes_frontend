@@ -45,7 +45,7 @@
               </button>
             </div>
           </div>
-          <!-- <div id="searchinput">
+          <div id="searchinput">
           <div class="relative mx-4 lg:mx-0" style="width= 100%">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
               <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -62,12 +62,12 @@
             <input
               class="w-32 pl-10 pr-4 text-indigo-600 border-gray-200 rounded-md sm:w-64 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
               type="text"
-            placeholder="以裝置名稱或其ID搜尋"
+            placeholder="以位置搜尋"
             v-model="search_text"
             @change="search_event"
             />
           </div>
-          </div> -->
+          </div>
           <div id="outputbutton" @click="getTHObservationOutput()">
             <button class="device_abnormal_button">
               輸出 .csv
@@ -140,8 +140,13 @@
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.humidity }}％</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_temperature == 0 && u.alarm_humidity == 0 ">正常</p>
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_temperature == 0 && u.alarm_humidity == 0 && u.status == 0 ">正常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.status == 2 ">資料遺失</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_temperature == 0 && u.alarm_humidity == 1 ">濕度異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_temperature == 1 && u.alarm_humidity == 0 ">溫度異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_temperature == 1 && u.alarm_humidity == 1 ">溫濕度異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.status == 1 ">裝置異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else>異常</p>
                   </td>
                 </tr>
               </tbody>
@@ -174,31 +179,19 @@ import { getDevice_ModelObservation, getDevice_ModelObservation_data, getAllDevi
 import store from "../../store"
 export default {
   data (){
-    let temperature_humidity_ObservationTableData=[]
-    let device_Map = new Map()
-    let page = 1
-    let total = 1
-    let page_size = 50
-    let page_total = 1
-    let start_date = ""
-    let start_time = "00:00:00"
-    let end_date = ""
-    let end_time = "23:59:59"
-    let select_status = -1
-    let search_text = ""
     return{
-      temperature_humidity_ObservationTableData,
-      device_Map,
-      page,
-      total,
-      page_size,
-      page_total,
-      start_date,
-      start_time,
-      end_date,
-      end_time,
-      select_status,
-      search_text,
+      temperature_humidity_ObservationTableData:[],
+      device_Map: new Map(),
+      page: 1,
+      total: 1,
+      page_size: 50,
+      page_total: 1,
+      start_date: "",
+      start_time: "00:00:00",
+      end_date:"",
+      end_time: "23:59:59",
+      select_status: -1,
+      search_text: "",
       device_list:[],
       select_device: -1,
       timer: window.setInterval(() => { this.getTHObservation () }, 10000),
@@ -209,7 +202,7 @@ export default {
       let device_model = 1
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      await getDevice_ModelObservation(device_model,this.page,this.page_size, this.select_status,start_time,end_time,this.select_device).then((res)=>{
+      await getDevice_ModelObservation(device_model,this.page,this.page_size, this.select_status,start_time,end_time,this.select_device,this.search_text).then((res)=>{
         let observationlist = Object.assign(res.data.items)
         this.total = Object.assign(res.data.total)
         this.page_total = Math.ceil(this.total/this.page_size)
@@ -235,12 +228,12 @@ export default {
       let device_model = 1
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      let FILE = await getDevice_ModelObservation_data(device_model, this.select_status,start_time,end_time).then((res)=>{
+      let FILE = await getDevice_ModelObservation_data(device_model, this.select_status,start_time,end_time,this.search_text).then((res)=>{
         return Object.assign(res.data)
       }) 
       if (FILE) {
          const anchor = document.createElement('a');
-          anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(FILE);
+          anchor.href = "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(FILE);
           anchor.target = '_blank';
           anchor.download = this.start_date+'-'+this.end_date+'輸出報表.csv';
           anchor.click();
@@ -320,7 +313,7 @@ export default {
       this.getTHObservation()
     },
     search_event(){
-      console.log(this.search_text) 
+      // console.log(this.search_text) 
     },
   },
   beforeMount() {

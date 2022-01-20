@@ -11,6 +11,11 @@
     @deleteStaff="get_Staff"
     />
   </teleport>
+  <teleport to="#destination" :disabled="disableTeleport">
+    <DeleteComfirm ref="deletemodal" 
+    @deleteDevice="deleteStaff"
+    />
+  </teleport>
 
   <div id="select">
           <!-- <button class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500">
@@ -123,7 +128,7 @@
                     </router-link>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <img src="../../assets/SUMI_img/icon-2.png" alt="" height="25" width="25" @click="deleteStaff(u.id)" />
+                    <img src="../../assets/SUMI_img/icon-2.png" alt="" height="25" width="25" @click="delete_click(u.id)" />
                   </td>
                 </tr>
               </tbody>
@@ -156,11 +161,13 @@ import { ref } from 'vue';
 import { getStaff, getDepartment, delete_staff } from "../../untils/api.js"
 import Addstaff from "../../components/fasteyes/Addstaff.vue"
 import Modifystaff from "../../components/fasteyes/Modifystaff.vue"
+import DeleteComfirm from "../../components/DeleteComfirm.vue"
 
 export default {
   components:{
     Addstaff,
-    Modifystaff
+    Modifystaff,
+    DeleteComfirm
   },
   data (){
     return{
@@ -176,6 +183,7 @@ export default {
       select_department: -1,
       staff_status: -1,
       select_staff : {},
+      delete_staff_id: -1,
       timer: window.setInterval(() => { this.get_Staff () }, 60000)
     }
   },
@@ -208,10 +216,15 @@ export default {
         });
       }) 
     },
-    async deleteStaff(staff_id) {
-      await delete_staff(staff_id).then((res) => {
+    delete_click(staff_id){
+      this.delete_staff_id = staff_id
+      this.showDeleteModal()
+    },
+    async deleteStaff() {
+      await delete_staff(this.delete_staff_id).then((res) => {
         this.get_Staff()
         }).catch((err) => {
+          alert(err.response.data.detail)
         })
     },
     increment(){
@@ -291,12 +304,19 @@ export default {
       this.showModal = true
     }
 
+    const deletemodal = ref(null);
+    function showDeleteModal(){
+      deletemodal.value.show()
+    }
+
     return {
       disableTeleport,
       addStaffClick ,
       showSettingModal,
       modal,
-      settingmodal
+      settingmodal,
+      deletemodal,
+      showDeleteModal
     }
   },
 };

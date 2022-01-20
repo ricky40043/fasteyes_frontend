@@ -14,7 +14,7 @@
             <div id="bulletin">
               <img src="../../assets/SUMI_img/bulletin.png" alt="" style="display:block; margin:auto;" >
             </div>
-            <input type="radio" id="age1" name="age" value="30" :checked="!use_setting">
+            <input type="radio" id="age1" name="age" value="30" :checked="!use_setting" @change="modifyBulletin(false)">
             <label for="age1">使用預設</label><br>
 
           </div>
@@ -22,11 +22,11 @@
         <div class="flex-1 overflow-x-hidden overflow-y-auto">
           <div class="container mx-auto px-6 py-8">
             <div id="bulletin">
-              <img :src="image_data" alt="" v-if="use_setting" style="display:block; margin:auto;" />
+              <img :src="image_data" alt="" v-if="have_picture" style="display:block; margin:auto;" />
               <img src="../../assets/SUMI_img/noImg_tw.3307d94.png" alt="" v-else style="display:block; margin:auto;" />
             </div>
             <div class="flex">
-              <input type="radio" id="age2" name="age" value="60" :checked="use_setting">
+              <input type="radio" id="age2" name="age" value="60" :checked="use_setting" @change="modifyBulletin(true)">
               <label for="age2">上架中</label><br> 
               <button class="device_comfirm_button" @click="remove" v-if="!upload_img_exist">
                 移除
@@ -74,7 +74,7 @@
 </template>
 <script>
 import { useRouter } from "vue-router";
-import { get_bulletin_image, post_bulletin_image, delete_bulletin_image} from '../../untils/api.js'
+import { get_bulletin_image, post_bulletin_image, delete_bulletin_image, get_bulletin, modify_bulletin} from '../../untils/api.js'
 import moment from 'moment';
 
 const router = useRouter();
@@ -83,13 +83,14 @@ export default {
     return {
       image_data: '',
       upload_img_exist :false,
-      use_setting: false
+      use_setting: false,
+      have_picture: false
    }
   },
   methods: {
     async getBulletinImage(){
       await get_bulletin_image().then((res)=>{
-        this.use_setting = true
+        this.have_picture = true
         this.image_data = ('data:image/png;base64,' + btoa(
         new Uint8Array(res.data).reduce(
           (data, byte) => data + String.fromCharCode(byte), ''
@@ -123,9 +124,19 @@ export default {
         this.use_setting = false
       })
     },
+    async getBulletin(){
+      await get_bulletin().then(async(res)=>{
+          this.use_setting = res.data.is_used
+      })
+    },
+    async modifyBulletin(is_used){
+        await modify_bulletin(is_used).then(async(res)=>{
+      })
+    }
   },
-  beforeMount() {
-    this.getBulletinImage()
+  async beforeMount() {
+    await this.getBulletin()
+    await this.getBulletinImage()
   },
   created() {
     if(sessionStorage.getItem("state")){

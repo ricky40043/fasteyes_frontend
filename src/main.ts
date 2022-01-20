@@ -13,6 +13,7 @@ import ElectrostaticDashboardLayout from './layout/electrostatic/ElectrostaticDa
 import EnvironmentalDashboardLayout from './layout/environmental/EnvironmentalDashboardLayout.vue';
 import FasteyesDashboardLayout from './layout/fasteyes/FasteyesDashboardLayout.vue';
 import IPCamDashboardLayout from './layout/IPCam/IPCamDashboardLayout.vue';
+import AreaDashboardLayout from './layout/area/AreaDashboardLayout.vue';
 import EmptyLayout from './layout/dashboard/EmptyLayout.vue';
 
 const app = createApp(App);
@@ -24,6 +25,7 @@ app.component('environmental-layout', EnvironmentalDashboardLayout);
 app.component('fasteyes-layout', FasteyesDashboardLayout);
 app.component('IPCam-layout', IPCamDashboardLayout);
 app.component('empty-layout', EmptyLayout);
+app.component('area-layout', AreaDashboardLayout);
 
 app.use(router);
 app.use(store);

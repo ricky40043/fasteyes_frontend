@@ -52,6 +52,7 @@ export default {
         console.log(res.data)
         this.hide()
         }).catch((err) => {
+          alert(err.response.data.detail)
           let errorMessage = err.response.data.detail
           this.error_input = true
           this.error_description = errorMessage

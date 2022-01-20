@@ -25,7 +25,9 @@
         <router-link :class="[$route.name === 'TemperatureHumidity' ? activeClass : inactiveClass]" to="/environment/temperature_humidity">
           <span class="mx-4">環境監控</span>
         </router-link>
-      
+        <router-link :class="[$route.name === 'AreaSetting' ? activeClass : inactiveClass]" to="/area/area_setting" v-if="level<=2">
+          <span class="mx-4">區域管理</span>
+        </router-link>
 
 
     </div>

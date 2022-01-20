@@ -27,6 +27,21 @@
         </div>
       </div>
   </div>
+    <div id="select">
+    <div class="mt-4" >
+      <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
+        <div class="flex items-center justify-center">
+          <p>上班時段：</p>
+          <input type="time" class="time_block_text" v-model="check_in_time1">
+          <input type="time" class="time_block_text" v-model="check_in_time2">
+          <p> ~ </p>
+          <p>下班時段：</p>
+          <input type="time" class="time_block_text" v-model="check_out_time1">
+          <input type="time" class="time_block_text" v-model="check_out_time2">
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="data">
   <div>
     <div class="flex item-center justfy-center ">
@@ -111,6 +126,7 @@ export default {
     let start_time = "00:00:00"
     let end_date = ""
     let end_time = "23:59:59"
+
     return{
       fasteyes_AttendanceTableData,
       page,
@@ -121,13 +137,17 @@ export default {
       start_time,
       end_date,
       end_time,
+      check_in_time1:"06:00:00",
+      check_in_time2:"09:00:00",
+      check_out_time1:"17:00:00",
+      check_out_time2:"21:00:00",
       Fasteyes_DeviceList: [],
       select_device: -1,
       statsCards: [
         {
           type: "warning",
           icon: "ti-server",
-          title: "出席率",
+          title: "準時",
           value: "96",
           footerText: "過去10天資料",
           footerIcon: "ti-reload",
@@ -136,7 +156,7 @@ export default {
         {
           type: "success",
           icon: "ti-wallet",
-          title: "遲到",
+          title: "遲到(未簽到)",
           value: "3",
           footerText: "遲到人數18",
           footerIcon: "ti-calendar",
@@ -145,7 +165,7 @@ export default {
         {
           type: "danger",
           icon: "ti-pulse",
-          title: "早退",
+          title: "早退(未簽退)",
           value: "1",
           footerText: "7",
           footerIcon: "ti-timer",
@@ -167,7 +187,8 @@ export default {
     async getfasteyes_Attendance(){
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      await getFasteyes_AttendancePie(start_time,end_time,this.select_device).then((res)=>{
+      await getFasteyes_AttendancePie(start_time,end_time,this.select_device,
+                                      this.check_in_time1,this.check_in_time2, this.check_out_time1, this.check_out_time2).then((res)=>{
         let AttendancePieData = Object.assign(res.data)
         // console.log(AttendancePieData)
         this.statsCards[0].footerText = AttendancePieData.ontime

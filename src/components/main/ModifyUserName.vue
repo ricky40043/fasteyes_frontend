@@ -45,6 +45,7 @@ export default {
         this.hide()
         this.$emit('saveChange')
         }).catch((err) => {
+          alert(err.response.data.detail)
           let errorMessage = err.response.data.detail
           if (errorMessage == "Name already exist in this group"){
             this.error_input = true

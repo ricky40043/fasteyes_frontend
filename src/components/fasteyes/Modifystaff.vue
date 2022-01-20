@@ -138,6 +138,7 @@ export default {
         this.hide()
         this.$emit('saveStaff')
         }).catch((err) => {
+          alert(err.response.data.detail)
           let errorMessage = err.response.data.detail
           if (errorMessage == "Serveral_number already exist in this group"){
             this.id_repeate = true
@@ -150,6 +151,7 @@ export default {
         this.hide()
         this.$emit('deleteStaff')
         }).catch((err) => {
+          alert(err.response.data.detail)
         })
     },
     clear_data(){
