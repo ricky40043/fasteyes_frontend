@@ -206,6 +206,8 @@ export default {
       await add_device(2, this.device_name, this.area, this.serial_number, DeviceData).then((res) => {
         this.hide()
         this.$emit('addDevice')
+      }).catch((err) => {
+        alert(err.response.data.detail)
       })
     },
     connectTest(){
@@ -279,14 +281,6 @@ export default {
       else
         this.ip_error = false
    
-      console.log(this.username_error)
-      console.log(this.password_error)
-      console.log(this.empty_name_error)
-      console.log(this.empty_area_error)
-      console.log(this.empty_serial_number_error)
-      console.log(this.stream_name_error)
-      console.log(this.port)
-      console.log(this.ip_error)
       if(this.username_error || this.password_error || this.empty_name_error || this.empty_area_error || 
          this.empty_serial_number_error || this.stream_name_error || this.port_error || this.ip_error){
         return true

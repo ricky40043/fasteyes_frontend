@@ -10,10 +10,6 @@
               to="/environment/device/Nitrogen">
                 氮氣產生機
             </router-link>
-            <router-link class="device_set_button"              
-              to="/environment/device/email">
-                Email通知
-            </router-link>
           </div>
         </div>
   </div>

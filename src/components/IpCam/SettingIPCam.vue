@@ -218,9 +218,11 @@ export default {
         "password":this.password,
         "username":this.username,
       }
-      await modify_device(2, this.device_id, this.device_name, this.area, DeviceData).then((res) => {
+      await modify_device(2, this.device_id, this.device_name, this.area, DeviceData, this.serial_number).then((res) => {
         this.hide()
         this.$emit('saveDevice')
+      }).catch((err) => {
+        alert(err.response.data.detail)
       })
     },
     seeVideo(){

@@ -227,7 +227,7 @@ export default {
         return
       }
       let DeviceData = Object.assign(this.addDeviceData)
-      await modify_device(1, this.device_id,this.device_name, this.area, DeviceData).then((res) => {
+      await modify_device(1, this.device_id,this.device_name, this.area, DeviceData, this.serial_number).then((res) => {
         this.hide()
         this.$emit('saveDevice')
       }).catch((err) => {

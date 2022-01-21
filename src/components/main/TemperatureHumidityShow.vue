@@ -1,5 +1,5 @@
 <template>
-  <p class="TH_div_inner_text" :class="devicelist.length!=TH_Data_list.length? 'mis_data':'' ">溫濕度感應器接收資料：{{TH_Data_list.length}}/{{devicelist.length}}</p>
+  <p class="TH_div_inner_text_error" :class="devicelist.length!=TH_Data_list.length? 'mis_data':'' ">溫濕度感應器接收資料：{{TH_Data_list.length}}/{{devicelist.length}}</p>
   <div id="main">
     <div id="THLeftIcon" >
       <!-- <span class="ti-angle-left" style="align-items: center; align-content: center;"></span> -->
@@ -304,7 +304,7 @@ export default {
         // console.log(index,type, data)
         if (data === undefined)
           return false
-        if (data.info.status ==2)
+        if (data.info.status ==3)
           return true
       },
       getTHDatafunc(index,type) {
@@ -320,12 +320,12 @@ export default {
           return data.info.name
         }
         else if(type ==2){
-          if (data.info.status ==2)
+          if (data.info.status ==3)
             return "無資料"
           return data.info.temperature+ "°C"
         }
         else if(type ==3){
-          if (data.info.status ==2)
+          if (data.info.status ==3)
             return "無資料"
           return data.info.humidity+"%"
         }

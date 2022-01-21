@@ -106,13 +106,16 @@
                     測量時間
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    氮氣壓力（kg/cm2）
+                    氮氣壓力
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    含氧量（％）
+                    氧氣壓力
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    類型
+                    氮氣流量
+                  </th>
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                    氮氣含氧量
                   </th>
                 </tr>
               </thead>
@@ -132,21 +135,22 @@
                     <p class="text-gray-900 whitespace-nowrap">{{ u.time }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_temperature == 0">{{ u.temperature }}</p>
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.temperature }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.nitrogen_press_height == 0 && u.nitrogen_press_low == 0">{{ u.nitrogen_pressure }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.nitrogen_pressure }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_humidity == 0">{{ u.humidity }}％</p>
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.humidity }}％</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.air_press_low == 0">{{ u.air_press }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.air_press }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_Nitrogen == 0 && u.alarm_humidity == 0 && u.alarm_Oxygen == 0 ">正常</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_Nitrogen == 0 && u.alarm_Oxygen == 1 ">濕度異常</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_Nitrogen == 1 && u.alarm_Oxygen == 0 ">溫度異常</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_Nitrogen == 1 && u.alarm_Oxygen == 1 ">溫濕度異常</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_status == 1 ">裝置異常</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_status == 2 ">資料遺失</p>
-                    <p class="text-red-600 whitespace-nowrap" style="color:red;" v-else>異常</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;">{{ u.nitrogen_flowrate }}</p>
+                  </td>
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.oxygen_height == 0">{{ u.oxygen_content }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.oxygen_content }}</p>
+                  </td>
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+
                   </td>
                 </tr>
               </tbody>
@@ -227,12 +231,21 @@ export default {
           observation_data.area = this.device_Map.get(observation.device_id).area
           let datetime = moment(observation.created_at, "YYYY-MM-DDThh:mm:ss:SSSSSS")
           observation_data.time = datetime.format('YYYY-MM-DD HH:mm:ss')
-          observation_data.Nitrogen = observation.info.Nitrogen  
-          observation_data.humidity = observation.info.humidity  
-          observation_data.Oxygen = observation.info.Oxygen  
-          observation_data.alarm_Nitrogen = observation.info.alarm_Nitrogen  
-          observation_data.alarm_Oxygen = observation.info.alarm_Oxygen  
-          observation_data.status = observation_data.alarm_Nitrogen==false && observation_data.alarm_Oxygen==false ?0:1  
+          observation_data.nitrogen_pressure = observation.info.nitrogen_pressure  
+          observation_data.air_press = observation.info.air_press  
+          observation_data.nitrogen_flowrate = observation.info.nitrogen_flowrate  
+          observation_data.oxygen_content = observation.info.oxygen_content  
+
+          observation_data.oxygen_height = observation.info.oxygen_height  
+          observation_data.air_press_low = observation.info.air_press_low  
+          observation_data.freeze_drier = observation.info.freeze_drier  
+          observation_data.air_system = observation.info.air_system  
+          observation_data.nitrogen_press_height = observation.info.nitrogen_press_height  
+          observation_data.nitrogen_press_low = observation.info.nitrogen_press_low  
+          observation_data.run_status = observation.info.run_status  
+          observation_data.stop_status = observation.info.stop_status  
+          observation_data.standby_status = observation.info.standby_status  
+          observation_data.maintain_status = observation.info.maintain_status  
           this.temperature_humidity_ObservationTableData.push(observation_data)
         });
       }) 

@@ -441,11 +441,12 @@ export function add_device (device_model_id, name, area, serial_number, info) {
   })
 }
 
-export function modify_device (device_model_id, device_id, name, area, info) {
+export function modify_device (device_model_id, device_id, name, area, info, serial_number) {
   let patch_data = {
     "area": area,
     "info": info,
-    "name":name
+    "name":name,
+    "serial_number": serial_number
   }
   return axios({
     url: `${global_.url}/devices/device_model/${device_model_id}/device/${device_id}`,

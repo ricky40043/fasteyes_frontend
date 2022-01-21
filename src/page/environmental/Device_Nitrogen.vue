@@ -21,10 +21,6 @@
               to="/environment/device/Nitrogen">
                 氮氣產生機
             </router-link>
-            <router-link class="device_comfirm_button"              
-              to="/environment/device/email">
-                Email通知
-            </router-link>
           </div>
         </div>
       <div class="mt-4" >
@@ -78,10 +74,16 @@
                     裝置位置
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    氮氣壓力正常範圍（kg/cm2）
+                    氮氣壓力正常範圍
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    含氧量正常範圍
+                    氧氣壓力正常範圍
+                  </th>
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                    氮氣流量正常範圍
+                  </th>
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                    氮氣含氧量正常範圍
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
                     狀態
@@ -107,11 +109,16 @@
                     <p class="text-gray-900 whitespace-nowrap">{{ u.alarm_Nitrogen_lower_limit }}~{{ u.alarm_Nitrogen_upper_limit }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap">{{ u.alarm_Oxygen_lower_limit }}%~{{ u.alarm_Oxygen_upper_limit }}%</p>
+                    <p class="text-gray-900 whitespace-nowrap">{{ u.alarm_Oxygen_lower_limit }}~{{ u.alarm_Oxygen_upper_limit }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.status == 0">正常</p>
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>異常</p>
+                    <p class="text-gray-900 whitespace-nowrap">{{ u.Nitrogen_Flow_lower_limit }}~{{ u.Nitrogen_Flow_upper_limit }}</p>
+                  </td>
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap">{{ u.Nitrogen_content_Oxygen_lower_limit }}~{{ u.Nitrogen_content_Oxygen_upper_limit }}</p>
+                  </td>
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <p class="text-gray-900 whitespace-nowrap">{{ u.status }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200 text-indigo-600 hover:text-indigo-900" v-if="level<=2">
                     <button @click="settingDevice(u)">管理</button>
@@ -186,20 +193,27 @@ export default {
         device.device_name = Data.name
         device.device_serial_number = Data.serial_number
         device.area = Data.area
+        device.ip = Data.info.ip  
+        device.port = Data.info.port  
         device.alarm_Nitrogen_lower_limit = Data.info.alarm_Nitrogen_lower_limit  
         device.alarm_Nitrogen_upper_limit = Data.info.alarm_Nitrogen_upper_limit  
         device.alarm_Oxygen_lower_limit = Data.info.alarm_Oxygen_lower_limit  
         device.alarm_Oxygen_upper_limit = Data.info.alarm_Oxygen_upper_limit  
+        device.Nitrogen_Flow_lower_limit = Data.info.Nitrogen_Flow_lower_limit  
+        device.Nitrogen_Flow_upper_limit = Data.info.Nitrogen_Flow_upper_limit  
+        device.Nitrogen_content_Oxygen_lower_limit = Data.info.Nitrogen_content_Oxygen_lower_limit  
+        device.Nitrogen_content_Oxygen_upper_limit = Data.info.Nitrogen_content_Oxygen_upper_limit  
 
         if(this.device_observation_Map.get(Data.id) != undefined){
-          if(this.device_observation_Map.get(Data.id).info.alarm_Nitrogen || this.device_observation_Map.get(Data.id).info.alarm_Oxygen )
+          if(this.device_observation_Map.get(Data.id).info.oxygen_height || this.device_observation_Map.get(Data.id).info.air_press_low ||
+             this.device_observation_Map.get(Data.id).info.freeze_drier || this.device_observation_Map.get(Data.id).info.air_system ||
+             this.device_observation_Map.get(Data.id).info.nitrogen_press_height || this.device_observation_Map.get(Data.id).info.nitrogen_press_low )
             device.status = 1
           else
             device.status = 0
         }
         else
           device.status = 1
-
 
         this.Nitrogen_DeviceTableData.push(device)
       })
