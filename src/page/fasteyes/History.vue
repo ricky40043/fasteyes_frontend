@@ -6,7 +6,6 @@
     />
   </teleport>
   <div id="select">
-      <div class="mt-4" >
         <div class="flex items-center px-4 py-4 space-x-4 overflow-x-auto bg-white rounded-md" style="background-color: #F5F6F9;">
           <div id="time" class="flex items-center justify-center">
   
@@ -30,7 +29,6 @@
                 重置
             </button>
           </div>
-        </div>
       </div>
   </div>
   <div id="data">
@@ -117,7 +115,7 @@
                 </thead>
 
                 <tbody>
-                  <tr v-for="u in fasteyes_ObservationTableData" :key="u.id" v-on:click="showResult($event, u)" class="report_list" :style="select_id==u.id? 'background-color:powderblue;':''">
+                  <tr v-for="u in fasteyes_ObservationTableData" :key="u.id" @click="showResult($event, u)" class="report_list" :style="select_id==u.id? 'background-color:powderblue;':''">
                     <td class="px-5 py-5 text-sm border-b border-gray-200">
                       <p class="text-gray-900 whitespace-nowrap">{{ u.deviceName }}</p>
                     </td>

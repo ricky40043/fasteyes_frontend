@@ -89,9 +89,9 @@ export function getDeviceObservation (device_id, start_time,end_time) {
   })
 }
 
-export function getLatestDeviceObservation () {
+export function getLatestDeviceObservation (device_model_id) {
   return axios({
-    url: `${global_.url}/observations/device/observation/latest`,
+    url: `${global_.url}/observations/device_model/${device_model_id}/latest`,
     method: 'get',
     headers: {
       Authorization: `Bearer ${token()}`
@@ -737,5 +737,53 @@ export function delete_area_user (area_id, user_id) {
     headers: {
       Authorization: `Bearer ${token()}`,
     }
+  })
+}
+
+export function getAreaImage (area_id) {
+  return axios({
+    url: `${global_.url}/area/${area_id}/image`,
+    method: 'get',
+    responseType: 'arraybuffer',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    }
+  })
+}
+
+export function patchAreaImage (area_id,image) {
+  // generate file from base64 string
+  const file = dataURLtoFile(image)
+  // put file into form data
+  const formdata = new FormData()
+  formdata.append('Image_file', file, file.name)
+  return axios({
+    url: `${global_.url}/area/${area_id}/image`,
+    method: 'patch',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+      'Content-Type': 'multipart/form-data'
+    },
+    data: formdata
+  })
+}
+
+export function deleteAreaImage (area_id) {
+  return axios({
+    url: `${global_.url}/area/${area_id}/image`,
+    method: 'delete',
+    headers: {
+      Authorization: `Bearer ${token()}`,
+    }
+  })
+}
+
+export function modify_device_position (device_model_id, device_id, position_x,position_y) {
+  return axios({
+    url: `${global_.url}/devices/device_model/${device_model_id}/device/${device_id}/position?&position_x=${position_x}&position_y=${position_y}`,
+    method: 'patch',
+    headers: {
+      Authorization: `Bearer ${token()}`
+    },
   })
 }

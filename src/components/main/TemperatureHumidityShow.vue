@@ -272,7 +272,7 @@ export default {
     },
       async getTHObservation(){
         this.TH_Data_list = []
-        await getLatestDeviceObservation().then((res)=>{
+        await getLatestDeviceObservation(1).then((res)=>{
               let observation = Object.assign(res.data)
               this.TH_Data_list = observation
           })

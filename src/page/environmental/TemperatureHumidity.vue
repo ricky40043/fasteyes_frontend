@@ -141,11 +141,11 @@
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.alarm_temperature == 0 && u.alarm_humidity == 0 && u.status == 0 ">正常</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.status == 2 ">資料遺失</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.status == 3 ">資料遺失</p>
                     <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_temperature == 0 && u.alarm_humidity == 1 ">濕度異常</p>
                     <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_temperature == 1 && u.alarm_humidity == 0 ">溫度異常</p>
                     <p class="text-red-600 whitespace-nowrap" v-else-if="u.alarm_temperature == 1 && u.alarm_humidity == 1 ">溫濕度異常</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.status == 1 ">裝置異常</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.status == 2 ">裝置異常</p>
                     <p class="text-red-600 whitespace-nowrap" v-else>異常</p>
                   </td>
                 </tr>

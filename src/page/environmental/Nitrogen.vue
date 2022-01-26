@@ -231,10 +231,10 @@ export default {
           observation_data.area = this.device_Map.get(observation.device_id).area
           let datetime = moment(observation.created_at, "YYYY-MM-DDThh:mm:ss:SSSSSS")
           observation_data.time = datetime.format('YYYY-MM-DD HH:mm:ss')
-          observation_data.nitrogen_pressure = observation.info.nitrogen_pressure  
-          observation_data.air_press = observation.info.air_press  
-          observation_data.nitrogen_flowrate = observation.info.nitrogen_flowrate  
-          observation_data.oxygen_content = observation.info.oxygen_content  
+          observation_data.nitrogen_pressure = observation.info.nitrogen_pressure.toFixed(2)  
+          observation_data.air_press = observation.info.air_press.toFixed(2)  
+          observation_data.nitrogen_flowrate = observation.info.nitrogen_flowrate.toFixed(2)  
+          observation_data.oxygen_content = observation.info.oxygen_content.toFixed(2)  
 
           observation_data.oxygen_height = observation.info.oxygen_height  
           observation_data.air_press_low = observation.info.air_press_low  

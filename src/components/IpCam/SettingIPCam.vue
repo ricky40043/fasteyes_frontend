@@ -101,7 +101,7 @@
                   </td>
                   <td class="px-2 py-2">
                     <div class="flex items-center justify-center">
-                      <input type="text" v-model="ip" :class="ip_error?'error_input':''" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" disabled/>
+                      <input type="text" v-model="ip" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" disabled/>
                     </div>
                   </td>
                 </tr>
@@ -188,7 +188,6 @@ export default {
       username:"",
       password:"",
       device_id:-1,
-      ip_error:false,
       port_error:false,
       stream_name_error:false,
       username_error:false,
@@ -207,7 +206,7 @@ export default {
   },
     methods: {
     async addDevice () {
-      if(this.check()){
+      if(!this.check()){
         alert("輸入資料有誤")
         return
       }
@@ -246,7 +245,6 @@ export default {
       this.stream_name=""
       this.username=""
       this.password=""
-      this.ip_error=false
       this.port_error=false
       this.stream_name_error=false
       this.username_error=false
@@ -297,14 +295,17 @@ export default {
       else
         this.password_error = false
 
-      if((this.ip1<0 || this.ip1>255)  || (this.ip2<0 || this.ip2>255) || (this.ip3<0 || this.ip3>255) || (this.ip4<0 || this.ip4>255))
-        this.ip_error = true
-      else
-        this.ip_error = false
-   
+      console.log(this.username_error)
+      console.log(this.password_error)
+      console.log(this.empty_name_error)
+      console.log(this.empty_area_error)
+      console.log(this.empty_serial_number_error)
+      console.log(this.stream_name_error)
+      console.log(this.port_error)
+      console.log(this.username_error)
 
       if(this.username_error || this.password_error || this.empty_name_error || this.empty_area_error || 
-         this.empty_serial_number_error || this.stream_name_error || this.port_error || this.ip_error){
+         this.empty_serial_number_error || this.stream_name_error || this.port_error){
         return false
       }
       else{
