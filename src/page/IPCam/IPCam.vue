@@ -42,6 +42,10 @@
         </div>
       </div>
   </div>
+  <div class="flex items-center">
+    一頁總數：
+    <input type="number" v-model="page_size" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20">
+  </div>
   <div>
     <div class="mt-8">
       <div class="mt-6">
@@ -162,14 +166,14 @@ export default {
       if(this.page<this.page_total)
       {
         this.page++
-        this.getTHDevice()
+        this.init()
       }
     },
     decrement(){
       if(this.page>1)
       {
         this.page--
-        this.getTHDevice()
+        this.init()
       }
     },
     search_event(){
@@ -182,8 +186,10 @@ export default {
     async init(){
       // create Device Map 
       let device_model = 2
-      await getAllDevice(device_model).then((res)=>{
-        let devicelist = Object.assign(res.data)
+      await getAllDevice(device_model, this.page, this.page_size).then((res)=>{
+        this.devicelist = Object.assign(res.data.items)
+        this.total = res.data.total
+        this.page_total = Math.ceil(this.total/this.page_size)
         this.IPCam_DeviceTableData = []
         devicelist.forEach(Data => {
           let device={}
@@ -216,7 +222,9 @@ export default {
     })
   },
   watch:{
-    
+    page_size(){
+      this.init()
+    }
   },
   setup() {
     const disableTeleport = ref(false)   

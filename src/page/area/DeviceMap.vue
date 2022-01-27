@@ -21,22 +21,28 @@
               <option value="-1">所有區域</option>
               <option v-for="area in area_list" :value="area" :key="area">{{area.name}}</option>
             </select>
+          
+
           </div>
           <div v-if="select_area!=-1" class="flex items-center">
             <input class="device_comfirm_button" type="file" accept="image/gif, image/jpeg, image/png" @change="selectedImg">
-            <button class ="device_set_button" @click="comfirm">修改圖片</button>
-            <button v-if="changeImage==false" class ="device_delete_button" @click="remove">刪除圖片</button>
+            <button v-if="changeImage" class ="device_set_button" @click="comfirm">修改圖片</button>
+            <button v-if="!changeImage" class ="device_delete_button" @click="remove">刪除圖片</button>
             <button v-else class ="device_delete_button" @click="cancel">取消</button>
-            <a href="https://blog.xuite.net/vexed/tech/65591105-%E7%B7%9A%E4%B8%8A%E8%AA%BF%E6%95%B4%E5%9C%96%E7%89%87%E5%A4%A7%E5%B0%8F" class ="device_comfirm_button">改變圖片大小連結</a>
+            <a href="https://blog.xuite.net/vexed/tech/65591105-%E7%B7%9A%E4%B8%8A%E8%AA%BF%E6%95%B4%E5%9C%96%E7%89%87%E5%A4%A7%E5%B0%8F" class ="device_comfirm_button">改變圖片大小連結 => 800x500</a>
           </div>
         </div>
 
       </div>
-      
+      <div class="flex items-center">
+        一頁總數：
+        <input type="number" v-model="page_size" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20">
+
+      </div>
   </div>
   <div>
     <div class="flex">
-      <div id="left" v-if="changeImage == false">
+      <div id="left" v-if="!changeImage">
         <div class=" overflow-x-auto sm:-mx-8 sm:px-8">
           <div
             class="inline-block min-w-full overflow-hidden rounded-lg shadow"
@@ -190,7 +196,7 @@ export default {
       area_list:[],
       page:1,
       total:1,
-      page_size:10,
+      page_size:6,
       page_total:1,
       search_text:"",
       select_area:-1,
@@ -233,14 +239,14 @@ export default {
       if(this.page<this.page_total)
       {
         this.page++
-        this.getTHDevice()
+        this.init()
       }
     },
     decrement(){
       if(this.page>1)
       {
         this.page--
-        this.getTHDevice()
+        this.init()
       }
     },
     search_event(){
@@ -261,33 +267,34 @@ export default {
       await this.getAreaImage()
       // create Device Map
       this.DeviceTableData=[]
-      for (let index = 1; index < 5; index++) {
-        let device_model = index
-        let areaName
-        if(this.select_area !=-1){
-          areaName = this.select_area.name
-        }
-        else
-          areaName = ""
 
-        await getAllDevice(device_model, areaName).then((res)=>{
-          this.devicelist = res.data
-          this.devicelist.forEach(Data => {
-            let device = {}
-            device.device_id = Data.id
-            device.device_name = Data.name
-            device.device_serial_number = Data.serial_number
-            device.device_model_id = Data.device_model_id
-            device.x = Data.info.position_x
-            device.y = Data.info.position_y
-            this.DeviceTableData.push(device)
-          });
-        })
+      let areaName = ""
+      if(this.select_area !=-1){
+        areaName = this.select_area.name
       }
+
+      await getAllDevice(-1, this.page, this.page_size, areaName).then((res)=>{
+        console.log(res.data)
+        this.total = res.data.total
+        this.page_total = Math.ceil(this.total/this.page_size)
+        let devicelist = res.data.items
+        devicelist.forEach(Data => {
+          let device = {}
+          device.device_id = Data.id
+          device.device_name = Data.name
+          device.device_serial_number = Data.serial_number
+          device.device_model_id = Data.device_model_id
+          device.x = Data.info.position_x
+          device.y = Data.info.position_y
+          this.DeviceTableData.push(device)
+        });
+      })
     },
     async comfirm(){
       await patchAreaImage(this.select_area.id,this.image_data).then(async(res)=>{
+        this.total_init()
         this.changeImage = false
+        await this.getArea()
         await this.init()
       })
     },
@@ -316,7 +323,7 @@ export default {
       var myImg = document.querySelector("#area_image");
       // this.realWidth = myImg.naturalWidth;
       // this.realHeight = myImg.naturalHeight;
-      
+
       // this.DeviceTableData.forEach((element,index) => {
       //   let id_name ="device_"+(element.device_id).toString()
       //   var tag = this.$refs.inputDom
@@ -353,7 +360,10 @@ export default {
       this.select_id = -1
     },
     async remove(){
-      await deleteAreaImage(this.select_area.id).then((res)=>{
+      await deleteAreaImage(this.select_area.id).then(async(res)=>{
+        this.total_init()
+        await this.getArea()
+        await this.init()
         this.image_data = ''
         this.have_picture = false
       })
@@ -370,7 +380,6 @@ export default {
 
       await this.showObservation(select_device)
 
-      // let select_id_name ="device_"+(this.select_device.device_id).toString()
       // this.DeviceTableData.forEach((element,index) => {
       //   let id_name ="device_"+(element.device_id).toString()
       //   if(select_id_name == id_name)
@@ -379,6 +388,34 @@ export default {
       //     document.getElementById(id_name).style.color = "blue";
       //   document.getElementById(id_name).style.position = "relative";
       // })
+    },
+    total_init(){
+      this.DeviceTableData=[],
+      this.area_list=[],
+      this.page=1,
+      this.total=1,
+      this.page_size=6,
+      this.page_total=1,
+      this.search_text="",
+      this.select_area=-1,
+      this.showModal= false,
+      this.image_data= "",
+      this.have_picture= false,
+      this.select_id= -1,
+      this.select_device= "",
+      this.position_x= -1,
+      this.position_y= -1,
+      this.changeImage= false,
+      this.realWidth= 800,
+      this.realHeight= 500,
+      this.select_device_model_id= -1,
+      this.select_device_id= -1,
+      this.TH_Data_list= [],
+      this.THObservation= {},
+      this.ElectroObservation= {},
+      this.NitrogenObservation= {},
+      this.TH_observation_Map= new Map(),
+      this.ip_cam_device_id= -1
     },
     async cancel(){
       this.changeImage = false
@@ -534,7 +571,9 @@ export default {
     // },
   },
   watch:{
-    
+    page_size(){
+      this.init()
+    }
   },
   async beforeMount() {
     await this.getArea()

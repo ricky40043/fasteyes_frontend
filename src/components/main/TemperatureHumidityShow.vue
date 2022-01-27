@@ -263,8 +263,8 @@ export default {
     async init(){
       // create Device Map 
       let device_model = 1
-      await getAllDevice(device_model).then((res)=>{
-        this.devicelist = Object.assign(res.data)
+      await getAllDevice(device_model,1,100).then((res)=>{
+        this.devicelist = Object.assign(res.data.items)
         this.devicelist.forEach(device => {
           this.device_Map.set(device.id, Object.assign(device))
         });

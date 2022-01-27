@@ -41,11 +41,15 @@
           <div id="device" class="flex items-center justify-center">
             <select v-model="select_area" class="device_block_text" @change="init">
               <option value="-1">所有區域</option>
-              <option v-for="area in area_list" :value="area.name" :key="area.name">{{area.name}}</option>
+              <option v-for="area in area_list" :value="area" :key="area">{{area.name}}</option>
             </select>
           </div>
         </div>
       </div>
+  </div>
+  <div class="flex items-center">
+    一頁總數：
+    <input type="number" v-model="page_size" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20">
   </div>
   <div>
     <div class="mt-8">
@@ -128,7 +132,7 @@ export default {
       area_list:[],
       page:1,
       total:1,
-      page_size:50,
+      page_size:10,
       page_total:1,
       search_text:"",
       select_area:-1,
@@ -153,14 +157,14 @@ export default {
       if(this.page<this.page_total)
       {
         this.page++
-        this.getTHDevice()
+        this.init()
       }
     },
     decrement(){
       if(this.page>1)
       {
         this.page--
-        this.getTHDevice()
+        this.init()
       }
     },
     search_event(){
@@ -173,28 +177,26 @@ export default {
 
     async init(){
       // create Device Map
-      this.DeviceTableData=[]
-      for (let index = 1; index < 5; index++) {
-        let device_model = index
-        let areaName
-        if(this.select_area !=-1){
-          areaName = this.select_area
-        }
-        else
-          areaName = ""
-
-        await getAllDevice(device_model, areaName).then((res)=>{
-          this.devicelist = res.data
-          this.devicelist.forEach(Data => {
-            let device = {}
-            device.device_id = Data.id
-            device.device_name = Data.name
-            device.device_serial_number = Data.serial_number
-            device.device_model_id = Data.device_model_id
-            this.DeviceTableData.push(device)
-          });
-        })
-      }
+    this.DeviceTableData=[]
+    let areaName = ""
+    if(this.select_area !=-1){
+      areaName = this.select_area.name
+    }
+    await getAllDevice(-1, this.page, this.page_size, areaName).then((res)=>{
+      this.total = res.data.total
+      this.page_total = Math.ceil(this.total/this.page_size)
+      let devicelist = res.data.items
+      devicelist.forEach(Data => {
+        let device = {}
+        device.device_id = Data.id
+        device.device_name = Data.name
+        device.device_serial_number = Data.serial_number
+        device.device_model_id = Data.device_model_id
+        device.x = Data.info.position_x
+        device.y = Data.info.position_y
+        this.DeviceTableData.push(device)
+      });
+    })
     },
     doSome(res) {
       console.log(success)
@@ -203,6 +205,11 @@ export default {
   async beforeMount() {
     await this.getArea()
     await this.init()
+  },
+  watch:{
+    page_size(){
+      this.init()
+    }
   },
   created() {
     if(sessionStorage.getItem("state")){

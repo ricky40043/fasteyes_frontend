@@ -45,7 +45,7 @@
               </button>
             </div>
           </div>
-          <!-- <div id="searchinput">
+          <div id="searchinput">
           <div class="relative mx-4 lg:mx-0" style="width= 100%">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
               <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -62,12 +62,12 @@
             <input
               class="w-32 pl-10 pr-4 text-indigo-600 border-gray-200 rounded-md sm:w-64 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
               type="text"
-            placeholder="以裝置名稱或其ID搜尋"
+            placeholder="以位置搜尋"
             v-model="search_text"
             @change="search_event"
             />
           </div>
-          </div> -->
+          </div>
           <div id="outputbutton" @click="getTHObservationOutput()">
             <button class="device_abnormal_button">
               輸出 .csv
@@ -93,29 +93,29 @@
             <table class="min-w-full leading-normal">
               <thead>
                 <tr>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
                     裝置名稱
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
                     裝置編號
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
                     裝置位置
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
                     測量時間
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    氮氣壓力
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
+                    氮氣壓力(Mpag)
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    氧氣壓力
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
+                    氧氣壓力(Nm3/h)
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    氮氣流量
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
+                    氮氣流量(Mpag)
                   </th>
-                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-                    氮氣含氧量
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
+                    氮氣含氧量(ppm)
                   </th>
                 </tr>
               </thead>
@@ -135,22 +135,23 @@
                     <p class="text-gray-900 whitespace-nowrap">{{ u.time }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.nitrogen_press_height == 0 && u.nitrogen_press_low == 0">{{ u.nitrogen_pressure }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.nitrogen_pressure == -1">--.--</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else-if="u.nitrogen_press_height == 0 && u.nitrogen_press_low == 0">{{ u.nitrogen_pressure }}</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.nitrogen_pressure }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.air_press_low == 0">{{ u.air_press }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.air_press == -1">--.--</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else-if="u.air_press_low == 0">{{ u.air_press }}</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.air_press }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;">{{ u.nitrogen_flowrate }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.nitrogen_flowrate == -1">--.--</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else style="color:red;">{{ u.nitrogen_flowrate }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" v-if="u.oxygen_height == 0">{{ u.oxygen_content }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-if="u.oxygen_content == -1">--.--</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else-if="u.oxygen_height == 0">{{ u.oxygen_content }}</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.oxygen_content }}</p>
-                  </td>
-                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-
                   </td>
                 </tr>
               </tbody>
@@ -218,7 +219,7 @@ export default {
       let device_model = 4
       let start_time = this.start_date+"T"+this.start_time
       let end_time = this.end_date+"T"+this.end_time
-      await getDevice_ModelObservation(device_model,this.page,this.page_size, this.select_status,start_time,end_time,this.select_device).then((res)=>{
+      await getDevice_ModelObservation(device_model,this.page,this.page_size, this.select_status,start_time,end_time,this.select_device,this.search_text).then((res)=>{
         let observationlist = Object.assign(res.data.items)
         this.total = Object.assign(res.data.total)
         this.page_total = Math.ceil(this.total/this.page_size)
@@ -231,10 +232,10 @@ export default {
           observation_data.area = this.device_Map.get(observation.device_id).area
           let datetime = moment(observation.created_at, "YYYY-MM-DDThh:mm:ss:SSSSSS")
           observation_data.time = datetime.format('YYYY-MM-DD HH:mm:ss')
-          observation_data.nitrogen_pressure = observation.info.nitrogen_pressure.toFixed(2)  
-          observation_data.air_press = observation.info.air_press.toFixed(2)  
-          observation_data.nitrogen_flowrate = observation.info.nitrogen_flowrate.toFixed(2)  
-          observation_data.oxygen_content = observation.info.oxygen_content.toFixed(2)  
+          observation_data.nitrogen_pressure = parseFloat(observation.info.nitrogen_pressure).toFixed(2)  
+          observation_data.air_press = parseFloat(observation.info.air_press).toFixed(2)  
+          observation_data.nitrogen_flowrate = parseFloat(observation.info.nitrogen_flowrate).toFixed(2)  
+          observation_data.oxygen_content = parseFloat(observation.info.oxygen_content).toFixed(2)  
 
           observation_data.oxygen_height = observation.info.oxygen_height  
           observation_data.air_press_low = observation.info.air_press_low  
@@ -270,8 +271,8 @@ export default {
       // create Device Map 
       this.device_list= []
       let device_model = 4
-      await getAllDevice(device_model).then((res)=>{
-        this.devicelist = Object.assign(res.data)
+      await getAllDevice(device_model,1,100).then((res)=>{
+        this.devicelist = Object.assign(res.data.items)
         this.devicelist.forEach(Data => {
           this.device_Map.set(Data.id, Object.assign(Data))
           let device = {}

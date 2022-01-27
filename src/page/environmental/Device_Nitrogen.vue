@@ -54,6 +54,10 @@
         </div>
       </div>
   </div>
+  <div class="flex items-center">
+    一頁總數：
+    <input type="number" v-model="page_size" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20">
+  </div>
   <div>
     <div class="mt-8">
       <div class="mt-6">
@@ -220,7 +224,7 @@ export default {
     },
     async getTHObservation(){
       this.TH_Data_list = []
-      await getLatestDeviceObservation(1).then((res)=>{
+      await getLatestDeviceObservation(4).then((res)=>{
             let observation = Object.assign(res.data)
             this.TH_Data_list = observation
             this.TH_Data_list.forEach(Data => {
@@ -232,14 +236,14 @@ export default {
       if(this.page<this.page_total)
       {
         this.page++
-        this.getTHDevice()
+        this.init()
       }
     },
     decrement(){
       if(this.page>1)
       {
         this.page--
-        this.getTHDevice()
+        this.init()
       }
     },
     search_event(){
@@ -253,8 +257,10 @@ export default {
       // create Device Map
       this.device_Map = new Map()
       let device_model = 4
-      await getAllDevice(device_model).then((res)=>{
-        this.devicelist = Object.assign(res.data)
+      await getAllDevice(device_model, this.page, this.page_size).then((res)=>{
+        this.devicelist = Object.assign(res.data.items)
+        this.total = res.data.total
+        this.page_total = Math.ceil(this.total/this.page_size)
         this.devicelist.forEach(device => {
           this.device_Map.set(device.id, Object.assign(device))
         });
@@ -278,7 +284,9 @@ export default {
     })
   },
   watch:{
-    
+    page_size(){
+      this.init()
+    }
   },
   setup() {
     const disableTeleport = ref(false)   

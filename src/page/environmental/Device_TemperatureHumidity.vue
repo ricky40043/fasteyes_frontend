@@ -56,6 +56,10 @@
         </div>
       </div>
   </div>
+  <div class="flex items-center">
+    一頁總數：
+    <input type="number" v-model="page_size" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500 w-20">
+  </div>
   <div>
     <div class="mt-8">
       <div class="mt-6">
@@ -117,11 +121,11 @@
                     <p class="text-gray-900 whitespace-nowrap">{{ u.humidity_lower_limit }}%~{{ u.humidity_upper_limit }}%</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.temperature ==-1">無資料</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.temperature ==-255">無資料</p>
                     <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.temperature }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.humidity ==-1">無資料</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.humidity ==-255">無資料</p>
                     <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.humidity }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
@@ -230,7 +234,7 @@ export default {
     },
     async getTHObservation(){
       this.TH_Data_list = []
-      await getLatestDeviceObservation(4).then((res)=>{
+      await getLatestDeviceObservation(1).then((res)=>{
             let observation = Object.assign(res.data)
             this.TH_Data_list = observation
             this.TH_Data_list.forEach(Data => {
@@ -242,14 +246,14 @@ export default {
       if(this.page<this.page_total)
       {
         this.page++
-        this.getTHDevice()
+        this.init()
       }
     },
     decrement(){
       if(this.page>1)
       {
         this.page--
-        this.getTHDevice()
+        this.init()
       }
     },
     search_event(){
@@ -263,8 +267,10 @@ export default {
       // create Device Map 
       this.device_Map = new Map()
       let device_model = 1
-      await getAllDevice(device_model).then((res)=>{
-        this.devicelist = res.data
+      await getAllDevice(device_model, this.page, this.page_size).then((res)=>{
+        this.devicelist = res.data.items
+        this.total = res.data.total
+        this.page_total = Math.ceil(this.total/this.page_size)
         this.devicelist.forEach(device => {
           this.device_Map.set(device.id, Object.assign(device))
         });
@@ -289,6 +295,11 @@ export default {
       sessionStorage.removeItem('state')
       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
     })
+  },
+  watch:{
+    page_size(){
+      this.init()
+    }
   },
   setup() {
     const disableTeleport = ref(false)   

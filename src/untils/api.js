@@ -51,10 +51,10 @@ export function setUserInfo (obj_input) {
   })
 }
 
-export function getAllDevice (device_model_id, area="") {
+export function getAllDevice (device_model_id, page, size, area="") {
   if(area===""){
     return axios({
-      url: `${global_.url}/devices/device_model/${device_model_id}`,
+      url: `${global_.url}/devices/device_model/${device_model_id}?page=${page}&size=${size}`,
       method: 'get',
       headers: {
         Authorization: `Bearer ${token()}`
@@ -63,7 +63,7 @@ export function getAllDevice (device_model_id, area="") {
   }
   else{
     return axios({
-      url: `${global_.url}/devices/device_model/${device_model_id}?area=${area}`,
+      url: `${global_.url}/devices/device_model/${device_model_id}?page=${page}&size=${size}&area=${area}`,
       method: 'get',
       headers: {
         Authorization: `Bearer ${token()}`

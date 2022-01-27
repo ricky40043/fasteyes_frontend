@@ -88,7 +88,7 @@
                   <td class="px-3 py-3 text-sm border-b border-gray-200">
                     <div v-if="select_area.id==u.id" class="flex">
                       <input type="text" class="block mt-1 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" v-model="u.name" />
-                      <button class="device_set_button" @click="ModifyArea(u.id,u.name,u.send_mail)">修改</button>
+                      <button class="device_set_button" @click="ModifyAreaName(u.id,u.name,u.send_mail)">修改</button>
                     </div>
                     <div v-else class="flex">
                       <p class="text-gray-900 whitespace-nowrap">{{ u.name }}</p>
@@ -212,6 +212,13 @@ export default {
       console.log(this.search_text) 
     },
     async ModifyArea(area_id,name,send_mail){
+      await modify_area(area_id,name,send_mail).then((res) => {
+        this.getArea()
+        }).catch((err) => {
+          alert(err.response.data.detail)
+        })
+    },
+    async ModifyAreaName(area_id,name,send_mail){
       await modify_area(area_id,name,send_mail).then((res) => {
         this.select_area={}
         this.getArea()
