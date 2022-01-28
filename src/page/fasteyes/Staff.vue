@@ -194,6 +194,7 @@ export default {
         let stafflist = Object.assign(res.data)
         stafflist.forEach(Data =>{
           let staff = {}
+          // console.log(Data)
           staff.department = this.department_Map.get(Data.department_id).name
           staff.department_id = Data.department_id
           staff.serial_number = Data.serial_number

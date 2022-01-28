@@ -220,7 +220,7 @@ export default {
       else
         this.empty_name_error = false
       
-      if(this.empty_serial_number_error || this.empty_name_error)
+      if(this.empty_serial_number_error || this.empty_name_error || this.select_department_error || this.select_gender_error)
         return false
       else
         return true

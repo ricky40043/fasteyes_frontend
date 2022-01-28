@@ -237,7 +237,7 @@ export default {
          const anchor = document.createElement('a');
           anchor.href = "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(FILE);
           anchor.target = '_blank';
-          anchor.download = this.start_date+'-'+this.end_date+'輸出報表.csv';
+          anchor.download = '溫濕度感應器'+this.start_date+'-'+this.end_date+'輸出報表.csv';
           anchor.click();
       } else 
         console.log('none')

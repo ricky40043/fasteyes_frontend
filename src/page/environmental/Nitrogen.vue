@@ -117,6 +117,9 @@
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
                     氮氣含氧量(ppm)
                   </th>
+                  <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
+                    狀態
+                  </th>
                 </tr>
               </thead>
 
@@ -152,6 +155,20 @@
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.oxygen_content == -1">--.--</p>
                     <p class="text-gray-900 whitespace-nowrap" v-else-if="u.oxygen_height == 0">{{ u.oxygen_content }}</p>
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else>{{ u.oxygen_content }}</p>
+                  </td>
+                  <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                    <p class="text-red-600 whitespace-nowrap" v-if="u.oxygen_height == -1">資料遺失</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.oxygen_height == 1">氮氣含氧量過高</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.air_press_low == 1">儀表空氣壓力低报警</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.freeze_drier == 1">冷乾機故障</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.air_system == 1">空氣系統報警</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.nitrogen_press_height == 1">氮氣壓力高</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.nitrogen_press_low == 1">氮氣壓力低</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.run_status == 1">運行信號</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.stop_status == 1">停機信號</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.standby_status == 1">系統待機</p>
+                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.maintain_status == 1 ">維護提示</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else>正常</p>
                   </td>
                 </tr>
               </tbody>
@@ -260,9 +277,9 @@ export default {
       }) 
       if (FILE) {
          const anchor = document.createElement('a');
-          anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(FILE);
+          anchor.href = "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(FILE);
           anchor.target = '_blank';
-          anchor.download = this.start_date+'-'+this.end_date+'輸出報表.csv';
+          anchor.download = '氮氣機'+this.start_date+'-'+this.end_date+'輸出報表.csv';
           anchor.click();
       } else 
         console.log('none')

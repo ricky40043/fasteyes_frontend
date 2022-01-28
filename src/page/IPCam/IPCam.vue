@@ -187,11 +187,12 @@ export default {
       // create Device Map 
       let device_model = 2
       await getAllDevice(device_model, this.page, this.page_size).then((res)=>{
+        console.log(res.data.items)
         this.devicelist = Object.assign(res.data.items)
         this.total = res.data.total
         this.page_total = Math.ceil(this.total/this.page_size)
         this.IPCam_DeviceTableData = []
-        devicelist.forEach(Data => {
+        this.devicelist.forEach(Data => {
           let device={}
           device.device_id = Data.id
           device.device_name = Data.name
