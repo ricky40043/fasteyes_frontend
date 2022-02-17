@@ -101,10 +101,7 @@
           <img id="area_image" :src="image_data" alt="" v-if="have_picture" style="display:block;" />
           <div v-for="(u,index) in DeviceTableData" :key="u.id" :ref="'device_'+u.id" @click="showObservation(u)" style="position: relative;"
                :style="[select_id==u.device_id? 'color:red;':'color:blue;',{left: u.x+'px', top: (u.y-realHeight-15*index)+'px'}]" >
-            <div v-if="u.device_model_id==1" class= "ti-dashboard" ></div>
-            <div v-if="u.device_model_id==2" class= "ti-video-camera" ></div>
-            <div v-if="u.device_model_id==3" class= "ti-comment" ></div>
-            <div v-if="u.device_model_id==4" class= "ti-desktop" ></div>
+            <div :class= "deviceIcon(u.device_model_id)" ></div>
           </div>
 
         </div>
@@ -234,6 +231,16 @@ export default {
           this.area_list.push(area)
         });
       }) 
+    },
+    deviceIcon(device_model_id){
+      if (device_model_id == 1)
+        return "ti-dashboard"
+      else if (device_model_id == 2)
+        return "ti-video-camera"
+      else if (device_model_id == 3)
+        return "ti-comment"
+      else if (device_model_id == 4)
+        return "ti-desktop"
     },
     increment(){
       if(this.page<this.page_total)

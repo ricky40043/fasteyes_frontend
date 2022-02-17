@@ -122,11 +122,13 @@
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.temperature ==-255">無資料</p>
-                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.temperature }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else-if="u.alarm_temperature == 1">{{ u.temperature }}°C</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.temperature }}°C</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.humidity ==-255">無資料</p>
-                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.humidity }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-else-if="u.alarm_humidity == 1">{{ u.humidity }}%</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.humidity }}%</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" style="color:red;" v-if="u.battery ==-1">無資料</p>
@@ -222,16 +224,18 @@ export default {
         device.humidity_upper_limit = Data.info.alarm_humidity_upper_limit  
         device.compensate_temperature = Data.info.compensate_temperature
         device.compensate_humidity = Data.info.compensate_humidity  
+        device.alarm_temperature = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.alarm_temperature : -1
+        device.alarm_humidity = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.alarm_humidity : -1
         device.temperature = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.temperature : -1
         device.humidity = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.humidity : -1
         device.battery = this.device_observation_Map.get(Data.id)!=undefined ? this.device_observation_Map.get(Data.id).info.battery : -1
         if (this.device_observation_Map.get(Data.id)==undefined)
-          device.status = 1
+          device.status = 3
         else{
           if(this.device_observation_Map.get(Data.id).info.alarm_temperature || this.device_observation_Map.get(Data.id).info.alarm_temperature )
             device.status = 1
           else
-            device.status = 0
+            device.status = this.device_observation_Map.get(Data.id).info.status
         }
 
         this.temperature_humidity_DeviceTableData.push(device)

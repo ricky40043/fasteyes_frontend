@@ -299,7 +299,7 @@ export default {
       }) 
       if (FILE) {
          const anchor = document.createElement('a');
-          anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(FILE);
+          anchor.href = "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(FILE);
           anchor.target = '_blank';
           let today = new Date();
           let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();

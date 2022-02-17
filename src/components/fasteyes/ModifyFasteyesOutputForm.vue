@@ -16,8 +16,6 @@
             裝置選擇 ᴠ
             </button>
             <div class="flex mx-4 text-gray-600 focus:outline-none">
-
-
             <div
               v-show="dropdownOpen1"
               class="fixed inset-0 z-10 w-full h-full"
@@ -84,9 +82,11 @@
             <p>每日輸出時間：</p>
           <div class="items-center">
           <ul id="array-rendering">
-            <li v-for="(item,index) in faseyes_output_date_list">
+            <div v-for="(item,index) in faseyes_output_date_list" class="flex">
               <input id="start_time" type="time" class="time_block_text" v-model="faseyes_output_date_list[index]">
-            </li>
+              <button class ="device_delete_button" @click="delete_output_date(index)">刪除</button>
+            </div>
+            <button class ="device_cancel_button" @click="add_output_date">新增輸出時間</button>
           </ul>
           </div>
         </div>
@@ -145,6 +145,8 @@ export default {
         }
       })
       this.faseyes_observation_form_data.output_time = this.faseyes_output_date_list
+      this.faseyes_observation_form_data.output_sequence = this.output_list
+      this.faseyes_observation_form_data.not_output = this.not_output_list
       console.log(this.faseyes_observation_form_data.output_time)
       await patch_output(faseyes_form_data).then((res) => {
         this.hide()
@@ -175,10 +177,10 @@ export default {
       this.resign_staff_output=false
     },
     input_data(){
-      this.faseyes_output_date_list = this.faseyes_observation_form_data.output_time
-      this.faseyes_device_list = this.faseyes_observation_form_data.output_fasteyes
-      this.output_list = this.faseyes_observation_form_data.output_sequence
-      this.not_output_list = this.faseyes_observation_form_data.not_output
+      this.faseyes_output_date_list = this.faseyes_observation_form_data.output_time.slice()
+      this.faseyes_device_list = this.faseyes_observation_form_data.output_fasteyes.slice()
+      this.output_list = this.faseyes_observation_form_data.output_sequence.slice()
+      this.not_output_list = this.faseyes_observation_form_data.not_output.slice()
       this.resign_staff_output = this.faseyes_observation_form_data.resign_staff_output
       this.select_faseyes_device_list = []
       this.Fasteyes_DeviceList.forEach(device =>{
@@ -228,6 +230,12 @@ export default {
       let innerdata = event.target.innerHTML
       innerdata = innerdata.substring(0,innerdata.length - img.length)
       event.target.innerHTML = innerdata 
+    },
+    delete_output_date(index){
+      this.faseyes_output_date_list.splice(index, 1)
+    },
+    add_output_date(){
+      this.faseyes_output_date_list.push("00:00")
     }
   },
   computed:{
@@ -334,7 +342,7 @@ a{
     left: 0;
     top: 0;
     width: 100%;
-    height: 110%;
+    height: 130%;
     background-color: rgba(0, 0, 0, 0.7);
 }
 .modal-content {

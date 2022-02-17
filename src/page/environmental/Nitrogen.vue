@@ -106,13 +106,13 @@
                     測量時間
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
-                    氮氣壓力(Mpag)
+                    氮氣壓力(MPa)
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
-                    氧氣壓力(Nm3/h)
+                    空氣壓力(MPa)
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
-                    氮氣流量(Mpag)
+                    氮氣流量(Nm3/h)
                   </th>
                   <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 bg-gray-100 border-b-2 border-gray-200">
                     氮氣含氧量(ppm)
@@ -149,7 +149,7 @@
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.nitrogen_flowrate == -1">--.--</p>
-                    <p class="text-gray-900 whitespace-nowrap" v-else style="color:red;">{{ u.nitrogen_flowrate }}</p>
+                    <p class="text-gray-900 whitespace-nowrap" v-else>{{ u.nitrogen_flowrate }}</p>
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
                     <p class="text-gray-900 whitespace-nowrap" v-if="u.oxygen_content == -1">--.--</p>
@@ -164,9 +164,8 @@
                     <p class="text-red-600 whitespace-nowrap" v-else-if="u.air_system == 1">空氣系統報警</p>
                     <p class="text-red-600 whitespace-nowrap" v-else-if="u.nitrogen_press_height == 1">氮氣壓力高</p>
                     <p class="text-red-600 whitespace-nowrap" v-else-if="u.nitrogen_press_low == 1">氮氣壓力低</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.run_status == 1">運行信號</p>
                     <p class="text-red-600 whitespace-nowrap" v-else-if="u.stop_status == 1">停機信號</p>
-                    <p class="text-red-600 whitespace-nowrap" v-else-if="u.standby_status == 1">系統待機</p>
+                    <p class="text-gray-900  whitespace-nowrap" v-else-if="u.standby_status == 1">系統待機</p>
                     <p class="text-red-600 whitespace-nowrap" v-else-if="u.maintain_status == 1 ">維護提示</p>
                     <p class="text-gray-900 whitespace-nowrap" v-else>正常</p>
                   </td>
